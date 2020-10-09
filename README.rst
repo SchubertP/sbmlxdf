@@ -1,3 +1,11 @@
+Install:
+========
+
+$ pip install git+https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
+
+
+
+
 Convert between SBML coded files and Pandas DataFrames
 ======================================================
 
