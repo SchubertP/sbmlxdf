@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
+  <model id="test_ud" name="species" substanceUnits="item">
+    <notes>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <p>Test Annotation<br/>
+           Based on:<br/>
+           The Systems Biology Markup Language (SBML):<br/>
+           Language Specification for Level 3 Version 2 Core<br/>
+           Chapter 6.7: Example of species annotation<br/>
+        </p>
+      </body>
+    </notes>
+    <listOfUnitDefinitions>
+      <unitDefinition id="volume" name="volume">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="C" name="cell" spatialDimensions="3" size="1e-06" units="volume" constant="true" sboTerm="SBO:0000290">
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="Ca_calmodulin" metaid="cacam" compartment="C" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF
+              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+              xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"        >
+            <rdf:Description rdf:about="#cacam">
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P62158"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:29108"/>
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+    </listOfSpecies>
+  </model>
+</sbml>

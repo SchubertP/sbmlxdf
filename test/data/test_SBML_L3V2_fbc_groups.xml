@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2"
+    xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" fbc:required="false"
+    xmlns:groups="http://www.sbml.org/sbml/level3/version1/groups/version1" groups:required="false">
+  <model fbc:strict="true" id="fba_example" extentUnits="substance" substanceUnits="substance" timeUnits="time" >
+    <notes>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <p>Test import and export fbc and groups<br/>
+        Based on:<br/>
+        fba_example from Developers's guide for version 5.18.0 libSBML Pyhton API:<br/>
+        Modified to be SBML L3V2 compiant<br/>
+        - UnitDefinitions added, xxxxUnits added to model element<br/>
+      </p>
+    </body>
+  </notes>
+  <listOfUnitDefinitions>
+    <unitDefinition id="mmol_per_gDW_per_hr">
+      <listOfUnits>
+        <unit kind="mole" scale="-3" multiplier="1" exponent="1"/>
+        <unit kind="gram" scale="0" multiplier="1" exponent="-1"/>
+        <unit kind="second" scale="0" multiplier="3600" exponent="-1"/>
+      </listOfUnits>
+    </unitDefinition>
+    <unitDefinition id="substance" name="Millimoles per gram">
+      <listOfUnits>
+        <unit exponent="1" kind="mole" multiplier="1" scale="-3"/>
+        <unit exponent="-1" kind="gram" multiplier="1" scale="0"/>
+      </listOfUnits>
+    </unitDefinition>
+    <unitDefinition id="time" name="Hour">
+      <listOfUnits>
+        <unit exponent="1" kind="second" multiplier="3600" scale="0"/>
+      </listOfUnits>
+    </unitDefinition>
+  </listOfUnitDefinitions>
+  <listOfCompartments>
+    <compartment id="compartment" size="1" constant="true" units="litre"/>
+  </listOfCompartments>
+  <listOfSpecies>
+    <species id="Node0" compartment="compartment" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    <species id="Node1" compartment="compartment" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false" fbc:charge="-1" fbc:chemicalFormula="C2H5Br"/>
+    <species id="Node2" compartment="compartment" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    <species id="Node3" compartment="compartment" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    <species id="Node4" compartment="compartment" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    <species id="Node5" compartment="compartment" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    <species id="Node6" compartment="compartment" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    <species id="Node7" compartment="compartment" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    <species id="Node8" compartment="compartment" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    <species id="Node9" compartment="compartment" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+  </listOfSpecies>
+  <listOfParameters>
+    <parameter id="flux_lb" value="0" constant="true" units="mmol_per_gDW_per_hr"/>
+    <parameter id="flux_ub" value="1000" constant="true" units="mmol_per_gDW_per_hr"/>
+  </listOfParameters>
+  <listOfReactions>
+    <reaction id="J0" reversible="false" fbc:lowerFluxBound="flux_lb" fbc:upperFluxBound="flux_ub">
+      <listOfReactants>
+        <speciesReference species="Node0" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Node1" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction id="J1" reversible="false" fbc:lowerFluxBound="flux_lb" fbc:upperFluxBound="flux_ub">
+      <listOfReactants>
+        <speciesReference species="Node1" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Node2" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction id="J2" reversible="false" fbc:lowerFluxBound="flux_lb" fbc:upperFluxBound="flux_ub">
+      <listOfReactants>
+        <speciesReference species="Node1" stoichiometry="2" constant="true"/>
+        <speciesReference species="Node2" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Node3" stoichiometry="1" constant="true"/>
+        <speciesReference species="Node4" stoichiometry="2" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction id="J3" reversible="false" fbc:lowerFluxBound="flux_lb" fbc:upperFluxBound="flux_ub">
+      <listOfReactants>
+        <speciesReference species="Node1" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Node4" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction id="J4" reversible="false" fbc:lowerFluxBound="flux_lb" fbc:upperFluxBound="flux_ub">
+      <listOfReactants>
+        <speciesReference species="Node4" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Node2" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction id="J5" reversible="false" fbc:lowerFluxBound="flux_lb" fbc:upperFluxBound="flux_ub">
+      <listOfReactants>
+        <speciesReference species="Node3" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Node5" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction id="J6" reversible="false" fbc:lowerFluxBound="flux_lb" fbc:upperFluxBound="flux_ub">
+      <listOfReactants>
+        <speciesReference species="Node5" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Node6" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction id="J7" reversible="false" fbc:lowerFluxBound="flux_lb" fbc:upperFluxBound="flux_ub">
+      <listOfReactants>
+        <speciesReference species="Node6" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Node7" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+    </reaction>
+    <reaction id="J8" reversible="false" fbc:lowerFluxBound="flux_lb" fbc:upperFluxBound="flux_ub">
+      <listOfReactants>
+        <speciesReference species="Node5" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Node8" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+      <fbc:geneProductAssociation>
+        <fbc:geneProductRef fbc:geneProduct="G_b1377"/>
+      </fbc:geneProductAssociation>
+    </reaction>
+    <reaction id="J9" reversible="false" fbc:lowerFluxBound="flux_lb" fbc:upperFluxBound="flux_ub">
+      <listOfReactants>
+        <speciesReference species="Node8" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Node7" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+      <fbc:geneProductAssociation>
+        <fbc:and>
+          <fbc:geneProductRef fbc:geneProduct="G_b0902"/>
+          <fbc:geneProductRef fbc:geneProduct="G_b0905"/>
+        </fbc:and>
+      </fbc:geneProductAssociation>
+    </reaction>
+    <reaction id="J10" reversible="false" fbc:lowerFluxBound="flux_lb" fbc:upperFluxBound="flux_ub">
+      <listOfReactants>
+        <speciesReference species="Node7" stoichiometry="1" constant="true"/>
+      </listOfReactants>
+      <listOfProducts>
+        <speciesReference species="Node9" stoichiometry="1" constant="true"/>
+      </listOfProducts>
+      <fbc:geneProductAssociation>
+        <fbc:or>
+          <fbc:and>
+            <fbc:geneProductRef fbc:geneProduct="G_b0902"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b5553"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b2579"/>
+          </fbc:and>
+          <fbc:and>
+            <fbc:geneProductRef fbc:geneProduct="G_b0902"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b0903"/>
+          </fbc:and>
+          <fbc:and>
+            <fbc:geneProductRef fbc:geneProduct="G_b0902"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3114"/>
+          </fbc:and>
+          <fbc:and>
+            <fbc:geneProductRef fbc:geneProduct="G_b3951"/>
+            <fbc:geneProductRef fbc:geneProduct="G_b3952"/>
+          </fbc:and>
+        </fbc:or>
+      </fbc:geneProductAssociation>
+    </reaction>
+  </listOfReactions>
+  <fbc:listOfObjectives fbc:activeObjective="obj1">
+    <fbc:objective fbc:id="obj1" fbc:type="maximize" sboTerm="SBO:0000624">
+      <fbc:listOfFluxObjectives>
+        <fbc:fluxObjective fbc:reaction="J8" fbc:coefficient="1"/>
+      </fbc:listOfFluxObjectives>
+    </fbc:objective>
+    <fbc:objective fbc:id="obj2" fbc:type="minimize" fbc:name="name_obj_2">
+      <fbc:listOfFluxObjectives>
+        <fbc:fluxObjective fbc:reaction="J1" fbc:coefficient="-2.5"/>
+        <fbc:fluxObjective fbc:reaction="J2" fbc:coefficient="3"/>
+      </fbc:listOfFluxObjectives>
+    </fbc:objective>
+  </fbc:listOfObjectives>
+  <fbc:listOfGeneProducts>
+    <fbc:geneProduct metaid="G_b1377" fbc:id="G_b1377" fbc:label="b1377" fbc:associatedSpecies="Node2">
+      <annotation>
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:Description rdf:about="#G_b1377">
+            <bqbiol:is>
+              <rdf:Bag>
+                <rdf:li rdf:resource="http://identifiers.org/kegg.genes/mtu:b1377"/>
+              </rdf:Bag>
+            </bqbiol:is>
+          </rdf:Description>
+        </rdf:RDF>
+      </annotation>
+    </fbc:geneProduct>
+    <fbc:geneProduct metaid="G_b5553" fbc:id="G_b5553" fbc:label="b5553">
+      <annotation>
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:Description rdf:about="#G_b5553">
+            <bqbiol:is>
+              <rdf:Bag>
+                <rdf:li rdf:resource="http://identifiers.org/kegg.genes/mtu:b5553"/>
+              </rdf:Bag>
+            </bqbiol:is>
+          </rdf:Description>
+        </rdf:RDF>
+      </annotation>
+    </fbc:geneProduct>
+    <fbc:geneProduct fbc:id="G_b0902" fbc:label="b0902"/>
+    <fbc:geneProduct fbc:id="G_b0905" fbc:label="b0905"/>
+    <fbc:geneProduct fbc:id="G_b2579" fbc:label="b2579"/>
+    <fbc:geneProduct fbc:id="G_b0903" fbc:label="b0903"/>
+    <fbc:geneProduct fbc:id="G_b3114" fbc:label="b3114"/>
+    <fbc:geneProduct fbc:id="G_b3951" fbc:label="b3951"/>
+    <fbc:geneProduct fbc:id="G_b3952" fbc:label="b3952"/>
+  </fbc:listOfGeneProducts>
+  <groups:listOfGroups xmlns:groups="http://www.sbml.org/sbml/level3/version1/groups/version1">
+    <groups:group groups:id="g1" groups:kind="partonomy" groups:name="Transport, Inner Membrane" sboTerm="SBO:0000633">
+      <groups:listOfMembers>
+        <groups:member groups:idRef="J1" />
+        <groups:member groups:idRef="J2" />
+        <groups:member groups:idRef="J3" />
+        <groups:member groups:idRef="J4" />
+      </groups:listOfMembers>
+    </groups:group>
+    <groups:group groups:id="g2" groups:kind="partonomy" groups:name="some species" sboTerm="SBO:0000633">
+      <groups:listOfMembers>
+        <groups:member groups:idRef="G_b3114" />
+        <groups:member groups:idRef="G_b3951" />
+        <groups:member groups:idRef="G_b3952" />
+      </groups:listOfMembers>
+    </groups:group>
+    <groups:group groups:id="g3" metaid="g3" groups:kind="partonomy" groups:name="Transport, Outer Membrane" sboTerm="SBO:0000633">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#g3">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/bigg.reaction/12DGR120tipp" />
+                  <rdf:li rdf:resource="http://identifiers.org/metanetx.reaction/MNXR94675" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      <groups:listOfMembers groups:id="lom_g3" groups:name="list_of_members g3" sboTerm="SBO:0000633">
+        <groups:member groups:metaIdRef="G_b5553" sboTerm="SBO:0000633"/>
+        <groups:member groups:idRef="J6" />
+        <groups:member groups:idRef="J7" />
+      </groups:listOfMembers>
+    </groups:group>
+  </groups:listOfGroups>
+</model>
+</sbml>
