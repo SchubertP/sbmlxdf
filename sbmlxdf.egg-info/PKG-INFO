@@ -6,7 +6,15 @@ Home-page: https://gitlab.com/pschubert/samplexdfmod
 Author: Peter Schubert
 Author-email: peter.schubert@hhu.de
 License: LGPL
-Description: Convert between SBML coded files and Pandas DataFrames
+Description: Install:
+        ========
+        
+        $ pip install git+https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
+        
+        
+        
+        
+        Convert between SBML coded files and Pandas DataFrames
         ======================================================
         
         Example:
