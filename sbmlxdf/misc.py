@@ -67,3 +67,35 @@ def extract_vps(record):
             key.append(m['next_key'])
     val.append(part[-1].strip())
     return dict(zip(key,val))
+
+
+def extract_uncertainty(s):
+    # extracts from string next Uncertainty, enclosed in square brackets
+    # Uncertanty consist of UncertParameters separated by ';'
+    # starting behind the opening bracket, looking for corresonding closing
+    #  bracket. Returning this string of UncerParameters,
+    #  not including closing brackets
+    brackets = 1
+    for i in range(len(s)):
+        if s[i] == '[':
+            brackets += 1
+        if s[i] == ']':
+            brackets -= 1
+        if brackets == 0:
+            return s[:i]
+    return s
+
+
+def extract_uncert_parameter(s):
+    # from sting of UncertParameters (separated by ';') next UncertParameter.
+    # UncertParameters can contain nested ListOfUncertParameters '[...]'
+    # read up to next ';', considering nested ListOfUncertParameters
+    brackets = 0
+    for i in range(len(s)):
+        if s[i] == '[':
+            brackets += 1
+        if s[i] == ']':
+            brackets -= 1
+        if s[i] == ';' and brackets == 0:
+            return s[:i]
+    return s
