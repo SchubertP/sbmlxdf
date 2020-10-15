@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 
 import libsbml
 
-from .misc import extract_vps
+from .misc import extract_vps, extract_uncertainty, extract_uncert_parameter
 
 # Explore_SBML_import_export_2020-10-05.ipynb
 
@@ -244,21 +244,10 @@ class ListOfUncertainties(SBase):
     def to_df(self):
         return '; '.join(u.to_df() for u in self.uncertainties)
 
-    def _get_uncertainty(self, s):
-        brackets = 1
-        for i in range(len(s)):
-            if s[i] == '[':
-                brackets += 1
-            if s[i] == ']':
-                brackets -= 1
-            if brackets == 0:
-                return s[:i]
-        return s
-
     def from_df(self, lou_str):
         while lou_str.find('[') >= 0:
             lou_str = lou_str[lou_str.find('[')+1:]
-            u_str = self._get_uncertainty(lou_str)
+            u_str = extract_uncertainty(lou_str)
             u = Uncertainty()
             u.from_df(u_str)
             self.uncertainties.append(u)
@@ -297,20 +286,9 @@ class Uncertainty(SBase):
             ups_str.append(', '.join(up.to_df()))
         return '[' + '; '.join(ups_str) + ']'
 
-    def _get_uncert_param(self, s):
-        brackets = 0
-        for i in range(len(s)):
-            if s[i] == '[':
-                brackets += 1
-            if s[i] == ']':
-                brackets -= 1
-            if s[i] == ';' and brackets == 0:
-                return s[:i]
-        return s
-
     def from_df(self, u_str):
         while len(u_str):
-            up_str = self._get_uncert_param(u_str)
+            up_str = extract_uncert_parameter(u_str)
             if re.search(r'^\s*param', up_str):
                 up = UncertParameter()
             else:
@@ -379,21 +357,10 @@ class UncertParameter(SBase):
             attr.append('lup=' + lup_str )
         return attr
 
-    def _get_lop(self, s):
-        brackets = 1
-        for i in range(len(s)):
-            if s[i] == '[':
-                brackets += 1
-            if s[i] == ']':
-                brackets -= 1
-            if brackets == 0:
-                return s[:i]
-        return s
-
     def from_df(self, up_str):
         m = re.search(r',\s*lup=\s*\[', up_str)
         if m:
-            lup_str = self._get_lop(up_str[m.end():])
+            lup_str = extract_uncertainty(up_str[m.end():])
             self.lo_uncert_parameters = Uncertainty()
             self.lo_uncert_parameters.from_df(lup_str)
             up_str = up_str[:m.start()] + up_str[m.end()+len(lup_str)+1:]
@@ -457,21 +424,10 @@ class UncertScan(UncertParameter):
             attr.append('varu=' + self.var_upper)
         return attr
 
-    def _get_lop(self, s):
-        brackets = 1
-        for i in range(len(s)):
-            if s[i] == '[':
-                brackets += 1
-            if s[i] == ']':
-                brackets -= 1
-            if brackets == 0:
-                return s[:i]
-        return s
-
     def from_df(self, up_str):
         m = re.search(r',\s*lup=\s*\[', up_str)
         if m:
-            lup_str = self._get_lop(up_str[m.end():])
+            lup_str = extract_uncertainty(up_str[m.end():])
             us_str = up_str[:m.start()] + up_str[m.end()+len(lup_str)+1:]
         us_dict = extract_vps(us_str)
         if 'vall' in us_dict:
