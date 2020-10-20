@@ -31,10 +31,11 @@ class ListOfUnitDefs(SBase):
         super().export_sbml(sbml_model.getListOfUnitDefinitions())
 
     def to_df(self):
-        return pd.DataFrame([ud.to_df() for ud in self.unit_defs])
+        return pd.DataFrame([ud.to_df() for ud in self.unit_defs])\
+                           .set_index('id')
 
     def from_df(self, lud_df):
-        for idx, ud_s in lud_df.iterrows():
+        for idx, ud_s in lud_df.reset_index().iterrows():
             ud = UnitDefinition()
             ud.from_df(ud_s.dropna().to_dict())
             self.unit_defs.append(ud)

@@ -177,49 +177,49 @@ class Model(SBase):
             model_dict[key] = lo.to_df()
         if 'species' in model_dict and 'reactions' in model_dict:
             model_dict['S_info'] = self._get_stoich_matrix(
-                model_dict['species'].set_index(keys="id"),
-                model_dict['reactions'].set_index(keys="id"))
+                model_dict['species'], model_dict['reactions'])
         return model_dict
 
     def from_df(self, model_dict):
+        if ('sbml' not in model_dict) or ('modelAttrs' not in model_dict):
+            print('no valid model dict; sbml and modelAttrs required!')
+            return
+        self.sbml_container = SbmlContainer()
+        self.sbml_container.from_df(model_dict['sbml'])
+        self.isModel = True
+        self.list_of['modelAttrs'] = ModelAttrs()
+        if 'funcDefs' in model_dict:
+            self.list_of['funcDefs'] = ListOfFunctionDefs()
+        if 'unitDefs' in model_dict:
+            self.list_of['unitDefs'] = ListOfUnitDefs()
+        if 'compartments' in model_dict:
+            self.list_of['compartments'] = ListOfCompartments()
+        if 'species' in model_dict:
+            self.list_of['species'] = ListOfSpecies()
+        if 'parameters' in model_dict:
+            self.list_of['parameters'] = ListOfParameters()
+        if 'initAssign' in model_dict:
+            self.list_of['initAssign'] = ListOfInitAssign()
+        if 'rules' in model_dict:
+            self.list_of['rules'] = ListOfRules()
+        if 'constraints' in model_dict:
+            self.list_of['constraints'] = ListOfConstraints()
+        if 'reactions' in model_dict:
+            self.list_of['reactions'] = ListOfReactions()
+        if 'events' in model_dict:
+            self.list_of['events'] = ListOfEvents()
+        if 'fbcObjectives' in model_dict:
+            self.list_of['fbcObjectives'] = FbcListOfObjectives()
+        if 'fbcGeneProducts' in model_dict:
+            self.list_of['fbcGeneProducts'] = FbcListOfGeneProducts()
+        if 'groups' in model_dict:
+            self.list_of['groups'] = GroupsListOfGroups()
         try:
-            if ('sbml' not in model_dict) or ('modelAttrs' not in model_dict):
-                print('no valid model dict; sbml and modelAttrs required!')
-                return
-            self.sbml_container = SbmlContainer()
-            self.sbml_container.from_df(model_dict['sbml'])
-            self.isModel = True
-            self.list_of['modelAttrs'] = ModelAttrs()
-            if 'funcDefs' in model_dict:
-                self.list_of['funcDefs'] = ListOfFunctionDefs()
-            if 'unitDefs' in model_dict:
-                self.list_of['unitDefs'] = ListOfUnitDefs()
-            if 'compartments' in model_dict:
-                self.list_of['compartments'] = ListOfCompartments()
-            if 'species' in model_dict:
-                self.list_of['species'] = ListOfSpecies()
-            if 'parameters' in model_dict:
-                self.list_of['parameters'] = ListOfParameters()
-            if 'initAssign' in model_dict:
-                self.list_of['initAssign'] = ListOfInitAssign()
-            if 'rules' in model_dict:
-                self.list_of['rules'] = ListOfRules()
-            if 'constraints' in model_dict:
-                self.list_of['constraints'] = ListOfConstraints()
-            if 'reactions' in model_dict:
-                self.list_of['reactions'] = ListOfReactions()
-            if 'events' in model_dict:
-                self.list_of['events'] = ListOfEvents()
-            if 'fbcObjectives' in model_dict:
-                self.list_of['fbcObjectives'] = FbcListOfObjectives()
-            if 'fbcGeneProducts' in model_dict:
-                self.list_of['fbcGeneProducts'] = FbcListOfGeneProducts()
-            if 'groups' in model_dict:
-                self.list_of['groups'] = GroupsListOfGroups()
             for component, lo in self.list_of.items():
                 lo.from_df(model_dict[component])
         except KeyError as err:
-            print("KeyError: {0} in {1}".format(err, __name__))
+            print("KeyError: {0} in {1} while processing {2}"
+                  .format(err, __name__, component))
             return -1
         return 0
 
@@ -227,19 +227,19 @@ class Model(SBase):
         with pd.ExcelWriter(file_name) as writer:
             for key, component in self.to_df().items():
                 if type(component) == pd.core.frame.DataFrame:
-                    if key=='S_info':
-                        component.to_excel(writer, sheet_name=key, index=True)
-                    else:
+                    if type(component.index) == pd.core.indexes.range.RangeIndex:
                         component.to_excel(writer, sheet_name=key, index=False)
+                    else:
+                        component.to_excel(writer, sheet_name=key, index=True)
                 if type(component) == pd.core.series.Series:
                     component.to_excel(writer, sheet_name=key, header=False)
 
     def from_excel(self, file_name):
         s_sheets = ('sbml', 'modelAttrs')
-        df_sheets = ('funcDefs', 'unitDefs', 'compartments','species',
-                     'parameters', 'initAssign', 'rules', 'constraints',
-                     'reactions','events', 'fbcObjectives', 'fbcGeneProducts',
-                     'groups')
+        df_idx_sheets = ('funcDefs', 'unitDefs', 'compartments','species',
+                         'parameters', 'initAssign', 'reactions',
+                         'fbcObjectives', 'fbcGeneProducts')
+        df_noidx_sheets = ('rules', 'constraints', 'events', 'groups')
         m_dict = {}
         with pd.ExcelFile(file_name) as xlsx:
             for sheet in xlsx.sheet_names:
@@ -247,8 +247,12 @@ class Model(SBase):
                     m_dict[sheet] = pd.read_excel(xlsx, sheet, header=None,
                                                   index_col=0, squeeze=True,
                                                   dtype=str)
-                if sheet in df_sheets:
-                    m_dict[sheet] = pd.read_excel(xlsx, sheet, dtype=str)
+                if sheet in df_idx_sheets:
+                    m_dict[sheet] = pd.read_excel(xlsx, sheet, index_col=0,
+                                                  dtype=str)
+                if sheet in df_noidx_sheets:
+                    m_dict[sheet] = pd.read_excel(xlsx, sheet, index_col=None,
+                                                  dtype=str)
         return self.from_df(m_dict)
 
     def to_csv(self, dir_name):
@@ -263,22 +267,22 @@ class Model(SBase):
             os.mkdir(dir_name)
         for key, component in self.to_df().items():
             if type(component) == pd.core.frame.DataFrame:
-                if key=='S_info':
-                        component.to_csv(os.path.join(dir_name, key + '.csv'),
-                                         index=True)
+                if type(component.index) == pd.core.indexes.range.RangeIndex:
+                    component.to_csv(os.path.join(dir_name, key+'.csv'),
+                                     index=False)
                 else:
-                        component.to_csv(os.path.join(dir_name, key + '.csv'),
-                                         index=False)
+                    component.to_csv(os.path.join(dir_name, key+'.csv'),
+                                     index=True)
             if type(component) == pd.core.series.Series:
                 component.to_csv(os.path.join(dir_name, key + '.csv'),
                                  header=False)
 
     def from_csv(self, dir_name):
         s_sheets = ('sbml', 'modelAttrs')
-        df_sheets = ('funcDefs', 'unitDefs', 'compartments','species',
-                     'parameters', 'initAssign', 'rules', 'constraints',
-                     'reactions','events', 'fbcObjectives', 'fbcGeneProducts',
-                     'groups')
+        df_idx_sheets = ('funcDefs', 'unitDefs', 'compartments','species',
+                         'parameters', 'initAssign', 'reactions',
+                         'fbcObjectives', 'fbcGeneProducts')
+        df_noidx_sheets = ('rules', 'constraints', 'events', 'groups')
         m_dict = {}
         if os.path.exists(dir_name):
             for csv_file in glob.glob(os.path.join(dir_name, "*.csv")):
@@ -287,6 +291,10 @@ class Model(SBase):
                     m_dict[sheet] = pd.read_csv(csv_file, header=None,
                                                 index_col=0, squeeze=True,
                                                 dtype=str)
-                if sheet in df_sheets:
-                    m_dict[sheet] = pd.read_csv(csv_file, dtype=str)
+                if sheet in df_idx_sheets:
+                    m_dict[sheet] = pd.read_csv(csv_file, index_col=0,
+                                                dtype=str)
+                if sheet in df_noidx_sheets:
+                    m_dict[sheet] = pd.read_csv(csv_file, index_col=None,
+                                                dtype=str)
         return self.from_df(m_dict)

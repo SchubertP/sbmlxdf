@@ -31,10 +31,11 @@ class ListOfFunctionDefs(SBase):
         super().export_sbml(sbml_lfd)
 
     def to_df(self):
-        return pd.DataFrame([fd.to_df() for fd in self.function_defs])
+        return pd.DataFrame([fd.to_df() for fd in self.function_defs])\
+                           .set_index('id')
 
     def from_df(self, lfd_df):
-        for idx, fd_s in lfd_df.iterrows():
+        for idx, fd_s in lfd_df.reset_index().iterrows():
             fd = FunctionDef()
             fd.from_df(fd_s.dropna().to_dict())
             self.function_defs.append(fd)

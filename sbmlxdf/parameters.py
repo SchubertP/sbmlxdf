@@ -31,10 +31,11 @@ class ListOfParameters(SBase):
         super().export_sbml(sbml_model.getListOfParameters())
 
     def to_df(self):
-        return pd.DataFrame([p.to_df() for p in self.parameters])
+        return pd.DataFrame([p.to_df() for p in self.parameters])\
+                           .set_index('id')
 
     def from_df(self, lp_df):
-        for idx, p_s in lp_df.iterrows():
+        for idx, p_s in lp_df.reset_index().iterrows():
             p = Parameter()
             p.from_df(p_s.dropna().to_dict())
             self.parameters.append(p)

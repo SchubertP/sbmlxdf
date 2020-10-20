@@ -34,10 +34,11 @@ class ListOfReactions(SBase):
         super().export_sbml(sbml_model.getListOfReactions())
 
     def to_df(self):
-        return pd.DataFrame([r.to_df() for r in self.reactions])
+        return pd.DataFrame([r.to_df() for r in self.reactions])\
+                           .set_index('id')
 
     def from_df(self, lr_df):
-        for idx, r_s in lr_df.iterrows():
+        for idx, r_s in lr_df.reset_index().iterrows():
             r = Reaction()
             r.from_df(r_s.dropna().to_dict())
             self.reactions.append(r)

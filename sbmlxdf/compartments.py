@@ -30,10 +30,11 @@ class ListOfCompartments(SBase):
         super().export_sbml(sbml_model.getListOfCompartments())
 
     def to_df(self):
-        return pd.DataFrame([c.to_df() for c in self.compartments])
+        return pd.DataFrame([c.to_df() for c in self.compartments])\
+                           .set_index('id')
 
     def from_df(self, lc_df):
-        for idx, c_s in lc_df.iterrows():
+        for idx, c_s in lc_df.reset_index().iterrows():
             c = Compartment()
             c.from_df(c_s.dropna().to_dict())
             self.compartments.append(c)

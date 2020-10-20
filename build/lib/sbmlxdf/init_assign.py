@@ -32,10 +32,11 @@ class ListOfInitAssign(SBase):
         super().export_sbml(sbml_model.getListOfInitialAssignments())
 
     def to_df(self):
-        return pd.DataFrame([ia.to_df() for ia in self.init_assigns])
+        return pd.DataFrame([ia.to_df() for ia in self.init_assigns])\
+                           .set_index('symbol')
 
     def from_df(self, lia_df):
-        for idx, ia_s in lia_df.iterrows():
+        for idx, ia_s in lia_df.reset_index().iterrows():
             ia = InitAssign()
             ia.from_df(ia_s.dropna().to_dict())
             self.init_assigns.append(ia)

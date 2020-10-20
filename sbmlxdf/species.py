@@ -32,10 +32,11 @@ class ListOfSpecies(SBase):
         super().export_sbml(sbml_model.getListOfSpecies())
 
     def to_df(self):
-        return pd.DataFrame([s.to_df() for s in self.species])
+        return pd.DataFrame([s.to_df() for s in self.species])\
+                           .set_index('id')
 
     def from_df(self, ls_df):
-        for idx, s_s in ls_df.iterrows():
+        for idx, s_s in ls_df.reset_index().iterrows():
             s = Species()
             s.from_df(s_s.dropna().to_dict())
             self.species.append(s)

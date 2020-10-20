@@ -37,15 +37,15 @@ class FbcListOfObjectives(SBase):
         super().export_sbml(sbml_lo)
 
     def to_df(self):
-        df_obj = pd.DataFrame([o.to_df() for o in self.objectives])
-        df_obj.insert(1, 'active', df_obj['id'] == str(self.active))
+        df_obj = pd.DataFrame([o.to_df() for o in self.objectives])\
+                              .set_index('id')
+        df_obj.insert(1, 'active', df_obj.index == str(self.active))
         return df_obj
 
     def from_df(self, lo_df):
-        active = lo_df['id'][lo_df['active']=='True'].values
-        if len(active):
-            self.active = active[0]
-        for idx, o_s in lo_df.iterrows():
+        if len(lo_df[lo_df['active']==str(True)]):
+            self.active = lo_df[lo_df['active']==str(True)].index[0]
+        for idx, o_s in lo_df.reset_index().iterrows():
             o = FbcObjective()
             o.from_df(o_s.dropna().to_dict())
             self.objectives.append(o)
@@ -75,12 +75,10 @@ class FbcObjective(SBase):
         super().export_sbml(sbml_o)
 
     def to_df(self):
-        o_dict = {}
+        o_dict = super().to_df()
         o_dict['type'] = self.type
         o_dict['fluxObjectives'] = '; '.join([fo.to_df()
                                               for fo in self.flux_objectives])
-        if hasattr(self, 'sboterm'):
-            o_dict['sboterm'] = self.sboterm
         return o_dict
 
     def from_df(self, o_dict):
@@ -122,16 +120,11 @@ class FbcFluxObjective(SBase):
 
     def from_df(self, fo_str):
         fo_dict = extract_vps(fo_str)
-        if 'id' in fo_dict:
-            self.id = fo_dict['id']
-        if 'name' in fo_dict:
-            self.name = fo_dict['name']
         if 'reac' in fo_dict:
             self.reaction = fo_dict['reac']
         if 'coef' in fo_dict:
             self.coefficient = float(fo_dict['coef'])
-        if 'sboterm' in fo_dict:
-            self.sboterm = fo_dict['sboterm']
+        super().from_df(fo_dict)
 
 
 class FbcListOfGeneProducts(SBase):
@@ -157,10 +150,11 @@ class FbcListOfGeneProducts(SBase):
         super().export_sbml(sbml_lgp)
 
     def to_df(self):
-        return pd.DataFrame([gp.to_df() for gp in self.gene_products])
+        return pd.DataFrame([gp.to_df() for gp in self.gene_products])\
+                           .set_index('id')
 
     def from_df(self, lgp_df):
-        for idx, gp_s in lgp_df.iterrows():
+        for idx, gp_s in lgp_df.reset_index().iterrows():
             gp = FbcGeneProduct()
             gp.from_df(gp_s.dropna().to_dict())
             self.gene_products.append(gp)
