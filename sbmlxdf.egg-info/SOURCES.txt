@@ -2,6 +2,7 @@ MANIFEST.in
 README.rst
 setup.py
 sbmlxdf/__init__.py
+sbmlxdf/_version.py
 sbmlxdf/compartments.py
 sbmlxdf/constraints.py
 sbmlxdf/events.py

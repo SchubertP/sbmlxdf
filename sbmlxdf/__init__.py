@@ -1,6 +1,4 @@
-from .model import Model
-from .misc import extract_vps, mathml2numpy
-from .misc import extract_uncertainty, extract_uncert_parameter
+from sbmlxdf._version import __version__
 
-__version__ = '0.1'
+program_name = 'sbmlxdf'
 __author__ = 'Peter Schubert'

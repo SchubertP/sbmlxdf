@@ -27,13 +27,26 @@ from .sbml_container import SbmlContainer
 from .species import ListOfSpecies
 from .unit_defs import ListOfUnitDefs
 from .misc import extract_vps
+from sbmlxdf import __version__, program_name
 
 # Explore_SBML_import_export_2020-10-05.ipynb
 
-program_name = 'sbmlxdf'
-program_version = '1.0'
+#program_name = 'sbmlxdf'
+#program_version = '0.8.0'
 results_dir = 'results'
 
+
+IS_SERIES = 1
+IS_DF_INDEXED = 2
+IS_DF_NOTINDEXED = 3
+_sheets = {'sbml': IS_SERIES, 'modelAttrs': IS_SERIES,
+           'funcDefs': IS_DF_INDEXED , 'unitDefs' : IS_DF_INDEXED,
+           'compartments' : IS_DF_INDEXED, 'species': IS_DF_INDEXED,
+           'parameters': IS_DF_INDEXED, 'initAssign': IS_DF_INDEXED,
+           'reactions': IS_DF_INDEXED,
+           'fbcObjectives': IS_DF_INDEXED, 'fbcGeneProducts': IS_DF_INDEXED,
+           'rules': IS_DF_NOTINDEXED, 'constraints': IS_DF_NOTINDEXED,
+           'events': IS_DF_NOTINDEXED, 'groups': IS_DF_NOTINDEXED}
 
 class SbmlFileError(Exception):
     """Terminate on SBML read file Error."""
@@ -151,7 +164,7 @@ class Model(SBase):
                     lo.export_sbml(sbml_model)
             writer = libsbml.SBMLWriter()
             writer.setProgramName(program_name)
-            writer.setProgramVersion(program_version)
+            writer.setProgramVersion(__version__)
             writer.writeSBML(sbml_doc, sbml_filename)
 
     def _get_stoich_matrix(self, df_species, df_reactions, sparse=False):
@@ -225,34 +238,27 @@ class Model(SBase):
 
     def to_excel(self, file_name):
         with pd.ExcelWriter(file_name) as writer:
-            for key, component in self.to_df().items():
-                if type(component) == pd.core.frame.DataFrame:
-                    if type(component.index) == pd.core.indexes.range.RangeIndex:
-                        component.to_excel(writer, sheet_name=key, index=False)
-                    else:
-                        component.to_excel(writer, sheet_name=key, index=True)
-                if type(component) == pd.core.series.Series:
-                    component.to_excel(writer, sheet_name=key, header=False)
+            for sheet, component in self.to_df().items():
+                params = {'sheet_name': sheet}
+                if _sheets[sheet] == IS_SERIES:
+                    params['header'] = False
+                if _sheets[sheet] == IS_DF_NOTINDEXED:
+                    params['index'] = False
+                component.to_excel(writer, **params)
 
     def from_excel(self, file_name):
-        s_sheets = ('sbml', 'modelAttrs')
-        df_idx_sheets = ('funcDefs', 'unitDefs', 'compartments','species',
-                         'parameters', 'initAssign', 'reactions',
-                         'fbcObjectives', 'fbcGeneProducts')
-        df_noidx_sheets = ('rules', 'constraints', 'events', 'groups')
         m_dict = {}
         with pd.ExcelFile(file_name) as xlsx:
             for sheet in xlsx.sheet_names:
-                if sheet in s_sheets:
-                    m_dict[sheet] = pd.read_excel(xlsx, sheet, header=None,
-                                                  index_col=0, squeeze=True,
-                                                  dtype=str)
-                if sheet in df_idx_sheets:
-                    m_dict[sheet] = pd.read_excel(xlsx, sheet, index_col=0,
-                                                  dtype=str)
-                if sheet in df_noidx_sheets:
-                    m_dict[sheet] = pd.read_excel(xlsx, sheet, index_col=None,
-                                                  dtype=str)
+                if sheet in _sheets:
+                    params = {'sheet_name': sheet, 'dtype': str}
+                    if _sheets[sheet] == IS_SERIES:
+                        params['header'] = None
+                        params['index_col'] = 0
+                        params['squeeze'] = True
+                    if _sheets[sheet] == IS_DF_INDEXED:
+                        params['index_col'] = 0
+                    m_dict[sheet] = pd.read_excel(xlsx, **params)
         return self.from_df(m_dict)
 
     def to_csv(self, dir_name):
@@ -265,36 +271,26 @@ class Model(SBase):
                     print("Error while deleting *.csv file : ", csv_file)
         else:
             os.mkdir(dir_name)
-        for key, component in self.to_df().items():
-            if type(component) == pd.core.frame.DataFrame:
-                if type(component.index) == pd.core.indexes.range.RangeIndex:
-                    component.to_csv(os.path.join(dir_name, key+'.csv'),
-                                     index=False)
-                else:
-                    component.to_csv(os.path.join(dir_name, key+'.csv'),
-                                     index=True)
-            if type(component) == pd.core.series.Series:
-                component.to_csv(os.path.join(dir_name, key + '.csv'),
-                                 header=False)
+        for sheet, component in self.to_df().items():
+            params = {'path_or_buf': os.path.join(dir_name, sheet+'.csv')}
+            if _sheets[sheet] == IS_SERIES:
+                params['header'] = False
+            if _sheets[sheet] == IS_DF_NOTINDEXED:
+                params['index'] = False
+            component.to_csv(**params)
 
     def from_csv(self, dir_name):
-        s_sheets = ('sbml', 'modelAttrs')
-        df_idx_sheets = ('funcDefs', 'unitDefs', 'compartments','species',
-                         'parameters', 'initAssign', 'reactions',
-                         'fbcObjectives', 'fbcGeneProducts')
-        df_noidx_sheets = ('rules', 'constraints', 'events', 'groups')
         m_dict = {}
         if os.path.exists(dir_name):
             for csv_file in glob.glob(os.path.join(dir_name, "*.csv")):
                 sheet = os.path.basename(csv_file).replace('.csv','')
-                if sheet in s_sheets:
-                    m_dict[sheet] = pd.read_csv(csv_file, header=None,
-                                                index_col=0, squeeze=True,
-                                                dtype=str)
-                if sheet in df_idx_sheets:
-                    m_dict[sheet] = pd.read_csv(csv_file, index_col=0,
-                                                dtype=str)
-                if sheet in df_noidx_sheets:
-                    m_dict[sheet] = pd.read_csv(csv_file, index_col=None,
-                                                dtype=str)
+                if sheet in _sheets:
+                    params = {'dtype': str}
+                    if _sheets[sheet] == IS_SERIES:
+                        params['header'] = None
+                        params['index_col'] = 0
+                        params['squeeze'] = True
+                    if _sheets[sheet] == IS_DF_INDEXED:
+                        params['index_col'] = 0
+                    m_dict[sheet] = pd.read_csv(csv_file, **params)
         return self.from_df(m_dict)
