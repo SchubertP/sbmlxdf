@@ -6,11 +6,9 @@ import pandas as pd
 
 import libsbml
 
-from .sbase import SBase
-from .misc import extract_vps
+from sbmlxdf.sbase import SBase
+from sbmlxdf.misc import extract_params
 
-
-# Explore_SBML_import_export_2020-10-05.ipynb
 
 class ModelAttrs(SBase):
 
@@ -198,7 +196,7 @@ class ModelCreator():
         return ', '.join(attr)
 
     def from_df(self, creator):
-        mc_dict = extract_vps(creator)
+        mc_dict = extract_params(creator)
         if 'fn' in mc_dict:
             self.fn = mc_dict['fn']
         if 'gn' in mc_dict:

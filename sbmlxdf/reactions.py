@@ -8,11 +8,9 @@ import pandas as pd
 
 import libsbml
 
-from .sbase import SBase
-from .misc import extract_vps
+from sbmlxdf.sbase import SBase
+from sbmlxdf.misc import extract_params
 
-
-# Explore_SBML_import_export_2020-10-05.ipynb
 
 class ListOfReactions(SBase):
 
@@ -234,7 +232,7 @@ class ReacSpeciesRef(SimpleSpeciesRef):
         return ', '.join(attr)
 
     def from_df(self, sr_str):
-        sr_dict = extract_vps(sr_str)
+        sr_dict = extract_params(sr_str)
         if 'stoic' in sr_dict:
             self.stoichiometry = float(sr_dict['stoic'])
         self.constant = (sr_dict['const']==str(True))
@@ -267,7 +265,7 @@ class ProdSpeciesRef(SimpleSpeciesRef):
         return ', '.join(attr)
 
     def from_df(self, sr_str):
-        sr_dict = extract_vps(sr_str)
+        sr_dict = extract_params(sr_str)
         if 'stoic' in sr_dict:
             self.stoichiometry = float(sr_dict['stoic'])
         self.constant = (sr_dict['const']==str(True))
@@ -290,7 +288,7 @@ class ModSpeciesRef(SimpleSpeciesRef):
         return ', '.join(super().to_df())
 
     def from_df(self, msr_str):
-        super().from_df(extract_vps(msr_str))
+        super().from_df(extract_params(msr_str))
 
 
 class KineticLaw(SBase):
@@ -375,7 +373,7 @@ class LocalParameter(SBase):
         return ', '.join(attr)
 
     def from_df(self, lp_str):
-        lp_dict = extract_vps(lp_str)
+        lp_dict = extract_params(lp_str)
         if 'id' in lp_dict:
             self.id = lp_dict['id']
         if 'name' in lp_dict:
@@ -425,7 +423,7 @@ class FbcGeneProdAssociation(SBase):
         return ', '.join(attr)
 
     def from_df(self, gpa_str):
-        gpa_dict = extract_vps(gpa_str)
+        gpa_dict = extract_params(gpa_str)
         if 'id' in gpa_dict:
             self.id = gpa_dict['id']
         if 'name' in gpa_dict:

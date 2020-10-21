@@ -6,10 +6,9 @@ import pandas as pd
 
 import libsbml
 
-from .sbase import SBase
-from .misc import extract_vps
+from sbmlxdf.sbase import SBase
+from sbmlxdf.misc import extract_params
 
-# Explore_SBML_import_export_2020-10-05.ipynb
 
 class ListOfUnitDefs(SBase):
 
@@ -103,7 +102,7 @@ class Unit(SBase):
         return ', '.join(attr)
 
     def from_df(self, unit_str):
-        u_dict = extract_vps(unit_str)
+        u_dict = extract_params(unit_str)
         self.kind = u_dict['kind']
         self.exponent = float(u_dict['exp'])
         self.scale = int(float(u_dict['scale']))

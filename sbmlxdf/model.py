@@ -11,30 +11,25 @@ import pandas as pd
 
 import libsbml
 
-from .compartments import ListOfCompartments
-from .constraints import ListOfConstraints
-from .events import ListOfEvents
-from .fbc import FbcListOfObjectives, FbcListOfGeneProducts
-from .function_defs import ListOfFunctionDefs
-from .groups import GroupsListOfGroups
-from .init_assign import ListOfInitAssign
-from .model_attrs import ModelAttrs
-from .parameters import ListOfParameters
-from .reactions import ListOfReactions
-from .rules import ListOfRules
-from .sbase import SBase
-from .sbml_container import SbmlContainer
-from .species import ListOfSpecies
-from .unit_defs import ListOfUnitDefs
-from .misc import extract_vps
-from sbmlxdf import __version__, program_name
+from sbmlxdf.compartments import ListOfCompartments
+from sbmlxdf.constraints import ListOfConstraints
+from sbmlxdf.events import ListOfEvents
+from sbmlxdf.fbc import FbcListOfObjectives, FbcListOfGeneProducts
+from sbmlxdf.function_defs import ListOfFunctionDefs
+from sbmlxdf.groups import GroupsListOfGroups
+from sbmlxdf.init_assign import ListOfInitAssign
+from sbmlxdf.model_attrs import ModelAttrs
+from sbmlxdf.parameters import ListOfParameters
+from sbmlxdf.reactions import ListOfReactions
+from sbmlxdf.rules import ListOfRules
+from sbmlxdf.sbase import SBase
+from sbmlxdf.sbml_container import SbmlContainer
+from sbmlxdf.species import ListOfSpecies
+from sbmlxdf.unit_defs import ListOfUnitDefs
+from sbmlxdf.misc import extract_params
+from sbmlxdf._version import __version__, program_name
 
-# Explore_SBML_import_export_2020-10-05.ipynb
-
-#program_name = 'sbmlxdf'
-#program_version = '0.8.0'
 results_dir = 'results'
-
 
 IS_SERIES = 1
 IS_DF_INDEXED = 2
@@ -43,7 +38,7 @@ _sheets = {'sbml': IS_SERIES, 'modelAttrs': IS_SERIES,
            'funcDefs': IS_DF_INDEXED , 'unitDefs' : IS_DF_INDEXED,
            'compartments' : IS_DF_INDEXED, 'species': IS_DF_INDEXED,
            'parameters': IS_DF_INDEXED, 'initAssign': IS_DF_INDEXED,
-           'reactions': IS_DF_INDEXED,
+           'reactions': IS_DF_INDEXED, 'S_info' : IS_DF_INDEXED,
            'fbcObjectives': IS_DF_INDEXED, 'fbcGeneProducts': IS_DF_INDEXED,
            'rules': IS_DF_NOTINDEXED, 'constraints': IS_DF_NOTINDEXED,
            'events': IS_DF_NOTINDEXED, 'groups': IS_DF_NOTINDEXED}
@@ -173,11 +168,11 @@ class Model(SBase):
         for idx, r in df_reactions.iterrows():
             if type(r['reactants']) == str:
               for reac in r["reactants"].split(';'):
-                reac_dict = extract_vps(reac)
+                reac_dict = extract_params(reac)
                 df_N.at[reac_dict['species'], idx] -= float(reac_dict["stoic"])
             if type(r['products']) == str:
               for prod in r["products"].split(';'):
-                prod_dict = extract_vps(prod)
+                prod_dict = extract_params(prod)
                 df_N.at[prod_dict['species'], idx] += float(prod_dict["stoic"])
         if sparse:
             return df_N.astype(pd.SparseDtype("float", 0.0))

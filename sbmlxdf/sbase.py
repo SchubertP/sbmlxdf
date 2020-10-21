@@ -11,9 +11,8 @@ from abc import ABC, abstractmethod
 
 import libsbml
 
-from sbmlxdf.misc import extract_vps, extract_records, extract_lo_records
+from sbmlxdf.misc import extract_params, extract_records, extract_lo_records
 
-# Explore_SBML_import_export_2020-10-05.ipynb
 
 class SBase(ABC):
     """Abstract Class SBase, the base Class for any model object.
@@ -354,7 +353,7 @@ class UncertParameter(SBase):
         return attr
 
     def from_df(self, up_str):
-        up_dict = extract_vps(up_str)
+        up_dict = extract_params(up_str)
         if 'param' in up_dict:
             self.element = 'param'
             self.type = up_dict['param']
@@ -418,7 +417,7 @@ class UncertScan(UncertParameter):
         return attr
 
     def from_df(self, up_str):
-        us_dict = extract_vps(up_str)
+        us_dict = extract_params(up_str)
         if 'vall' in us_dict:
             self.value_lower = float(us_dict['vall'])
         if 'valu' in us_dict:

@@ -4,7 +4,6 @@ Peter Schubert, HHU Duesseldorf, October 2020
 """
 import re
 
-# Explore_SBML_import_export_2020-10-05.ipynb
 
 _map_mathml2numpy = (
 # arithmetic operators
@@ -47,10 +46,10 @@ def mathml2numpy(mformula):
     return pformula.strip()
 
 
-def extract_vps(s):
+def extract_params(s):
     # extract parameters from a record and returns these in a dictionary
-    # value pairs (key=value) are separated by ','
-    # considers nested key value pairs in square brackets (key=[nested vps])
+    # (key=value) are separated by ','
+    # considers nested values in square brackets (key=[nested value])
     find_key = re.compile(r'\s*(?P<key>\w*)\s*=\s*')
     params = {}
     pos = 0
@@ -87,7 +86,7 @@ def extract_vps(s):
 def extract_records(s):
     # extract records from a list of records
     # records are separated by ';'
-    # considers nested key value pairs in square brackets (key=[nested vps])
+    # considers nested values in square brackets (key=[nested values])
     records = []
     brackets = 0
     pos = 0
@@ -110,7 +109,7 @@ def extract_lo_records(s):
     # extract list of records from a list of list of records
     # list of records are enclosed by square brackets and separated by ';'
     # "[record; record; ...];[record; record; ...]
-    # considers nested key value pairs in square brackets (key=[nested vps])
+    # considers nested values in square brackets (key=[nested values])
     lo_records = []
     pos = 0
     while pos < len(s):

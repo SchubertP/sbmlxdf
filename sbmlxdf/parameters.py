@@ -6,10 +6,8 @@ import pandas as pd
 
 import libsbml
 
-from .sbase import SBase
+from sbmlxdf.sbase import SBase
 
-
-# Explore_SBML_import_export_2020-10-05.ipynb
 
 class ListOfParameters(SBase):
 

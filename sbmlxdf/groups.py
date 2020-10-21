@@ -6,10 +6,9 @@ import pandas as pd
 
 import libsbml
 
-from .sbase import SBase
-from .misc import extract_vps
+from sbmlxdf.sbase import SBase
+from sbmlxdf.misc import extract_params
 
-# Explore_SBML_import_export_2020-10-05.ipynb
 
 class GroupsListOfGroups(SBase):
 
@@ -116,7 +115,7 @@ class GroupListOfMembers(SBase):
 
     def from_df(self, gr_dict):
         if 'listMembers' in gr_dict:
-            attr_dict = extract_vps(gr_dict['listMembers'])
+            attr_dict = extract_params(gr_dict['listMembers'])
             if 'id' in attr_dict:
                 self.id = attr_dict['id']
             if 'name' in attr_dict:
@@ -165,7 +164,7 @@ class GroupMember(SBase):
         return ', '.join(attr)
 
     def from_df(self, m_str):
-        m_dict = extract_vps(m_str)
+        m_dict = extract_params(m_str)
         if 'idRef' in m_dict:
             self.idref = m_dict['idRef']
         if 'metaIdRef' in m_dict:

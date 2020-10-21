@@ -6,11 +6,9 @@ import pandas as pd
 
 import libsbml
 
-from .sbase import SBase
-from .misc import extract_vps
+from sbmlxdf.sbase import SBase
+from sbmlxdf.misc import extract_params
 
-
-# Explore_SBML_import_export_2020-10-05.ipynb
 
 class FbcListOfObjectives(SBase):
 
@@ -119,7 +117,7 @@ class FbcFluxObjective(SBase):
         return ', '.join(attr)
 
     def from_df(self, fo_str):
-        fo_dict = extract_vps(fo_str)
+        fo_dict = extract_params(fo_str)
         if 'reac' in fo_dict:
             self.reaction = fo_dict['reac']
         if 'coef' in fo_dict:

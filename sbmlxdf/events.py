@@ -6,10 +6,9 @@ import pandas as pd
 
 import libsbml
 
-from .sbase import SBase
-from .misc import extract_vps
+from sbmlxdf.sbase import SBase
+from sbmlxdf.misc import extract_params
 
-# Explore_SBML_import_export_2020-10-05.ipynb
 
 class ListOfEvents(SBase):
 
@@ -232,7 +231,7 @@ class EventAssignment(SBase):
         return ', '.join(attr)
 
     def from_df(self, ea_str):
-        ea_dict = extract_vps(ea_str)
+        ea_dict = extract_params(ea_str)
         if 'variable' in ea_dict:
             self.variable = ea_dict['variable']
         if 'math' in ea_dict:
