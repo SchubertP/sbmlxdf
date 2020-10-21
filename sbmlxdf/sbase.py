@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 
 import libsbml
 
-from .misc import extract_vps, extract_uncertainty, extract_uncert_parameter
+from sbmlxdf.misc import extract_vps, extract_records, extract_lo_records
 
 # Explore_SBML_import_export_2020-10-05.ipynb
 
@@ -245,13 +245,11 @@ class ListOfUncertainties(SBase):
         return '; '.join(u.to_df() for u in self.uncertainties)
 
     def from_df(self, lou_str):
-        while lou_str.find('[') >= 0:
-            lou_str = lou_str[lou_str.find('[')+1:]
-            u_str = extract_uncertainty(lou_str)
-            u = Uncertainty()
-            u.from_df(u_str)
-            self.uncertainties.append(u)
-            lou_str = lou_str[len(u_str):]
+        for u_str in extract_lo_records(lou_str):
+            if len(u_str):
+                u = Uncertainty()
+                u.from_df(u_str)
+                self.uncertainties.append(u)
 
 
 class Uncertainty(SBase):
@@ -287,15 +285,13 @@ class Uncertainty(SBase):
         return '[' + '; '.join(ups_str) + ']'
 
     def from_df(self, u_str):
-        while len(u_str):
-            up_str = extract_uncert_parameter(u_str)
+        for up_str in extract_records(u_str):
             if re.search(r'^\s*param', up_str):
                 up = UncertParameter()
             else:
                 up = UncertScan()
-            up.from_df(up_str.strip())
+            up.from_df(up_str)
             self.uncert_parameters.append(up)
-            u_str = u_str[len(up_str)+1:]
 
 
 class UncertParameter(SBase):
@@ -358,12 +354,6 @@ class UncertParameter(SBase):
         return attr
 
     def from_df(self, up_str):
-        m = re.search(r',\s*lup=\s*\[', up_str)
-        if m:
-            lup_str = extract_uncertainty(up_str[m.end():])
-            self.lo_uncert_parameters = Uncertainty()
-            self.lo_uncert_parameters.from_df(lup_str)
-            up_str = up_str[:m.start()] + up_str[m.end()+len(lup_str)+1:]
         up_dict = extract_vps(up_str)
         if 'param' in up_dict:
             self.element = 'param'
@@ -371,6 +361,9 @@ class UncertParameter(SBase):
         else:
             self.element = 'scan'
             self.type = up_dict['scan']
+        if 'lup' in up_dict:
+            self.lo_uncert_parameters = Uncertainty()
+            self.lo_uncert_parameters.from_df(up_dict['lup'])
         if 'val' in up_dict:
             self.value = float(up_dict['val'])
         if 'var' in up_dict:
@@ -425,11 +418,7 @@ class UncertScan(UncertParameter):
         return attr
 
     def from_df(self, up_str):
-        m = re.search(r',\s*lup=\s*\[', up_str)
-        if m:
-            lup_str = extract_uncertainty(up_str[m.end():])
-            us_str = up_str[:m.start()] + up_str[m.end()+len(lup_str)+1:]
-        us_dict = extract_vps(us_str)
+        us_dict = extract_vps(up_str)
         if 'vall' in us_dict:
             self.value_lower = float(us_dict['vall'])
         if 'valu' in us_dict:

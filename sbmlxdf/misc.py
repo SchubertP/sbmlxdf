@@ -47,55 +47,89 @@ def mathml2numpy(mformula):
     return pformula.strip()
 
 
-def extract_vps(record):
-    # split record in parts by '=' and not ',', to allow for commas in value
-    # first part contains first key
-    # next parts contain:
-    #       value (corresponding to previous key),
-    #       attribute separator ','
-    #       next key
-    # last part contains value corresponding to last key
-    # addtional white spaces are being removed
-    part = record.split('=')
-    key = []
-    val = []
-    key.append(part[0].strip())
-    for i in range(1, len(part)-1):
-        m = re.match(r'^\s*(?P<val>.*)\s*,\s*(?P<next_key>\w+)\s*$', part[i])
+def extract_vps(s):
+    # extract parameters from a record and returns these in a dictionary
+    # value pairs (key=value) are separated by ','
+    # considers nested key value pairs in square brackets (key=[nested vps])
+    find_key = re.compile(r'\s*(?P<key>\w*)\s*=\s*')
+    params = {}
+    pos = 0
+    while pos < len(s):
+        m = find_key.search(s[pos:])
         if m:
-            val.append(m['val'])
-            key.append(m['next_key'])
-    val.append(part[-1].strip())
-    return dict(zip(key,val))
+            pos += m.end(0)
+            if pos < len(s):
+                if s[pos] == '[':
+                    pos += 1
+                    if pos >= len(s):
+                        break
+                    brackets = 1
+                    for i in range(pos, len(s)):
+                        if s[i] == ']':
+                            brackets -= 1
+                        if s[i] == '[':
+                            brackets += 1
+                        if brackets == 0:
+                            break
+                else:
+                    for i in range(pos, len(s)):
+                        if s[i] == ',':
+                            break
+                        if i == len(s)-1:
+                            i += 1
+                params[m['key']] = s[pos:i].strip()
+                pos = i
+        else:
+            break
+    return params
 
 
-def extract_uncertainty(s):
-    # extracts from string next Uncertainty, enclosed in square brackets
-    # Uncertanty consist of UncertParameters separated by ';'
-    # starting behind the opening bracket, looking for corresonding closing
-    #  bracket. Returning this string of UncerParameters,
-    #  not including closing brackets
-    brackets = 1
-    for i in range(len(s)):
-        if s[i] == '[':
-            brackets += 1
-        if s[i] == ']':
-            brackets -= 1
-        if brackets == 0:
-            return s[:i]
-    return s
-
-
-def extract_uncert_parameter(s):
-    # from sting of UncertParameters (separated by ';') next UncertParameter.
-    # UncertParameters can contain nested ListOfUncertParameters '[...]'
-    # read up to next ';', considering nested ListOfUncertParameters
+def extract_records(s):
+    # extract records from a list of records
+    # records are separated by ';'
+    # considers nested key value pairs in square brackets (key=[nested vps])
+    records = []
     brackets = 0
-    for i in range(len(s)):
-        if s[i] == '[':
-            brackets += 1
-        if s[i] == ']':
-            brackets -= 1
-        if s[i] == ';' and brackets == 0:
-            return s[:i]
-    return s
+    pos = 0
+    while pos < len(s):
+        for i in range(pos, len(s)):
+            if s[i] == '[':
+                brackets += 1
+            if s[i] == ']':
+                brackets -= 1
+            if s[i] == ';' and brackets == 0:
+                break
+        if s[i] != ';':
+            i += 1
+        records.append(s[pos:i].strip())
+        pos = i+1
+    return records
+
+
+def extract_lo_records(s):
+    # extract list of records from a list of list of records
+    # list of records are enclosed by square brackets and separated by ';'
+    # "[record; record; ...];[record; record; ...]
+    # considers nested key value pairs in square brackets (key=[nested vps])
+    lo_records = []
+    pos = 0
+    while pos < len(s):
+        m = re.search('\[',s[pos:])
+        if m:
+            pos += m.end(0)
+            brackets = 1
+            if pos >= len(s):
+                break
+            for i in range(pos, len(s)):
+                if s[i] == '[':
+                    brackets += 1
+                if s[i] == ']':
+                    brackets -= 1
+                if brackets == 0:
+                    break
+            if s[i] == ']':
+                lo_records.append(s[pos:i].strip())
+            pos = i+1
+        else:
+            break
+    return lo_records
