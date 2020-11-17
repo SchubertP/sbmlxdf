@@ -3,6 +3,7 @@
 Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
+import sys
 
 import libsbml
 
@@ -125,7 +126,12 @@ class Trigger(SBase):
         sbml_t = sbml_e.createTrigger()
         sbml_t.setInitialValue(self.init_val)
         sbml_t.setPersistent(self.persistent)
-        sbml_t.setMath(libsbml.parseL3Formula(self.math))
+        math = libsbml.parseL3Formula(self.math)
+        if math:
+            sbml_t.setMath(math)
+        else:
+            print(libsbml.getLastParseL3Error())
+            sys.exit()
         super().export_sbml(sbml_t)
 
     def to_df(self):
@@ -157,7 +163,12 @@ class Priority(SBase):
 
     def export_sbml(self, sbml_e):
         sbml_p = sbml_e.createPriority()
-        sbml_p.setMath(libsbml.parseL3Formula(self.math))
+        math = libsbml.parseL3Formula(self.math)
+        if math:
+            sbml_p.setMath(math)
+        else:
+            print(libsbml.getLastParseL3Error())
+            sys.exit()
         super().export_sbml(sbml_p)
 
     def to_df(self):
@@ -188,7 +199,12 @@ class Delay(SBase):
 
     def export_sbml(self, sbml_e):
         sbml_d = sbml_e.createDelay()
-        sbml_d.setMath(libsbml.parseL3Formula(self.math))
+        math = libsbml.parseL3Formula(self.math)
+        if math:
+            sbml_d.setMath(math)
+        else:
+            print(libsbml.getLastParseL3Error())
+            sys.exit()
         super().export_sbml(sbml_d)
 
     def to_df(self):
@@ -220,7 +236,12 @@ class EventAssignment(SBase):
     def export_sbml(self, sbml_e):
         sbml_ea = sbml_e.createEventAssignment()
         sbml_ea.setVariable(self.variable)
-        sbml_ea.setMath(libsbml.parseL3Formula(self.math))
+        math = libsbml.parseL3Formula(self.math)
+        if math:
+            sbml_ea.setMath(math)
+        else:
+            print(libsbml.getLastParseL3Error())
+            sys.exit()
         super().export_sbml(sbml_ea)
 
     def to_df(self):

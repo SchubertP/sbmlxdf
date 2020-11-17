@@ -3,6 +3,7 @@
 Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
+import sys
 
 import libsbml
 
@@ -51,7 +52,12 @@ class FunctionDef(SBase):
 
     def export_sbml(self, sbml_model):
         sbml_fd = sbml_model.createFunctionDefinition()
-        sbml_fd.setMath(libsbml.parseL3Formula(self.math))
+        math = libsbml.parseL3Formula(self.math)
+        if math:
+            sbml_fd.setMath(math)
+        else:
+            print(libsbml.getLastParseL3Error())
+            sys.exit()
         super().export_sbml(sbml_fd)
 
     def to_df(self):

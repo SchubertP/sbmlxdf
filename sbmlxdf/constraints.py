@@ -3,6 +3,7 @@
 Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
+import sys
 
 import libsbml
 
@@ -51,7 +52,12 @@ class Constraint(SBase):
 
     def export_sbml(self, sbml_model):
         sbml_c = sbml_model.createConstraint()
-        sbml_c.setMath(libsbml.parseL3Formula(self.math))
+        math = libsbml.parseL3Formula(self.math)
+        if math:
+            sbml_c.setMath(math)
+        else:
+            print(libsbml.getLastParseL3Error())
+            sys.exit()
         if hasattr(self, 'message'):
             sbml_c.setMessage(self.message)
         super().export_sbml(sbml_c)

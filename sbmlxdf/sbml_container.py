@@ -56,14 +56,15 @@ class SbmlContainer(SBase):
         try:
             self.level = int(sc_dict['level'])
             self.version = int(sc_dict['version'])
-            for pgk_vals in sc_dict['packages'].split(';'):
-                pkg_dict = {}
-                for attr in pgk_vals.split(','):
-                    val = attr.split('=')
-                    pkg_dict[val[0].strip()] = val[1].strip()
-                self.packages[pkg_dict['name']] = {
-                    'version': int(pkg_dict['version']),
-                    'required': pkg_dict['required']==str(True)
-                    }
+            if hasattr(sc_dict, 'packages'):
+                for pgk_vals in sc_dict['packages'].split(';'):
+                    pkg_dict = {}
+                    for attr in pgk_vals.split(','):
+                        val = attr.split('=')
+                        pkg_dict[val[0].strip()] = val[1].strip()
+                    self.packages[pkg_dict['name']] = {
+                        'version': int(pkg_dict['version']),
+                        'required': pkg_dict['required']==str(True)
+                        }
         except KeyError as err:
             print("KeyError: {0} in {1}".format(err, __name__))

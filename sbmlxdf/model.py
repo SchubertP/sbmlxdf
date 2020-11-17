@@ -133,22 +133,28 @@ class Model(SBase):
             sbml_doc.setConsistencyChecks(
                     libsbml.LIBSBML_CAT_MODELING_PRACTICE, False)
             sbml_doc.checkConsistency()
-            sbml_compliance = True
-            errors = sbml_doc.getNumErrors()
-            for i in range(errors):
+            err_tot = {}
+            num_errors = sbml_doc.getNumErrors()
+            for i in range(num_errors):
                 e = sbml_doc.getError(i)
-                if e.getSeverity() >= libsbml.LIBSBML_SEV_ERROR:
-                    sbml_compliance = False
+                if e.isInfo():
+                    err_tot['Infos'] = err_tot.get('Infos', 0) + 1
+                if e.isWarning():
+                    err_tot['Warnings'] = err_tot.get('Warnings', 0) + 1
+                if e.isError():
+                    err_tot['Errors'] = err_tot.get('Errors', 0) + 1
+                if e.isFatal():
+                    err_tot['Fatals'] = err_tot.get('Fatals', 0) + 1
             with open(result_file, 'w') as f:
-                if sbml_compliance:
-                    f.write('OK: Model compliant with SBML standard\n')
+                f.write(str(err_tot))
+                if ('Errors' in err_tot ) or ('Fatals' in err_tot):
+                    f.write(' NOK: not SBML compliant, see results file!\n')
                 else:
-                    f.write('Error: Model not compliant with SBML standard\n')
+                    f.write(' OK: SBML compliant\n')
                 if not units_check:
                     f.write('Units not checked\n')
-                f.write('{:d} warning(s)/error(s) reported\n\n'.format(errors))
                 f.write(sbml_doc.getErrorLog().toString())
-        return sbml_compliance
+            return err_tot
 
     def export_sbml(self, sbml_filename):
         if hasattr(self, 'sbml_container'):
@@ -164,7 +170,8 @@ class Model(SBase):
 
     def _get_stoich_matrix(self, df_species, df_reactions, sparse=False):
         df_N = pd.DataFrame(np.zeros((len(df_species), len(df_reactions))),
-                            index=df_species.index, columns=df_reactions.index)
+                            index=df_species.index.values,
+                            columns=df_reactions.index.values)
         for idx, r in df_reactions.iterrows():
             if type(r['reactants']) == str:
               for reac in r["reactants"].split(';'):

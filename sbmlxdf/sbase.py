@@ -7,6 +7,7 @@ Peter Schubert, October 2020
 Computational Cell Design, HHU Duesseldorf
 """
 import re
+import sys
 from abc import ABC, abstractmethod
 
 import libsbml
@@ -327,7 +328,12 @@ class UncertParameter(SBase):
         if hasattr(self, 'url'):
             sbml_up.setDefinitionURL(self.url)
         if hasattr(self, 'math'):
-            sbml_up.setMath(libsbml.parseL3Formula(self.math))
+            math = libsbml.parseL3Formula(self.math)
+            if math:
+                sbml_up.setMath(math)
+            else:
+                print(libsbml.getLastParseL3Error())
+                sys.exit()
         if hasattr(self, 'lo_uncert_parameters'):
             self.lo_uncert_parameters.export_sbml(sbml_up)
         super().export_sbml(sbml_up)

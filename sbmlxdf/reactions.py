@@ -5,6 +5,7 @@
 Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
+import sys
 
 import libsbml
 
@@ -312,7 +313,12 @@ class KineticLaw(SBase):
 
     def export_sbml(self, sbml_r):
         sbml_kl = sbml_r.createKineticLaw()
-        sbml_kl.setMath(libsbml.parseL3Formula(self.math))
+        math = libsbml.parseL3Formula(self.math)
+        if math:
+            sbml_kl.setMath(math)
+        else:
+            print(libsbml.getLastParseL3Error())
+            sys.exit()
         for lp in self.local_params:
             lp.export_sbml(sbml_kl)
         super().export_sbml(sbml_kl)

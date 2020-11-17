@@ -3,6 +3,7 @@
 Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
+import sys
 
 import libsbml
 
@@ -64,7 +65,12 @@ class Rule(SBase):
             sbml_r = sbml_model.createAlgebraicRule()
         else:
             return
-        sbml_r.setMath(libsbml.parseL3Formula(self.math))
+        math = libsbml.parseL3Formula(self.math)
+        if math:
+            sbml_r.setMath(math)
+        else:
+            print(libsbml.getLastParseL3Error())
+            sys.exit()
         super().export_sbml(sbml_r)
 
     def to_df(self):

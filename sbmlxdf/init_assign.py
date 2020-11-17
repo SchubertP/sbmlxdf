@@ -3,6 +3,7 @@
 Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
+import sys
 
 import libsbml
 
@@ -52,7 +53,12 @@ class InitAssign(SBase):
     def export_sbml(self, sbml_model):
         sbml_ia = sbml_model.createInitialAssignment()
         sbml_ia.setSymbol(self.symbol)
-        sbml_ia.setMath(libsbml.parseL3Formula(self.math))
+        math = libsbml.parseL3Formula(self.math)
+        if math:
+            sbml_ia.setMath(math)
+        else:
+            print(libsbml.getLastParseL3Error())
+            sys.exit()
         super().export_sbml(sbml_ia)
 
     def to_df(self):

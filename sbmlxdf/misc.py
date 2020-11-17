@@ -4,46 +4,48 @@ Peter Schubert, HHU Duesseldorf, October 2020
 """
 import re
 
-
 _map_mathml2numpy = (
 # arithmetic operators
-    ('abs', 'np.absolute'), ('exp', 'np.exp'), ('sqrt', 'np.sqrt'),
-    ('sqr', 'np.square'), ('ln', 'np.log'), ('log10', 'np.log10'),
-    ('floor', 'np.floor'), ('ceil', 'np.ceil'),
-    ('factorial', 'np.math.factorial'), ('rem', 'np.fmod'),
+    ('abs', 'NP_NS.absolute'), ('exp', 'NP_NS.exp'), ('sqrt', 'NP_NS.sqrt'),
+    ('sqr', 'NP_NS.square'), ('ln', 'NP_NS.log'), ('log10', 'NP_NS.log10'),
+    ('floor', 'NP_NS.floor'), ('ceil', 'NP_NS.ceil'),
+    ('factorial', 'NP_NS.math.factorial'), ('rem', 'NP_NS.fmod'),
 # relational operators
-    ('eq', 'np.equal'), ('neq', 'np.not_equal'), ('gt', 'np.greater'),
-    ('lt', 'np.less'), ('geq', 'np.greater_equal'), ('leq', 'np.less_equal'),
+    ('eq', 'NP_NS.equal'), ('neq', 'NP_NS.not_equal'), ('gt', 'NP_NS.greater'),
+    ('lt', 'NP_NS.less'), ('geq', 'NP_NS.greater_equal'),
+    ('leq', 'NP_NS.less_equal'),
 # logical operators
-    ('and', 'np.logical_and'), ('or', 'np.logical_or'),
-    ('xor', 'np.logical_xor'), ('not', 'np.logical_not'),
-    ('and', 'np.logical_and'), ('or', 'np.logical_or'),
-    ('xor', 'np.logical_xor'), ('not', 'np.logical_not'),
+    ('and', 'NP_NS.logical_and'), ('or', 'NP_NS.logical_or'),
+    ('xor', 'NP_NS.logical_xor'), ('not', 'NP_NS.logical_not'),
+    ('and', 'NP_NS.logical_and'), ('or', 'NP_NS.logical_or'),
+    ('xor', 'NP_NS.logical_xor'), ('not', 'NP_NS.logical_not'),
 # trigonometric operators
-    ('sin', 'np.sin'), ('cos', 'np.cos'), ('tan', 'np.tan'),
-    ('sec', '1.0/np.cos'), ('csc', '1.0/np.sin'), ('cot', '1.0/np.tan'),
-    ('sinh', 'np.sinh'), ('cosh', 'np.cosh'), ('tanh', 'np.tanh'),
-    ('sech', '1.0/np.cosh'), ('csch',' 1.0/np.sinh'), ('coth', '1.0/np.tanh'),
-    ('asin', 'np.arcsin'), ('acos', 'np.arccos'),
-    ('atan', 'np.arctan'), ('arcsinh', 'np.arcsinh'),
-    ('arccosh', 'np.arccosh'), ('arctanh', 'np.arctanh'),
+    ('sin', 'NP_NS.sin'), ('cos', 'NP_NS.cos'), ('tan', 'NP_NS.tan'),
+    ('sec', '1.0/NP_NS.cos'), ('csc', '1.0/NP_NS.sin'),
+    ('cot', '1.0/NP_NS.tan'),
+    ('sinh', 'NP_NS.sinh'), ('cosh', 'NP_NS.cosh'), ('tanh', 'NP_NS.tanh'),
+    ('sech', '1.0/NP_NS.cosh'), ('csch',' 1.0/NP_NS.sinh'),
+    ('coth', '1.0/NP_NS.tanh'),
+    ('asin', 'NP_NS.arcsin'), ('acos', 'NP_NS.arccos'),
+    ('atan', 'NP_NS.arctan'), ('arcsinh', 'NP_NS.arcsinh'),
+    ('arccosh', 'NP_NS.arccosh'), ('arctanh', 'NP_NS.arctanh'),
 )
 
-def mathml2numpy(mformula):
-    """convert mathml infix to a numpy formula.
+def mathml2numpy(mformula, np_ns='np'):
+    """Convert mathml infix to a numpy formula.
 
-    This could be converted to a (static) class,
-    and it should be possible to set the namespace prefix (default 'np').
+    could be implemented as a (static) class
     """
-    pformula = ' ' + mformula
-    pformula = pformula.replace('^', '**')
-    pformula = pformula.replace(' && ', ' & ')
-    pformula = pformula.replace(' || ', ' | ')
-    for mathmlFunction, numpyFunction in _map_mathml2numpy:
-        if re.search(r'(?<=\W)' + mathmlFunction + '\(', pformula):
-            pformula = (re.sub(r'(?<=\W)' + mathmlFunction + '\(',
-                        numpyFunction + '(' , pformula))
-    return pformula.strip()
+    np_formula = ' ' + mformula
+    np_formula = re.sub(r'\s?dimensionless\s?', ' ', np_formula)
+    np_formula = re.sub(r'\^', '**', np_formula)
+    np_formula = re.sub(r'\s?&&\s?', ' & ', np_formula)
+    np_formula = re.sub(r'\s?\|\|\s?', ' | ', np_formula)
+    for mathml_f, np_f in _map_mathml2numpy:
+        np_formula = re.sub(r'\s+' + mathml_f + '\(',
+                            ' ' + np_f.replace('NP_NS', np_ns) + '(',
+                            np_formula)
+    return np_formula.strip()
 
 
 def extract_params(s):
