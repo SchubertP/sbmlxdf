@@ -54,7 +54,7 @@ class Reaction(SBase):
     def import_sbml(self, sbml_r):
         self.reversible = sbml_r.getReversible()
         if sbml_r.isSetFast():
-            self.fast = sbml_r.getGetFast()
+            self.fast = sbml_r.getFast()
         if sbml_r.isSetCompartment():
             self.compartment = sbml_r.getCompartment()
         if sbml_r.getNumReactants():
