@@ -53,6 +53,8 @@ class Reaction(SBase):
 
     def import_sbml(self, sbml_r):
         self.reversible = sbml_r.getReversible()
+        if sbml_r.isSetFast():
+            self.fast = sbml_r.getGetFast()
         if sbml_r.isSetCompartment():
             self.compartment = sbml_r.getCompartment()
         if sbml_r.getNumReactants():
@@ -91,6 +93,9 @@ class Reaction(SBase):
     def export_sbml(self, sbml_model):
         sbml_r = sbml_model.createReaction()
         sbml_r.setReversible(self.reversible)
+        if ((sbml_model.getLevel() < 3.0) or
+           (sbml_model.getLevel() == 3.0 and sbml_model.getVersion() == 1.0)):
+           sbml_r.setFast(getattr(self,'fast', False))
         if hasattr(self, 'compartment'):
             sbml_r.setCompartment(self.compartment)
         for r in self.reactants:
