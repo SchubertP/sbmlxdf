@@ -51,7 +51,8 @@ def mathml2numpy(mformula, np_ns='np'):
 def extract_params(s):
     # extract parameters from a record and returns these in a dictionary
     # (key=value) are separated by ','
-    # considers nested values in square brackets (key=[nested value])
+    # consider nested values in square brackets (key=[nested value])
+    # consider functions in round brackets (e.g. math=gamma(shape_Z, scale_Z))
     find_key = re.compile(r'\s*(?P<key>\w*)\s*=\s*')
     params = {}
     pos = 0
@@ -73,8 +74,13 @@ def extract_params(s):
                         if brackets == 0:
                             break
                 else:
+                    r_brackets = 0
                     for i in range(pos, len(s)):
-                        if s[i] == ',':
+                        if s[i] == '(':
+                            r_brackets += 1
+                        if s[i] == ')':
+                            r_brackets -= 1
+                        if s[i] == ',' and r_brackets == 0:
                             break
                         if i == len(s)-1:
                             i += 1
