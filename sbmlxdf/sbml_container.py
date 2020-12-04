@@ -7,6 +7,7 @@ import pandas as pd
 import libsbml
 
 from sbmlxdf.sbase import SBase
+from sbmlxdf.misc import extract_records, extract_params
 
 
 class SbmlContainer(SBase):
@@ -56,12 +57,9 @@ class SbmlContainer(SBase):
         try:
             self.level = int(sc_dict['level'])
             self.version = int(sc_dict['version'])
-            if hasattr(sc_dict, 'packages'):
-                for pgk_vals in sc_dict['packages'].split(';'):
-                    pkg_dict = {}
-                    for attr in pgk_vals.split(','):
-                        val = attr.split('=')
-                        pkg_dict[val[0].strip()] = val[1].strip()
+            if 'packages' in sc_dict:
+                for record in extract_records(sc_dict['packages']):
+                    pkg_dict = extract_params(record)
                     self.packages[pkg_dict['name']] = {
                         'version': int(pkg_dict['version']),
                         'required': pkg_dict['required']==str(True)
