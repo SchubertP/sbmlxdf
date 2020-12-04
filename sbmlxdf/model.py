@@ -177,12 +177,12 @@ class Model(SBase):
               for reac in r["reactants"].split(';'):
                 reac_dict = extract_params(reac)
                 df_N.at[reac_dict['species'], idx] \
-                        -= float(getattr(reac_dict,"stoic", 1.0))
+                        -= float(getattr(reac_dict, "stoic", 1.0))
             if type(r['products']) == str:
               for prod in r["products"].split(';'):
                 prod_dict = extract_params(prod)
                 df_N.at[prod_dict['species'], idx] \
-                        += float(getattr(reac_dict,"stoic", 1.0))
+                        += float(getattr(prod_dict, "stoic", 1.0))
         if sparse:
             return df_N.astype(pd.SparseDtype("float", 0.0))
         else:
