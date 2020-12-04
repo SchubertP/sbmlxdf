@@ -3,6 +3,7 @@
 Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
+import time
 
 import libsbml
 
@@ -129,6 +130,8 @@ class ModelHistory():
             sbml_hist.setCreatedDate(libsbml.Date(self.created))
         for md in self.modified:
             sbml_hist.addModifiedDate(libsbml.Date(md))
+        modified = libsbml.Date(time.strftime("%Y-%m-%dT%H:%M:%S%z"))
+        sbml_hist.addModifiedDate(modified)
         for mc in self.creators:
             mc.export_sbml(sbml_hist)
         sbml_model.setModelHistory(sbml_hist)
