@@ -176,11 +176,13 @@ class Model(SBase):
             if type(r['reactants']) == str:
               for reac in r["reactants"].split(';'):
                 reac_dict = extract_params(reac)
-                df_N.at[reac_dict['species'], idx] -= float(reac_dict["stoic"])
+                df_N.at[reac_dict['species'], idx] \
+                        -= float(getattr(reac_dict,"stoic", 1.0))
             if type(r['products']) == str:
               for prod in r["products"].split(';'):
                 prod_dict = extract_params(prod)
-                df_N.at[prod_dict['species'], idx] += float(prod_dict["stoic"])
+                df_N.at[prod_dict['species'], idx] \
+                        += float(getattr(reac_dict,"stoic", 1.0))
         if sparse:
             return df_N.astype(pd.SparseDtype("float", 0.0))
         else:
@@ -249,6 +251,9 @@ class Model(SBase):
                 component.to_excel(writer, **params)
 
     def from_excel(self, file_name):
+        # import model properly coded as Excel spreadsheet
+        # all values imported as string SparseDtype
+        # remove any trailing empty lines from Excel import
         m_dict = {}
         with pd.ExcelFile(file_name) as xlsx:
             for sheet in xlsx.sheet_names:
@@ -260,7 +265,8 @@ class Model(SBase):
                         params['squeeze'] = True
                     if _sheets[sheet] == IS_DF_INDEXED:
                         params['index_col'] = 0
-                    m_dict[sheet] = pd.read_excel(xlsx, **params)
+                    df_raw = pd.read_excel(xlsx, **params)
+                    m_dict[sheet] = df_raw.loc[df_raw.index.dropna()]
         return self.from_df(m_dict)
 
     def to_csv(self, dir_name):
