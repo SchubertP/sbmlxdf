@@ -17,31 +17,46 @@ Description: Install:
         Convert between SBML coded files and Pandas DataFrames
         ======================================================
         
+        using libSBML API for accessing SBML
+        
+        Bornstein, B. J., Keating, S. M., Jouraku, A., and Hucka M. (2008)
+        LibSBML: An API Library for SBML. Bioinformatics, 24(6):880–881,
+        doi:10.1093/bioinformatics/btn051.
+        
+        
         Example::
         
             import sbmlxdf
         
-            input_xml = 'protein_translation_model-2020-09-08.xml'
+            input_xml = 'SBML_Models/e_coli_core.xml'
         
-            # import SBML model and export to Excel
             model = sbmlxdf.Model()
-            model.import_sbml(input_xml)
-            model.to_excel('model.xlsx')
+            if model.import_sbml(input_xml):
+                model.to_excel('model.xlsx')
+                print('SBML model written to Excel: model.xlsx')
+                model.to_csv('model')
+                print('SBML model written to .csv: ./model/*.csv')
         
-            # read model from Excel and export, valdiate, export to SBML
-            upd_model = sbmlxdf.Model()
-            upd_model.from_excel('model.xlsx')
-            print("is valid SBML (check also ./results): ", upd_model.validate_sbml('check_upd_model.xml'))
-            upd_model.export_sbml('upd_model.xml')
-            
-            # access model data, including value-pair fields
-            model_dfs = upd_model.to_df()
-            reaction = r_df.iloc[2]
-            print('reaction ID:', reaction.id, '   kinetic law:', reaction.kineticLaw )
-            for record in reaction['reactants'].split(';'):
-                record_dict = sbmlxdf.extract_vps(record)
-                print(record_dict)
+                outm = sbmlxdf.Model()
+                outm.from_excel('model.xlsx')
+                print('\nSBML model imported from model.xlsx (alternatively from ./model/*.csv)')
+                is_valid_sbml = outm.validate_sbml('checkModel.xml')
+                print('SBML file valid:', is_valid_sbml)
         
+                model_dfs = outm.to_df()
+                print('\nmodel exported to Pandas DataFrame')
+                print(model_dfs.keys())
+        
+                df_r = model_dfs['reactions']
+                print('\n', len(df_r), 'reactions found, first reaction:' )
+                print(df_r.iloc[0])
+                print('\nreactants and products for some reactions:')
+                for id, reaction in df_r.head().iterrows():
+                    print('reaction:', id)
+                    for record in sbmlxdf.extract_records(reaction['reactants']):
+                        print('  reactant: ', sbmlxdf.extract_params(record))
+                    for record in sbmlxdf.extract_records(reaction['products']):
+                        print('  product:  ',sbmlxdf.extract_params(record))
         
         Peter Schubert, October 2020
         
