@@ -190,6 +190,13 @@ class Model(SBase):
         model_dict = {'sbml': self.sbml_container.to_df() }
         for key, lo in self.list_of.items():
             model_dict[key] = lo.to_df()
+        if ('reactions' in model_dict) and ('parameters' in model_dict):
+            if 'fbcLowerFluxBound' in model_dict['reactions'].columns:
+                params = model_dict['parameters']['value'].to_dict()
+                model_dict['reactions']['fbcLb'] = \
+                  model_dict['reactions']['fbcLowerFluxBound'].replace(params)
+                model_dict['reactions']['fbcUb'] = \
+                  model_dict['reactions']['fbcUpperFluxBound'].replace(params)
         if 'species' in model_dict and 'reactions' in model_dict:
             model_dict['S_info'] = self._get_stoich_matrix(
                 model_dict['species'], model_dict['reactions'])
