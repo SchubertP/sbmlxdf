@@ -59,9 +59,9 @@ class SBase(ABC):
         if sbml_obj.isSetNotes():
             self.notes = sbml_obj.getNotesString()
         distrib_plugin = sbml_obj.getPlugin('distrib')
-        if (distrib_plugin and
-            sbml_obj.getElementName() != 'sbml' and
-            distrib_plugin.getNumUncertainties()):
+        if (distrib_plugin != None
+            and sbml_obj.getElementName() != 'sbml'
+            and distrib_plugin.getNumUncertainties()):
             self.lo_uncertainties = ListOfUncertainties()
             self.lo_uncertainties.import_sbml(sbml_obj)
 
@@ -227,19 +227,21 @@ class ListOfUncertainties(SBase):
 
     def import_sbml(self, sbml_obj):
         distrib_plugin = sbml_obj.getPlugin('distrib')
-        sbml_lu = distrib_plugin.getListOfUncertainties()
-        for sbml_u in sbml_lu:
-            u = Uncertainty()
-            u.import_sbml(sbml_u)
-            self.uncertainties.append(u)
-        super().import_sbml(sbml_lu)
+        if distrib_plugin != None:
+            sbml_lu = distrib_plugin.getListOfUncertainties()
+            for sbml_u in sbml_lu:
+                u = Uncertainty()
+                u.import_sbml(sbml_u)
+                self.uncertainties.append(u)
+            super().import_sbml(sbml_lu)
 
     def export_sbml(self, sbml_obj):
         distrib_plugin = sbml_obj.getPlugin('distrib')
-        for u in self.uncertainties:
-            sbml_u = distrib_plugin.createUncertainty()
-            u.export_sbml(sbml_u)
-        super().export_sbml(distrib_plugin.getListOfUncertainties())
+        if distrib_plugin != None:
+            for u in self.uncertainties:
+                sbml_u = distrib_plugin.createUncertainty()
+                u.export_sbml(sbml_u)
+            super().export_sbml(distrib_plugin.getListOfUncertainties())
 
     def to_df(self):
         return '; '.join(u.to_df() for u in self.uncertainties)

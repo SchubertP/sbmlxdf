@@ -29,8 +29,11 @@ class SbmlContainer(SBase):
     def create_sbml_doc(self):
         sbml_container = libsbml.SBMLNamespaces(self.level, self.version)
         for pname in self.packages:
-            sbml_container.addPackageNamespace(
-                pname, self.packages[pname]['version'])
+            success = sbml_container.addPackageNamespace(
+                      pname, self.packages[pname]['version'])
+            if success != libsbml.LIBSBML_OPERATION_SUCCESS:
+                print('Error adding package: [{}]. Try '\
+                    '"pip install python-libsbml-experimental".'.format(pname))
         sbml_doc = libsbml.SBMLDocument(sbml_container)
         self.export_sbml(sbml_doc)
         return sbml_doc
