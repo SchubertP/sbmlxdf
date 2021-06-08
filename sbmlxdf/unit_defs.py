@@ -81,7 +81,7 @@ class Unit(SBase):
 
     def import_sbml(self, sbml_u):
         self.kind = libsbml.UnitKind_toString(sbml_u.getKind())
-        self.exponent = sbml_u.getExponent()
+        self.exponent = sbml_u.getExponentAsDouble()
         self.scale = sbml_u.getScale()
         self.multiplier = sbml_u.getMultiplier()
         super().import_sbml(sbml_u)
