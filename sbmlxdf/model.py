@@ -57,7 +57,7 @@ class Model(SBase):
 
     def import_sbml(self, sbml_filename):
         if not os.path.exists(sbml_filename):
-            print("SBML file not found: " + sbml_filename)
+            print('SBML file not found: ' + sbml_filename)
             return False
         try:
             self.in_sbml = sbml_filename
@@ -174,15 +174,15 @@ class Model(SBase):
                             columns=df_reactions.index.values)
         for idx, r in df_reactions.iterrows():
             if type(r['reactants']) == str:
-              for reac in r["reactants"].split(';'):
+              for reac in r['reactants'].split(';'):
                 s_d = extract_params(reac)
-                df_N.at[s_d['species'], idx] -= float(s_d.get("stoic", 1.0))
+                df_N.at[s_d['species'], idx] -= float(s_d.get('stoic', 1.0))
             if type(r['products']) == str:
-              for prod in r["products"].split(';'):
+              for prod in r['products'].split(';'):
                 s_d = extract_params(prod)
-                df_N.at[s_d['species'], idx] += float(s_d.get("stoic", 1.0))
+                df_N.at[s_d['species'], idx] += float(s_d.get('stoic', 1.0))
         if sparse:
-            return df_N.astype(pd.SparseDtype("float", 0.0))
+            return df_N.astype(pd.SparseDtype('float', 0.0))
         else:
             return df_N
 
@@ -205,7 +205,7 @@ class Model(SBase):
     def from_df(self, model_dict):
         if ('sbml' not in model_dict) or ('modelAttrs' not in model_dict):
             print('no valid model dict; sbml and modelAttrs required!')
-            return
+            return False
         self.sbml_container = SbmlContainer()
         self.sbml_container.from_df(model_dict['sbml'])
         self.isModel = True
@@ -240,10 +240,10 @@ class Model(SBase):
             for component, lo in self.list_of.items():
                 lo.from_df(model_dict[component])
         except KeyError as err:
-            print("KeyError: {0} in {1} while processing {2}"
+            print('KeyError: {0} in {1} while processing {2}'
                   .format(err, __name__, component))
-            return -1
-        return 0
+            return False
+        return True
 
     def to_excel(self, file_name):
         with pd.ExcelWriter(file_name) as writer:
@@ -259,6 +259,9 @@ class Model(SBase):
         # import model properly coded as Excel spreadsheet
         # all values imported as string SparseDtype
         # remove any trailing empty lines from Excel import
+        if not os.path.exists(file_name):
+            print('Excel document not found: ' + file_name)
+            return False
         m_dict = {}
         with pd.ExcelFile(file_name) as xlsx:
             for sheet in xlsx.sheet_names:
@@ -277,7 +280,7 @@ class Model(SBase):
     def to_csv(self, dir_name):
         """ create and check directory, remove existing *.csv files """
         if os.path.exists(dir_name):
-            for csv_file in glob.glob(os.path.join(dir_name, "*.csv")):
+            for csv_file in glob.glob(os.path.join(dir_name, '*.csv')):
                 try:
                     os.remove(csv_file)
                 except:
@@ -285,7 +288,7 @@ class Model(SBase):
         else:
             os.mkdir(dir_name)
         for sheet, component in self.to_df().items():
-            params = {'path_or_buf': os.path.join(dir_name, sheet+'.csv')}
+            params = {'path_or_buf': os.path.join(dir_name, sheet + '.csv')}
             if _sheets[sheet] == IS_SERIES:
                 params['header'] = False
             if _sheets[sheet] == IS_DF_NOTINDEXED:
@@ -293,17 +296,19 @@ class Model(SBase):
             component.to_csv(**params)
 
     def from_csv(self, dir_name):
+        if not os.path.exists(dir_name):
+            print('csv directory not found: ' + dir_name)
+            return False
         m_dict = {}
-        if os.path.exists(dir_name):
-            for csv_file in glob.glob(os.path.join(dir_name, "*.csv")):
-                sheet = os.path.basename(csv_file).replace('.csv','')
-                if sheet in _sheets:
-                    params = {'dtype': str}
-                    if _sheets[sheet] == IS_SERIES:
-                        params['header'] = None
-                        params['index_col'] = 0
-                        params['squeeze'] = True
-                    if _sheets[sheet] == IS_DF_INDEXED:
-                        params['index_col'] = 0
-                    m_dict[sheet] = pd.read_csv(csv_file, **params)
+        for csv_file in glob.glob(os.path.join(dir_name, '*.csv')):
+            sheet = os.path.basename(csv_file).replace('.csv', '')
+            if sheet in _sheets:
+                params = {'dtype': str}
+                if _sheets[sheet] == IS_SERIES:
+                    params['header'] = None
+                    params['index_col'] = 0
+                    params['squeeze'] = True
+                if _sheets[sheet] == IS_DF_INDEXED:
+                    params['index_col'] = 0
+                m_dict[sheet] = pd.read_csv(csv_file, **params)
         return self.from_df(m_dict)
