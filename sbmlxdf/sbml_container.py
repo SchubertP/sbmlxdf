@@ -20,7 +20,7 @@ class SbmlContainer(SBase):
         super().import_sbml(sbml_doc)
         self.level = sbml_doc.getLevel()
         self.version = sbml_doc.getVersion()
-        for idx in range(sbml_doc.getNumPlugins()):
+        for idx in range(1, sbml_doc.getNumPlugins()):
             p = sbml_doc.getPlugin(idx)
             pname = p.getPackageName()
             self.packages[pname] = {'version': p.getPackageVersion(),
