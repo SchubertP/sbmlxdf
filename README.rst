@@ -29,8 +29,8 @@ Example::
         model.to_csv('model')
         print('SBML model written to .csv: ./model/*.csv')
 
-        outm = sbmlxdf.Model()
-        outm.from_excel('model.xlsx')
+        # read model during __init__()
+        outm = sbmlxdf.Model('model.xlsx')
         print('\nSBML model imported from model.xlsx (alternatively from ./model/*.csv)')
         is_valid_sbml = outm.validate_sbml('checkModel.xml')
         print('SBML file valid:', is_valid_sbml)

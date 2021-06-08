@@ -18,12 +18,12 @@ with open(os.path.join('sbmlxdf','_version.py')) as f:
 
 setup(
     name='sbmlxdf',
-    description='convert between SBML coded models and DataFrames/Excel/.csv',
+    description='convert between SBML format and DataFrames/.xlsx/.csv',
     author='Peter Schubert',
     author_email='peter.schubert@hhu.de',
-    url='https://gitlab.com/pschubert/samplexdfmod',
-    license='LGPL',
-    packages=find_packages(exclude=('tests', 'docs')),
+    url='https://gitlab.com/pschubert/sbmlxdf',
+    license='GPLv3',
+    packages=find_packages(exclude=('docs')),
     install_requires = ['pandas>=0.25.0',
                         'xlrd>=1.1.0',
                         'openpyxl>=2.6.0',

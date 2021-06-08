@@ -50,10 +50,17 @@ class SbmlFileError(Exception):
 
 class Model(SBase):
 
-    def __init__(self):
+    def __init__(self, import_file=None):
         self.isModel = False
         self.list_of = {}
         super().__init__()
+        if type(import_file) == str:
+            if import_file.endswith('.xml'):
+                self.import_sbml(import_file)
+            elif import_file.endswith('.xlsx'):
+                self.from_excel(import_file)
+            elif os.path.exists(import_file):
+                self.from_csv(import_file)
 
     def import_sbml(self, sbml_filename):
         if not os.path.exists(sbml_filename):
