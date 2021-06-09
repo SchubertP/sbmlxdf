@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2"
+    xmlns:distrib="http://www.sbml.org/sbml/level3/version1/distrib/version1"
+    distrib:required="true">
+  <model id="test_distrib" name="distrib" extentUnits="substance" substanceUnits="substance" timeUnits="second">
+    <notes>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <p>Test import and export of distribution package elements<br />
+           Based on:<br />
+           SBML Level 3 Package Specification:<br />
+           The Distribution Package for SBML<br />
+           Version 1, Release 1, April 2, 2020<br />
+           <br />
+           gives SBML validation waring messages: <br />
+           (99505 [Warning]) In situations where a mathematical expression
+           contains literal numbers or parameters whose units have not been
+           declared, it is not possible to verify accurately the consistency
+           of the units in the expression.
+           The units of the 'initialAssignment - math' expression
+           'normal(mean_x, std_x)' cannot be fully checked. Unit consistency
+           reported as either no errors or further unit errors related
+           to this object may not be accurate.
+           <br />
+      </p>
+    </body>
+  </notes>
+  <listOfUnitDefinitions>
+    <unitDefinition id="substance" name="substance">
+      <listOfUnits>
+        <unit kind="mole" exponent="1" scale="0" multiplier="1"/>
+      </listOfUnits>
+    </unitDefinition>
+    <unitDefinition id="per_s" name="per_s">
+      <listOfUnits>
+        <unit kind="second" exponent="-1" scale="0" multiplier="1"/>
+      </listOfUnits>
+    </unitDefinition>
+    <unitDefinition id="M" name="M">
+      <listOfUnits>
+        <unit kind="mole" exponent="1" scale="0" multiplier="1"/>
+        <unit kind="litre" exponent="-1" scale="0" multiplier="1"/>
+      </listOfUnits>
+    </unitDefinition>
+  </listOfUnitDefinitions>
+  <listOfCompartments>
+    <compartment id="C" name="cell" spatialDimensions="3" size="1e-06" units="litre" constant="true" sboTerm="SBO:0000290"/>
+  </listOfCompartments>
+  <listOfSpecies>
+    <species id="x" compartment="C" initialAmount="30" substanceUnits="mole" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+    <species id="y" compartment="C" initialAmount="50" substanceUnits="mole" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+  </listOfSpecies>
+  <listOfParameters>
+    <parameter id="t" value = "17" constant="true" units="second"/>
+    <parameter id="mean_x" value = "30" constant="true" units="mole"/>
+    <parameter id="std_x" value = "3.3" constant="true" units="mole"/>
+    <parameter id="mean_y" value = "50" constant="true" units="mole"/>
+    <parameter id="z" value = "1" constant="false" units="dimensionless"/>
+    <parameter id="n" value = "0" constant="false" units="dimensionless"/>
+  </listOfParameters>
+  <listOfInitialAssignments>
+    <initialAssignment symbol="t">
+      <notes>
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          <p> Example from SBML L3V2 core: 3.4.7 Simulation time </p>
+        </body>
+      </notes>
+      <math xmlns="http://www.w3.org/1998/Math/MathML" xmlns:sbml="http://www.sbml.org/sbml/level3/version2/core">
+        <apply>
+          <minus/>
+          <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"/>
+          <cn sbml:units="second"> 2 </cn>
+        </apply>
+      </math>
+    </initialAssignment>
+    <initialAssignment symbol="x">
+      <notes>
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          <p> Example: 3.7.1 Using a normal distribution </p>
+        </body>
+      </notes>
+      <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <apply>
+          <csymbol definitionURL="http://www.sbml.org/sbml/symbols/distrib/normal" encoding="text"> normal </csymbol>
+          <ci> mean_x </ci>
+          <ci> std_x </ci>
+        </apply>
+      </math>
+    </initialAssignment>
+    <initialAssignment symbol="y">
+      <notes>
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          <p> Example: 3.7.2 Defining a truncated normal distribution </p>
+        </body>
+      </notes>
+      <math xmlns="http://www.w3.org/1998/Math/MathML" xmlns:sbml="http://www.sbml.org/sbml/level3/version2/core">
+        <apply>
+          <csymbol definitionURL="http://www.sbml.org/sbml/symbols/distrib/normal" encoding="text"> normal </csymbol>
+          <ci> mean_y </ci>
+          <cn sbml:units="mole" type="real"> 10.0 </cn>
+          <apply>
+            <minus/>
+            <ci> mean_y </ci>
+            <cn sbml:units="mole" type="real"> 20.0 </cn>
+          </apply>
+          <apply>
+            <plus/>
+            <ci> mean_y </ci>
+            <cn sbml:units="mole" type="real"> 20.0 </cn>
+          </apply>
+        </apply>
+      </math>
+    </initialAssignment>
+  </listOfInitialAssignments>
+  <listOfEvents>
+    <notes>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <p> Example: 3.7.3 Defining conditional events </p>
+      </body>
+    </notes>
+    <event id="E0" useValuesFromTriggerTime="true">
+      <trigger initialValue="true" persistent="false">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" xmlns:sbml="http://www.sbml.org/sbml/level3/version2/core">
+          <apply>
+            <and/>
+            <apply>
+              <gt/>
+              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
+              <cn sbml:units="second" type="integer"> 2 </cn>
+            </apply>
+            <apply>
+              <lt/>
+              <ci> n </ci>
+              <cn sbml:units="dimensionless" type="integer"> 1 </cn>
+            </apply>
+          </apply>
+        </math>
+      </trigger>
+      <priority>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <csymbol definitionURL="http://www.sbml.org/sbml/symbols/distrib/uniform" encoding="text"> uniform </csymbol>
+            <cn type="integer"> 0 </cn>
+            <cn type="integer"> 1 </cn>
+          </apply>
+        </math>
+      </priority>
+      <listOfEventAssignments>
+        <eventAssignment variable="n">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" xmlns:sbml="http://www.sbml.org/sbml/level3/version2/core">
+            <cn sbml:units="dimensionless" type="integer"> 3 </cn>
+          </math>
+        </eventAssignment>
+      </listOfEventAssignments>
+    </event>
+    <event id="E1" useValuesFromTriggerTime="true">
+      <trigger initialValue="true" persistent="false">
+        <math xmlns="http://www.w3.org/1998/Math/MathML" xmlns:sbml="http://www.sbml.org/sbml/level3/version2/core">
+          <apply>
+            <and/>
+            <apply>
+              <gt/>
+              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
+              <cn sbml:units="second" type="integer"> 2 </cn>
+            </apply>
+            <apply>
+              <lt/>
+              <ci> z </ci>
+              <cn sbml:units="dimensionless" type="integer"> 1 </cn>
+            </apply>
+          </apply>
+        </math>
+      </trigger>
+      <priority>
+        <math xmlns="http://www.w3.org/1998/Math/MathML" xmlns:sbml="http://www.sbml.org/sbml/level3/version2/core">
+          <apply>
+            <csymbol definitionURL="http://www.sbml.org/sbml/symbols/distrib/uniform" encoding="text"> uniform </csymbol>
+            <cn sbml:units="dimensionless" type="integer"> 0 </cn>
+            <cn sbml:units="dimensionless" type="integer"> 2 </cn>
+          </apply>
+        </math>
+      </priority>
+      <listOfEventAssignments>
+        <eventAssignment variable="z">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" xmlns:sbml="http://www.sbml.org/sbml/level3/version2/core">
+            <cn sbml:units="dimensionless" type="integer"> 5 </cn>
+          </math>
+        </eventAssignment>
+      </listOfEventAssignments>
+    </event>
+  </listOfEvents>
+</model>
+</sbml>

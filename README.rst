@@ -5,7 +5,6 @@ $ pip install git+https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
 
 
 
-
 Convert between SBML coded files and Pandas DataFrames
 ======================================================
 
@@ -49,5 +48,27 @@ Example::
                 print('  reactant: ', sbmlxdf.extract_params(record))
             for record in sbmlxdf.extract_records(reaction['products']):
                 print('  product:  ',sbmlxdf.extract_params(record))
+
+
+
+Workflow for creating SBML files:
+---------------------------------
+1. start with Excel spreadsheet model template
+   Excel templates can be created by converting existing SBML models
+   to Excel, e.g. using models from ./test/data/ directory
+   model = sbmlxdf.Model('ReferenceSBMLmodel.xml')
+   model.to_excel('templateModel.xlsx')
+2. modify / configure the template as needed
+   (use excel 'concat() function can speed up this process')
+3. import model using sbmlxdf:
+   mymodel = sbmlxdf.Model('mymodel.xlsx')
+4. validate comliance with SBML standard
+   mymodel.validate_sbml('tmp.xml')
+5. if warning or error messages are indicated, check messages in
+   'results/tmp.txt'; for line number references see 'tmp.xml'
+   correct messages and go back to step 3.
+6. once model complies with SBML, create your SBML model
+   mymodel.export_sbml('mySBMLmodel.xml')
+
 
 Peter Schubert, October 2020

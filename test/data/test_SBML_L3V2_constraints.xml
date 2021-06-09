@@ -37,7 +37,7 @@
             <and/>
             <apply>
               <lt/>
-              <cn sbml:units="mole"> 1 </cn>
+              <cn sbml:units="mole"> 1.3 </cn>
               <ci> S1 </ci>
             </apply>
             <apply>

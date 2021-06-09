@@ -2,7 +2,7 @@
 build/
 dist/
 __pycache__/
-results_dir/
+results/
 *.so
 *.lo
 *.o
