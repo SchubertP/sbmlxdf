@@ -21,7 +21,7 @@ LibSBML: An API Library for SBML. Bioinformatics, 24(6):880–881,
 doi:10.1093/bioinformatics/btn051.
 
 
-Example
+Example::
 
     import sbmlxdf
 
