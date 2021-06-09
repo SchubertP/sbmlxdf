@@ -3,6 +3,9 @@ Install:
 
 $ python3 -m pip install git+https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
 
+or, for access to sample SBML files in /test/data/
+
+$ git clone https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
 
 
 Convert between SBML coded files and Pandas DataFrames
@@ -67,6 +70,7 @@ Workflow for creating SBML files:
    using models from *./test/data/* directory
 
    ``model = sbmlxdf.Model('ReferenceSBMLmodel.xml')``
+
    ``model.to_excel('templateModel.xlsx')``
 
 2. Import Excel model

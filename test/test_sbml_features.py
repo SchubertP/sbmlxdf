@@ -15,7 +15,7 @@ SBML.xml -> (orig) -> tmp Excel.xlsx -> (xlsx) -> tmp SBML.xml -> (xml)
 - sample models can be used as reference to create excel spreadsheet templates
 
 Execute in package directory:
-$ pytest ./test/test_sbml_features.py -v
+$ pytest -v
 
 Peter Schubert, Computational Cell Biology, HHU Duesseldorf, June 2021
 """
@@ -26,12 +26,10 @@ import os
 
 import sbmlxdf
 
-
 ## pytest test/test_sbml_features.py -v
 
-pkg_dir = os.path.normpath(os.path.join(
-               os.path.dirname(os.path.abspath(sbmlxdf.__file__)), '..'))
-model_dir = os.path.join(pkg_dir, 'test', 'data')
+test_dir = os.path.dirname(__file__)
+model_dir = os.path.join(test_dir, 'data')
 pickel_dir = os.path.join(model_dir, 'pickel')
 
 def check_vs_reference(model_dfs, ref_dfs):
