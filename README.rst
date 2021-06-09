@@ -3,6 +3,9 @@ Install:
 
 $ python3 -m pip install git+https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
 
+or, for access to sample SBML files in /test/data/
+
+$ git clone https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
 
 
 Convert between SBML coded files and Pandas DataFrames
@@ -20,8 +23,14 @@ Bornstein, B. J., Keating, S. M., Jouraku, A., and Hucka M. (2008)
 LibSBML: An API Library for SBML. Bioinformatics, 24(6):880–881,
 doi:10.1093/bioinformatics/btn051.
 
+Note: **python-libsbml-experimental** package is used to support features in
+distrib package. It is imported with ``import libsbml``. If python-libsbml
+package is installed subsequently, e.g. as requirement for another tool,
+some functionality might get lost. In such case python-libsbml-experimental
+should be re-installed using pip install.
 
-Example
+
+Example::
 
     import sbmlxdf
 
@@ -67,6 +76,7 @@ Workflow for creating SBML files:
    using models from *./test/data/* directory
 
    ``model = sbmlxdf.Model('ReferenceSBMLmodel.xml')``
+
    ``model.to_excel('templateModel.xlsx')``
 
 2. Import Excel model
