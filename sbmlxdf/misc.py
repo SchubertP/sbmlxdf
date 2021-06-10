@@ -1,4 +1,4 @@
-"""Implementation of miscelanious functions.
+"""Implementation of miscellanious functions.
 
 Peter Schubert, HHU Duesseldorf, October 2020
 """

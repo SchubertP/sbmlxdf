@@ -12,16 +12,35 @@ Convert between SBML coded files and Pandas DataFrames
 ======================================================
 
 sbmlxdf supports, with few exceptions, all functionality of
-**SBML L3V2 core** package and extension packages **Flux Balance
-Constraints (fbc)**, **Groups (groups)** and **Distributions
-(distrib)**.
+**SBML L3V2 core** package [1]_ and extension packages **Flux Balance
+Constraints (fbc)** [2]_, **Groups (groups)** [3]_ and **Distributions
+(distrib)**[ 4]_.
 
 
-using **libSBML API** for accessing SBML.
+using **libSBML API** for accessing SBML [5]_.
 
-Bornstein, B. J., Keating, S. M., Jouraku, A., and Hucka M. (2008)
+.. [1] The Systems Biology Markup Language (SBML): Language Specification
+for Level 3 Version 2 Core (Release 2) Authors: Michael Hucka,
+Frank T. Bergmann, Claudine Chaouiya, Andreas Dräger, Stefan Hoops,
+Sarah M. Keating, Matthias König, Nicolas Le Novère, Chris J. Myers,
+Brett G. Olivier, Sven Sahle, James C. Schaff, Rahuman Sheriff,
+Lucian P. Smith, Dagmar Waltemath, Darren J. Wilkinson, and Fengkai Zhang
+.. [2] Olivier, B. G., & Bergmann, F. T. (2018). SBML Level 3 Package:
+Flux Balance Constraints version 2. Journal of Integrative Bioinformatics,
+15(1), 20170082.
+.. [3] Hucka, M., & Smith, L. P. (2016). SBML Level 3 package: Groups,
+Version 1 Release 1. _Journal of Integrative Bioinformatics_, 13(3), 290.
+.. [4] Smith, L. P., Moodie, S. L., Bergmann, F. T., Gillespie, C., Keating,
+S. M., König, M., Myers, C. J., Swat, M. J., Wilkinson, D. J., and Hucka,
+M. (2020). The Distributions Package for SBML Level 3. Retrieved from from
+COMBINE, https://identifiers.org/combine.specifications/
+sbml.level-3.version-1.distrib.version-1.release-1
+.. [5] Bornstein, B. J., Keating, S. M., Jouraku, A., and Hucka M. (2008)
 LibSBML: An API Library for SBML. Bioinformatics, 24(6):880–881,
 doi:10.1093/bioinformatics/btn051.
+
+
+
 
 Note: **python-libsbml-experimental** package is used to support features in
 distrib package. It is imported with ``import libsbml``. If python-libsbml
@@ -66,6 +85,42 @@ Example::
                 print('  product:  ', sbmlxdf.extract_params(record))
 
 
+Methods
+-------
+| create Model object, empty or from file
+|   sbmlxdf.Model()
+|   sbmlxdf.Model('model.xml')
+|   sbmlxdf.Model('model.xlsx')
+|   sbmlxdf.Model('model_dir')
+|
+| read/write SBML file
+|   sbmlxdf.Model.import_sbml('model.xml')
+|   sbmlxdf.Model.export_sbml('model.xml')
+|
+| read/write Excel spreadsheet with model data
+|  sbmlxdf.Model.from_excel('model.xlsx')
+|  sbmlxdf.Model.to_excel('model.xlsx')
+|
+| read/write model coded in set of .csv files
+|   sbmlxdf.Model.from_csv('model_dir')
+|   sbmlxdf.Model.to_csv('model_dir')
+|
+| convert model data to/from dict of Pandas dataframes
+|   sbmlxdf.Model.to_df()
+|   sbmlxdf.Model.from_df(model_dict)
+|
+| validate compliance with SBML specification (units check enabled/disabled)
+|   sbmlxdf.Model.validate_sbml('tmp.xml', units_check=True)
+|
+| miscellanious - data extraction helper functions
+|   sbmlxdf.misc.extract_params(record_str)
+|     extract dict of parameters from record
+|   sbmlxdf.misc.extract_records(lo_record_str)
+|     extract record from a list of records
+|   sbmlxdf.misc.extract_lo_records(lo_lo_records_str)
+|     extract list of records from a list of list of records
+|
+
 Workflow for creating SBML files:
 ---------------------------------
 1. Create and Excel model. e.g. 'mymodel.xlsx'
@@ -98,6 +153,39 @@ back to step 2.
 5. Upon successful validation write out your SBML model
 
    ``mymodel.export_sbml('mySBMLmodel.xml')``
+
+Sample Python script to generate SBML coded model from Excel coded model::
+
+    # xslx2sbml.py
+    # a simple script to convert excel coded model into SBML coded model.
+    # Peter Schubert, HHU Duesseldorf, 10.06.2021
+
+    import sys
+    import os.path
+    import sbmlxdf
+
+    # command line argument handling (simple)
+    if len(sys.argv) > 1:
+       excel_in = sys.argv[1]
+       sbml_out = excel_in.replace('.xlsx', '.xml')
+    else:
+       print('use:', os.path.basename(sys.argv[0]), 'xlsx_file [-f]')
+       print('     -f: forced; write SBML despite warnings')
+       sys.exit()
+    forced = (len(sys.argv) > 2) and (sys.argv[2] == '-f')
+
+    # read in excel file
+    model = sbmlxdf.Model(excel_in)
+    # check compliance with SBML specification
+    val_result = model.validate_sbml('tmp.xml')
+    print('validation result:', val_result)
+    if (len(val_result) == 0) or (forced and ('Errors' not in val_result.keys())):
+       model.export_sbml(sbml_out)
+       print('SBML file created:', sbml_out)
+    else:
+       print('correct xlsx and run converter again; -f option ignores warnings.\n')
+       print(open(os.path.join('.', 'results', 'tmp.txt'), 'r').read())
+
 
 
 Peter Schubert, October 2020
