@@ -25,28 +25,28 @@ some functionality might get lost. In such case python-libsbml-experimental
 should be re-installed using pip install.
 
 .. [1] The Systems Biology Markup Language (SBML): Language Specification
-for Level 3 Version 2 Core (Release 2) Authors: Michael Hucka,
-Frank T. Bergmann, Claudine Chaouiya, Andreas Dräger, Stefan Hoops,
-Sarah M. Keating, Matthias König, Nicolas Le Novère, Chris J. Myers,
-Brett G. Olivier, Sven Sahle, James C. Schaff, Rahuman Sheriff,
-Lucian P. Smith, Dagmar Waltemath, Darren J. Wilkinson, and Fengkai Zhang
+  for Level 3 Version 2 Core (Release 2) Authors: Michael Hucka,
+  Frank T. Bergmann, Claudine Chaouiya, Andreas Dräger, Stefan Hoops,
+  Sarah M. Keating, Matthias König, Nicolas Le Novère, Chris J. Myers,
+  Brett G. Olivier, Sven Sahle, James C. Schaff, Rahuman Sheriff,
+  Lucian P. Smith, Dagmar Waltemath, Darren J. Wilkinson, and Fengkai Zhang
 
 .. [2] Olivier, B. G., & Bergmann, F. T. (2018). SBML Level 3 Package:
-Flux Balance Constraints version 2. Journal of Integrative Bioinformatics,
-15(1), 20170082.
+  Flux Balance Constraints version 2. Journal of Integrative Bioinformatics,
+  15(1), 20170082.
 
 .. [3] Hucka, M., & Smith, L. P. (2016). SBML Level 3 package: Groups,
-Version 1 Release 1. _Journal of Integrative Bioinformatics_, 13(3), 290.
+  Version 1 Release 1. _Journal of Integrative Bioinformatics_, 13(3), 290.
 
 .. [4] Smith, L. P., Moodie, S. L., Bergmann, F. T., Gillespie, C., Keating,
-S. M., König, M., Myers, C. J., Swat, M. J., Wilkinson, D. J., and Hucka,
-M. (2020). The Distributions Package for SBML Level 3. Retrieved from from
-COMBINE, https://identifiers.org/combine.specifications/
-sbml.level-3.version-1.distrib.version-1.release-1
+  S. M., König, M., Myers, C. J., Swat, M. J., Wilkinson, D. J., and Hucka,
+  M. (2020). The Distributions Package for SBML Level 3. Retrieved from from
+  COMBINE, https://identifiers.org/combine.specifications/
+  sbml.level-3.version-1.distrib.version-1.release-1
 
 .. [5] Bornstein, B. J., Keating, S. M., Jouraku, A., and Hucka M. (2008)
-LibSBML: An API Library for SBML. Bioinformatics, 24(6):880–881,
-doi:10.1093/bioinformatics/btn051.
+  LibSBML: An API Library for SBML. Bioinformatics, 24(6):880–881,
+  doi:10.1093/bioinformatics/btn051.
 
 
 Example::
