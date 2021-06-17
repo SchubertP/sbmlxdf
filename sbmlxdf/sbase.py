@@ -12,8 +12,11 @@ from abc import ABC, abstractmethod
 
 import libsbml
 
+from sbmlxdf.annotation import Annotation
 from sbmlxdf.misc import extract_params, extract_records, extract_lo_records
 
+# RDF namespace for MIRIAM type annotations
+rdf_namespace = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 
 class SBase(ABC):
     """Abstract Class SBase, the base Class for any model object.
@@ -89,10 +92,12 @@ class SBase(ABC):
             sb_dict['id'] = self.id
         if hasattr(self, 'name'):
             sb_dict['name'] = self.name
+        if hasattr(self, 'metaid'):
+            sb_dict['metaid'] = self.metaid
         if hasattr(self, 'sboterm'):
             sb_dict['sboterm'] = self.sboterm
-        if hasattr(self, 'lo_uncertainties'):
-            sb_dict['uncertainties'] = self.lo_uncertainties.to_df()
+        if hasattr(self, 'annotation'):
+            sb_dict.update(self.annotation.to_df())
         if hasattr(self, 'notes'):
             xnotes = libsbml.XMLNode.convertStringToXMLNode(self.notes)
             if isinstance(xnotes, libsbml.XMLNode) and xnotes.getNumChildren():
@@ -100,10 +105,8 @@ class SBase(ABC):
               xbody = xnotes.getChild(0)
               for child in range(xbody.getNumChildren()):
                 sb_dict['notes'] += xbody.getChild(child).toXMLString().strip()
-        if hasattr(self, 'metaid'):
-            sb_dict['metaid'] = self.metaid
-        if hasattr(self, 'annotation'):
-            sb_dict['annotation'] = self.annotation.to_df()
+        if hasattr(self, 'lo_uncertainties'):
+            sb_dict['uncertainties'] = self.lo_uncertainties.to_df()
         return sb_dict
 
     @abstractmethod
@@ -116,6 +119,9 @@ class SBase(ABC):
             self.sboterm = obj_dict['sboterm']
         if 'metaid' in obj_dict:
             self.metaid = obj_dict['metaid']
+        if Annotation.is_annotation(obj_dict):
+            self.annotation = Annotation()
+            self.annotation.from_df(obj_dict)
         if 'notes' in obj_dict:
             notes = ('<notes>'
                      '  <body xmlns="http://www.w3.org/1999/xhtml">'
@@ -131,92 +137,9 @@ class SBase(ABC):
                 for i in range(xcontent.getNumChildren()):
                     xbody.addChild(xcontent.getChild(i))
             self.notes = xnotes.toXMLString()
-        if 'annotation' in obj_dict:
-            self.annotation = Annotation()
-            self.annotation.from_df(obj_dict['annotation'])
         if 'uncertainties' in obj_dict:
             self.lo_uncertainties = ListOfUncertainties()
             self.lo_uncertainties.from_df(obj_dict['uncertainties'])
-
-
-class Annotation:
-
-    def __init__(self):
-        self.cvterms = []
-
-    def import_sbml(self, sbml_obj):
-        for sbml_cv in sbml_obj.getCVTerms():
-            cv = CVTerm()
-            cv.import_sbml(sbml_cv)
-            self.cvterms.append(cv)
-
-    def export_sbml(self, sbml_obj):
-        for cv in self.cvterms:
-            cv.export_sbml(sbml_obj)
-
-    def to_df(self):
-        return '; '.join(cv.to_df() for cv in self.cvterms)
-
-    def from_df(self, annotation_str):
-        for cv_str in annotation_str.split(';'):
-            cv = CVTerm()
-            cv.from_df(cv_str)
-            self.cvterms.append(cv)
-
-
-class CVTerm:
-
-    def __init__(self):
-        self.qual_type = ''
-        self.sub_type = ''
-        self.resource_uri = []
-
-    def import_sbml(self, sbml_cv):
-        qual_type_id = sbml_cv.getQualifierType()
-        if qual_type_id == libsbml.BIOLOGICAL_QUALIFIER:
-            self.qual_type = 'bqbiol'
-            self.sub_type = libsbml.BiolQualifierType_toString(
-                                sbml_cv.getBiologicalQualifierType())
-        if qual_type_id == libsbml.MODEL_QUALIFIER:
-            self.qual_type = 'bqmodel'
-            self.sub_type = libsbml.ModelQualifierType_toString(
-                                sbml_cv.getModelQualifierType())
-        for r_idx in range(sbml_cv.getNumResources()):
-            self.resource_uri.append(sbml_cv.getResourceURI(r_idx))
-
-    def export_sbml(self, sbml_obj):
-        sbml_cv = libsbml.CVTerm()
-        if self.qual_type == 'bqbiol':
-            sbml_cv.setQualifierType(libsbml.BIOLOGICAL_QUALIFIER)
-            sbml_cv.setBiologicalQualifierType(self.sub_type)
-        if self.qual_type == 'bqmodel':
-            sbml_cv.setQualifierType(libsbml.MODEL_QUALIFIER)
-            sbml_cv.setModelQualifierType(self.sub_type)
-        for uri in self.resource_uri:
-            sbml_cv.addResource(uri)
-            sbml_obj.addCVTerm(sbml_cv)
-
-    def to_df(self):
-        cv_str = ''
-        cv_str = self.qual_type + ':' + self.sub_type
-        cv_str += ', ' + ', '.join([s.replace('http://identifiers.org/', '')
-                                    for s in self.resource_uri])
-        return cv_str
-
-    def from_df(self, cv_str):
-        try:
-            parts = cv_str.split(',')
-            qual = parts[0].split(':')
-            self.qual_type = qual[0].strip()
-            self.sub_type = qual[1].strip()
-            for i in range(1, len(parts)):
-                path = parts[i].strip()
-                if not (path.find('urn:') == 0 or
-                        path.find('http') == 0):
-                    path = 'http://identifiers.org/' + path
-                self.resource_uri.append(path)
-        except IndexError as err:
-            print(err)
 
 
 class ListOfUncertainties(SBase):

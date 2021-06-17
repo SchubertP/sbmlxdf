@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
+  <model id="test_xml_annotation" name="test_xml_annotation" metaid="test_xml_annotation" substanceUnits="item">
+    <notes>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <p>Test XML Annotation<br/>
+           Based on:<br/>
+           The Systems Biology Markup Language (SBML):<br/>
+           Language Specification for Level 3 Version 2 Core<br/>
+           Chapter 3.2.6: Annotation<br/>
+           Chapter 6.7: Example of species annotation<br/>
+        </p>
+      </body>
+    </notes>
+    <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vcard4="http://www.w3.org/2006/vcard/ns#"          xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"          xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+        <rdf:Description rdf:about="#test_xml_annotation">
+          <dcterms:creator>
+            <rdf:Bag>
+              <rdf:li rdf:parseType="Resource">
+                <vcard4:hasName rdf:parseType="Resource">
+                  <vcard4:family-name>Schubert</vcard4:family-name>
+                  <vcard4:given-name>Peter</vcard4:given-name>
+                </vcard4:hasName>
+                <vcard4:hasEmail>Peter.Schubert@hhu.de</vcard4:hasEmail>
+                <vcard4:organization-name>Heinrich-Heine-Unitversity Duesseldorf</vcard4:organization-name>
+              </rdf:li>
+              <rdf:li rdf:parseType="Resource">
+                <vcard4:hasName rdf:parseType="Resource">
+                  <vcard4:family-name>Shapiro</vcard4:family-name>
+                  <vcard4:given-name>Bruce</vcard4:given-name>
+                </vcard4:hasName>
+                <vcard4:hasEmail>bshapiro@jpl.nasa.gov</vcard4:hasEmail>
+                <vcard4:organization-name>NASA Jet Propulsion Laboratory</vcard4:organization-name>
+              </rdf:li>
+            </rdf:Bag>
+          </dcterms:creator>
+          <dcterms:created rdf:parseType="Resource">
+            <dcterms:W3CDTF>2005-02-06T23:39:40+00:00</dcterms:W3CDTF>
+          </dcterms:created>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2005-09-13T13:24:56+00:00</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2020-09-25T10:00:00+01:00</dcterms:W3CDTF>
+          </dcterms:modified>
+          <bqmodel:is>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/biomodels.db/BIOMD0000000003"/>
+            </rdf:Bag>
+          </bqmodel:is>
+          <bqmodel:isDescribedBy>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/pubmed/1833774"/>
+            </rdf:Bag>
+          </bqmodel:isDescribedBy>
+          <bqbiol:isVersionOf>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/wikipathways/WP179"/>
+              <rdf:li rdf:resource="http://identifiers.org/reactome/REACT_152"/>
+            </rdf:Bag>
+          </bqbiol:isVersionOf>
+        </rdf:Description>
+      </rdf:RDF>
+    </annotation>
+    <listOfUnitDefinitions>
+      <unitDefinition id="volume" name="volume">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="C" name="cell" spatialDimensions="3" size="1e-06" units="volume" constant="true" sboTerm="SBO:0000290">
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="Ca_calmodulin" metaid="cacam" compartment="C" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF
+              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+              xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"
+              xmlns:dcterms="http://purl.org/dc/terms/"
+              xmlns:vcard4="http://www.w3.org/2006/vcard/ns#" >
+            <rdf:Description rdf:about="#cacam">
+              <dcterms:creator>
+                <rdf:Bag>
+                  <rdf:li rdf:parseType="Resource">
+                    <vcard4:hasName rdf:parseType="Resource">
+                      <vcard4:family-name>Schubert</vcard4:family-name>
+                      <vcard4:given-name>Peter</vcard4:given-name>
+                    </vcard4:hasName>
+                    <vcard4:hasEmail>Peter.Schubert@hhu.de</vcard4:hasEmail>
+                    <vcard4:organization-name>Heinrich-Heine-Unitversity Duesseldorf</vcard4:organization-name>
+                  </rdf:li>
+                </rdf:Bag>
+              </dcterms:creator>
+              <dcterms:created rdf:parseType="Resource">
+                <dcterms:W3CDTF>2005-02-06T23:39:40+00:00</dcterms:W3CDTF>
+              </dcterms:created>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2020-09-25T10:00:00+01:00</dcterms:W3CDTF>
+              </dcterms:modified>
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P10000"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:10000"/>
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species id="x" metaid="x" compartment="C" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <annotation>
+          <bgm:molecule xmlns:bgm="http://www.hhu.de/ccb/bgm/molecule/ns"
+              bgm:weight_Da="123.5" bgm:atomCount="23"/>
+          <rdf:RDF
+              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+              xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"        >
+            <rdf:Description rdf:about="#x">
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P20000"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:20000"/>
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+          <struct:bonds xmlns:struct="http://www.struct.org/ns"
+              struct:number="2" struct:type="ionic"/>
+        </annotation>
+      </species>
+      <species id="y" metaid="y" compartment="C" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF
+              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+              xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#y">
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P3000"/>
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+          <bgm:molecule xmlns:bgm="http://www.hhu.de/ccb/bgm/molecule/ns"
+              bgm:weight_Da="90.12" bgm:atomCount="12"/>
+        </annotation>
+      </species>
+      <species id="z" compartment="C" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <annotation>
+          <bgm:molecule xmlns:bgm="http://www.hhu.de/ccb/bgm/molecule/ns"
+              bgm:weight_Da="18.02" bgm:atomCount="3"/>
+          <struct:bonds xmlns:struct="http://www.struct.org/ns"
+              struct:number="2" struct:type="ionic"/>
+        </annotation>
+      </species>
+    </listOfSpecies>
+  </model>
+</sbml>

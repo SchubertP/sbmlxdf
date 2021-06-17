@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
-  <model id="dimerization" substanceUnits="item" timeUnits="second" volumeUnits="litre" extentUnits="item">
+  <model id="stochasicSim" name="stochasicSim" substanceUnits="item" timeUnits="second" volumeUnits="litre" extentUnits="item">
       <notes>
         <body xmlns="http://www.w3.org/1999/xhtml">
           <p>Test discrete stochastic simulation model<br/>

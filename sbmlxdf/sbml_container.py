@@ -20,10 +20,15 @@ class SbmlContainer(SBase):
         super().import_sbml(sbml_doc)
         self.level = sbml_doc.getLevel()
         self.version = sbml_doc.getVersion()
-        for idx in range(1, sbml_doc.getNumPlugins()):
+
+        for idx in range(sbml_doc.getNumPlugins()):
             p = sbml_doc.getPlugin(idx)
             pname = p.getPackageName()
-            self.packages[pname] = {'version': p.getPackageVersion(),
+            pversion =  p.getPackageVersion()
+            # there seems to be a bug, that l3v2extendedmath is returned
+            if (idx == 0) and (pname=='l3v2extendedmath') and (pversion == 0):
+                continue
+            self.packages[pname] = {'version': pversion,
                                     'required': sbml_doc.getPkgRequired(pname)}
 
     def create_sbml_doc(self):
@@ -48,11 +53,12 @@ class SbmlContainer(SBase):
         sc_dict['level'] = self.level
         sc_dict['version'] = self.version
         attr = []
-        for pname, val in self.packages.items():
-            attr.append(', '.join(['name=' + pname,
-                                   'version=' + str(val['version']),
-                                   'required=' + str(val['required'])]))
-        sc_dict['packages'] = '; '.join(attr)
+        if len(self.packages) > 0:
+            for pname, val in self.packages.items():
+                attr.append(', '.join(['name=' + pname,
+                                       'version=' + str(val['version']),
+                                       'required=' + str(val['required'])]))
+            sc_dict['packages'] = '; '.join(attr)
         return pd.Series(sc_dict)
 
     def from_df(self, sc_s):

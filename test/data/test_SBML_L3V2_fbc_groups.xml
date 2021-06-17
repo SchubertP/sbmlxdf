@@ -2,7 +2,7 @@
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2"
     xmlns:fbc="http://www.sbml.org/sbml/level3/version1/fbc/version2" fbc:required="false"
     xmlns:groups="http://www.sbml.org/sbml/level3/version1/groups/version1" groups:required="false">
-  <model fbc:strict="true" id="fba_example" extentUnits="substance" substanceUnits="substance" timeUnits="time" >
+  <model id="fbc_groups" name="fbc_groups" fbc:strict="true" extentUnits="substance" substanceUnits="substance" timeUnits="time" >
     <notes>
       <body xmlns="http://www.w3.org/1999/xhtml">
         <p>Test import and export fbc and groups<br/>

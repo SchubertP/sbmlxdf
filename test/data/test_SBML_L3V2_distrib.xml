@@ -2,7 +2,7 @@
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2"
     xmlns:distrib="http://www.sbml.org/sbml/level3/version1/distrib/version1"
     distrib:required="true">
-  <model id="test_distrib" name="distrib" extentUnits="substance" substanceUnits="substance" timeUnits="second">
+  <model id="distrib" name="distrib" extentUnits="substance" substanceUnits="substance" timeUnits="second">
     <notes>
       <body xmlns="http://www.w3.org/1999/xhtml">
         <p>Test import and export of distribution package elements<br />

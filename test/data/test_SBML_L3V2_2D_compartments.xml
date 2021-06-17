@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
-  <model id="facilitated_ca_diffusion" substanceUnits="substance" areaUnits="area" volumeUnits="litre" timeUnits="second" extentUnits="substance">
+  <model id="facilitated_diffusion" name="facilitated_diffusion" substanceUnits="substance" areaUnits="area" volumeUnits="litre" timeUnits="second" extentUnits="substance">
       <notes>
         <body xmlns="http://www.w3.org/1999/xhtml">
           <p>Test two-dimensional compartments<br/>

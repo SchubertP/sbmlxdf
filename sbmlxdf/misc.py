@@ -3,6 +3,7 @@
 Peter Schubert, HHU Duesseldorf, October 2020
 """
 import re
+import libsbml
 
 _map_mathml2numpy = (
 # arithmetic operators
@@ -34,7 +35,27 @@ _map_mathml2numpy = (
 def mathml2numpy(mformula, np_ns='np'):
     """Convert mathml infix to a numpy formula.
 
-    could be implemented as a (static) class
+    Basically prefixes math functions with a numpy prefix.
+    Other mathml functions are converted to respective numpy equivalent.
+    Mathml functions that have no a simple numpy equivalent, are kept as is.
+    e.g. piecewise().
+
+    Parameters
+    ----------
+    mformula : str
+        string with mathml infix notation extracted from SBML
+
+    np_ns : str
+        numpy namespace prefix used in own Python code.
+        default: 'np'
+
+    Returns
+    -------
+    str
+        containing mathml operators and functions converted
+        to numpy notation. Sting could be further processed and
+        converted to a numpy function.
+
     """
     np_formula = ' ' + mformula
     np_formula = re.sub(r'\s?dimensionless\s?', ' ', np_formula)
@@ -49,10 +70,28 @@ def mathml2numpy(mformula, np_ns='np'):
 
 
 def extract_params(s):
-    # extract parameters from a record and returns these in a dictionary
-    # (key=value) are separated by ','
-    # consider nested values in square brackets (key=[nested value])
-    # consider functions in round brackets (e.g. math=gamma(shape_Z, scale_Z))
+    """Extract parameters from a record and return them in a dict.
+
+    Parameters
+    ----------
+    s : str
+        record string containting key-value pairs 'key=value'
+        key-value pairs are separated by ','.
+        e.g. 'key1=value1, key2=value2, key3=value3'
+        white spaces are getting removed.
+        considers nested records in square brackets (key=[nested records])
+        values can be functions, e.g. math=gamma(shape_Z, scale_Z)
+
+    Returns
+    -------
+    dict
+        keys and values extracted from record
+
+    see also:
+        extract_records()
+        extract_lo_records()
+
+    """
     find_key = re.compile(r'\s*(?P<key>\w*)\s*=\s*')
     params = {}
     pos = 0
@@ -92,9 +131,27 @@ def extract_params(s):
 
 
 def extract_records(s):
-    # extract records from a list of records
-    # records are separated by ';'
-    # considers nested values in square brackets (key=[nested values])
+    """Split group of records of into a list of individual records.
+
+    Parameters
+    ----------
+    s : str
+        string with group of records that are separated by ';'
+        e.g. 'record1; record2; record3'
+        records consist of key-value pairs,
+        e.g. record1 = 'key1=value1, key2=value2, key3=value3'
+        considers nested records in square brackets (key=[nested records])
+
+    Returns
+    -------
+    list
+        list with strings of individual records
+        which can be processed by extract_params()
+
+    see also:
+        extract_params()
+        extract_lo_records()
+    """
     records = []
     brackets = 0
     pos = 0
@@ -114,9 +171,30 @@ def extract_records(s):
 
 
 def extract_lo_records(s):
+    """Split groups of groups of records into a list of groups of records.
+
+    Parameters
+    ----------
+    s : str
+        string with groups of groups of records
+        groups of records are enclosed in square brackets and separated by ';'.
+        e.g. '[record1; record2; ...];[record7; record8; ...]'
+        considers nested records in square brackets (key=[nested records])
+
+    Returns
+    -------
+    list
+        list with strings of group of records
+        which can be processed by extract_records()
+
+    see also:
+        extract_parmas()
+        extract_records()
+
+    """
     # extract list of records from a list of list of records
     # list of records are enclosed by square brackets and separated by ';'
-    # "[record; record; ...];[record; record; ...]
+    # "v
     # considers nested values in square brackets (key=[nested values])
     lo_records = []
     pos = 0
@@ -140,3 +218,30 @@ def extract_lo_records(s):
         else:
             break
     return lo_records
+
+
+def extract_xml_attrs(xml_annots, namespace):
+    """Extract attributes from xml-annotation for given namespace.
+
+    Parameters
+    ----------
+    xml_annots : str
+        xml-annotation string from object
+
+    namespace : str
+        namespace for which attributes should be collected.
+
+    Returns
+    -------
+    dict
+        attribute key and attribute values extracted for specific namespace
+
+    """
+    xml_attrs = {}
+    for xml_str in xml_annots.split(';'):
+        params = extract_params(xml_str)
+        if params['ns_uri'] == namespace:
+            for k, v in params.items():
+                if k not in {'ns_uri', 'prefix', 'token'}:
+                    xml_attrs[k] = v
+    return xml_attrs

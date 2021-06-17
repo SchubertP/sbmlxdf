@@ -29,6 +29,7 @@ from sbmlxdf.unit_defs import ListOfUnitDefs
 from sbmlxdf.misc import extract_params
 from sbmlxdf._version import __version__, program_name
 
+# directory where to write result files of validate_sbml()
 results_dir = 'results'
 
 IS_SERIES = 1
@@ -38,7 +39,7 @@ _sheets = {'sbml': IS_SERIES, 'modelAttrs': IS_SERIES,
            'funcDefs': IS_DF_INDEXED , 'unitDefs' : IS_DF_INDEXED,
            'compartments' : IS_DF_INDEXED, 'species': IS_DF_INDEXED,
            'parameters': IS_DF_INDEXED, 'initAssign': IS_DF_INDEXED,
-           'reactions': IS_DF_INDEXED, 'S_info' : IS_DF_INDEXED,
+           'reactions': IS_DF_INDEXED,
            'fbcObjectives': IS_DF_INDEXED, 'fbcGeneProducts': IS_DF_INDEXED,
            'rules': IS_DF_NOTINDEXED, 'constraints': IS_DF_NOTINDEXED,
            'events': IS_DF_NOTINDEXED, 'groups': IS_DF_NOTINDEXED}
@@ -49,15 +50,47 @@ class SbmlFileError(Exception):
 
 
 class Model(SBase):
+    """Main Model class to represent the SBML model.
+
+    Methods
+    -------
+        __init__() : constructor, empty model or from file (e.g. SBML, Excel)
+
+        import_sbml() : import model from sbml-file
+        validate_sbml() : validate model against SBML specification
+        export_sbml() : export model to sbml-file
+
+        to_df() : export model to dict of Pandas dataframes
+        from_df() : import model from dict of Pandas dataframes
+
+        to_excel() : export model to Excel or OpenOffice spreadsheet
+        from_excel() : import model from Excel or OpenOffice spreadsheet
+
+        to_csv() : export model to a set of .csv files
+        from_csv : import model from a directory with a set of .csv files
+
+        get_s_matrix() : retrieve stoichiometric matrix of the model.
+    """
 
     def __init__(self, import_file=None):
+        """Constructor.
+
+        Parameters
+        ----------
+        import_file : str (optional)
+            During instantiation, model can be imported from file.
+            can be valid sbml file (.xml), Excel spreadsheet (.xlsx),
+            OpenOffice spreadsheet (.ods) or directory holding .csv files.
+
+        """
         self.isModel = False
         self.list_of = {}
         super().__init__()
         if type(import_file) == str:
             if import_file.endswith('.xml'):
                 self.import_sbml(import_file)
-            elif import_file.endswith('.xlsx'):
+            elif (import_file.endswith('.xlsx') or
+                  import_file.endswith('.ods')):
                 self.from_excel(import_file)
             elif os.path.exists(import_file):
                 self.from_csv(import_file)
@@ -175,23 +208,45 @@ class Model(SBase):
             writer.setProgramVersion(__version__)
             writer.writeSBML(sbml_doc, sbml_filename)
 
-    def _get_stoich_matrix(self, df_species, df_reactions, sparse=False):
-        df_N = pd.DataFrame(np.zeros((len(df_species), len(df_reactions))),
-                            index=df_species.index.values,
-                            columns=df_reactions.index.values)
-        for idx, r in df_reactions.iterrows():
-            if type(r['reactants']) == str:
-              for reac in r['reactants'].split(';'):
-                s_d = extract_params(reac)
-                df_N.at[s_d['species'], idx] -= float(s_d.get('stoic', 1.0))
-            if type(r['products']) == str:
-              for prod in r['products'].split(';'):
-                s_d = extract_params(prod)
-                df_N.at[s_d['species'], idx] += float(s_d.get('stoic', 1.0))
-        if sparse:
-            return df_N.astype(pd.SparseDtype('float', 0.0))
+    def get_s_matrix(self, sparse=False):
+        """Retrieve stoichiometric matrix of the modell.
+
+        requires both species and reactions to be defined
+
+        Parameters
+        ----------
+            sparse : boolen (optional, default=False)
+                specify if S-matrix should be returned in sparse format (True)
+
+        Returns
+        -------
+            Pandas DataFrame
+                stoichiometric matrix normal or in sparse format (sparse=True)
+
+        """
+        if ('species' in self.list_of) and ('reactions' in self.list_of):
+            df_species = self.list_of['species'].to_df()
+            df_reactions = self.list_of['reactions'].to_df()
+
+            df_S = pd.DataFrame(np.zeros((len(df_species), len(df_reactions))),
+                                index=df_species.index.values,
+                                columns=df_reactions.index.values)
+            for idx, r in df_reactions.iterrows():
+                if type(r['reactants']) == str:
+                  for reac in r['reactants'].split(';'):
+                    s_d = extract_params(reac)
+                    df_S.at[s_d['species'], idx] -= float(s_d.get('stoic', 1.0))
+                if type(r['products']) == str:
+                  for prod in r['products'].split(';'):
+                    s_d = extract_params(prod)
+                    df_S.at[s_d['species'], idx] += float(s_d.get('stoic', 1.0))
         else:
-            return df_N
+            df_S = pd.DataFrame(np.zeros((0,0)))
+
+        if sparse==True:
+            return df_S.astype(pd.SparseDtype('float', 0.0))
+        else:
+            return df_S
 
     def to_df(self):
         model_dict = {'sbml': self.sbml_container.to_df() }
@@ -204,9 +259,6 @@ class Model(SBase):
                   model_dict['reactions']['fbcLowerFluxBound'].replace(params)
                 model_dict['reactions']['fbcUb'] = \
                   model_dict['reactions']['fbcUpperFluxBound'].replace(params)
-        if 'species' in model_dict and 'reactions' in model_dict:
-            model_dict['S_info'] = self._get_stoich_matrix(
-                model_dict['species'], model_dict['reactions'])
         return model_dict
 
     def from_df(self, model_dict):
@@ -263,9 +315,6 @@ class Model(SBase):
                 component.to_excel(writer, **params)
 
     def from_excel(self, file_name):
-        # import model properly coded as Excel spreadsheet
-        # all values imported as string SparseDtype
-        # remove any trailing empty lines from Excel import
         if not os.path.exists(file_name):
             print('Excel document not found: ' + file_name)
             return False

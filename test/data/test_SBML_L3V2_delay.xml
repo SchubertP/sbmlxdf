@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
-  <model substanceUnits="mole" volumeUnits="litre" extentUnits="mole" timeUnits="second">
+  <model id="delay" name="delay" substanceUnits="mole" volumeUnits="litre" extentUnits="mole" timeUnits="second">
       <notes>
         <body xmlns="http://www.w3.org/1999/xhtml">
           <p>Test delay functions<br/>

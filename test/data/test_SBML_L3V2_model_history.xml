@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
-  <model metaid="_180340" id="GMO" name="Goldbeter1991_MinMitOscil">
+  <model id="history" name="history" metaid="_history">
     <notes>
       <body xmlns="http://www.w3.org/1999/xhtml">
         <p>Test Model History<br/>
@@ -13,7 +13,7 @@
   </notes>
   <annotation>
     <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vcard4="http://www.w3.org/2006/vcard/ns#"          xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"          xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-      <rdf:Description rdf:about="#_180340">
+      <rdf:Description rdf:about="#_history">
         <dcterms:creator>
           <rdf:Bag>
             <rdf:li rdf:parseType="Resource">

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
-  <model id="test_ud" name="unitdefs" >
+  <model id="compartments" name="compartments" >
     <listOfUnitDefinitions>
       <unitDefinition id="volume" name="volume">
         <listOfUnits>
