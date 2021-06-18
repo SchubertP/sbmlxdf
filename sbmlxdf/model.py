@@ -35,14 +35,35 @@ results_dir = 'results'
 IS_SERIES = 1
 IS_DF_INDEXED = 2
 IS_DF_NOTINDEXED = 3
-_sheets = {'sbml': IS_SERIES, 'modelAttrs': IS_SERIES,
-           'funcDefs': IS_DF_INDEXED , 'unitDefs' : IS_DF_INDEXED,
-           'compartments' : IS_DF_INDEXED, 'species': IS_DF_INDEXED,
-           'parameters': IS_DF_INDEXED, 'initAssign': IS_DF_INDEXED,
-           'reactions': IS_DF_INDEXED,
-           'fbcObjectives': IS_DF_INDEXED, 'fbcGeneProducts': IS_DF_INDEXED,
-           'rules': IS_DF_NOTINDEXED, 'constraints': IS_DF_NOTINDEXED,
-           'events': IS_DF_NOTINDEXED, 'groups': IS_DF_NOTINDEXED}
+_sheets = {
+    'sbml': IS_SERIES, 'modelAttrs': IS_SERIES, 'funcDefs': IS_DF_INDEXED,
+    'unitDefs' : IS_DF_INDEXED, 'compartments' : IS_DF_INDEXED,
+    'species': IS_DF_INDEXED, 'parameters': IS_DF_INDEXED,
+    'initAssign': IS_DF_INDEXED, 'rules': IS_DF_NOTINDEXED,
+    'constraints': IS_DF_NOTINDEXED, 'reactions': IS_DF_INDEXED,
+    'events': IS_DF_NOTINDEXED, 'fbcObjectives': IS_DF_INDEXED,
+    'fbcGeneProducts': IS_DF_INDEXED, 'groups': IS_DF_NOTINDEXED
+    }
+
+_lists_of = {
+    'modelAttrs': [libsbml.Model.hasRequiredElements, ModelAttrs],
+    'funcDefs': [libsbml.Model.getNumFunctionDefinitions, ListOfFunctionDefs],
+    'unitDefs': [libsbml.Model.getNumUnitDefinitions, ListOfUnitDefs],
+    'compartments': [libsbml.Model.getNumCompartments, ListOfCompartments],
+    'species': [libsbml.Model.getNumSpecies, ListOfSpecies],
+    'parameters': [libsbml.Model.getNumParameters, ListOfParameters],
+    'initAssign': [libsbml.Model.getNumInitialAssignments, ListOfInitAssign],
+    'rules': [libsbml.Model.getNumRules, ListOfRules],
+    'constraints': [libsbml.Model.getNumConstraints, ListOfConstraints],
+    'reactions': [libsbml.Model.getNumReactions, ListOfReactions],
+    'events': [libsbml.Model.getNumEvents, ListOfEvents],
+    'fbcObjectives': [libsbml.FbcModelPlugin.getNumObjectives,
+                      FbcListOfObjectives],
+    'fbcGeneProducts': [libsbml.FbcModelPlugin.getNumGeneProducts,
+                        FbcListOfGeneProducts],
+    'groups': [None, GroupsListOfGroups],
+    }
+
 
 class SbmlFileError(Exception):
     """Terminate on SBML read file Error."""
@@ -123,35 +144,20 @@ class Model(SBase):
             return False
 
     def _import_components(self, sbml_model):
-        self.list_of['modelAttrs'] = ModelAttrs()
-        if sbml_model.getNumFunctionDefinitions():
-            self.list_of['funcDefs'] = ListOfFunctionDefs()
-        if sbml_model.getNumUnitDefinitions():
-            self.list_of['unitDefs'] = ListOfUnitDefs()
-        if sbml_model.getNumCompartments():
-            self.list_of['compartments'] = ListOfCompartments()
-        if sbml_model.getNumSpecies():
-            self.list_of['species'] = ListOfSpecies()
-        if sbml_model.getNumParameters():
-            self.list_of['parameters'] = ListOfParameters()
-        if sbml_model.getNumInitialAssignments():
-            self.list_of['initAssign'] = ListOfInitAssign()
-        if sbml_model.getNumRules():
-            self.list_of['rules'] = ListOfRules()
-        if sbml_model.getNumConstraints():
-            self.list_of['constraints'] = ListOfConstraints()
-        if sbml_model.getNumReactions():
-            self.list_of['reactions'] = ListOfReactions()
-        if sbml_model.getNumEvents():
-            self.list_of['events'] = ListOfEvents()
-        if sbml_model.isPackageEnabled('fbc'):
-            fbc_mplugin = sbml_model.getPlugin('fbc')
-            if fbc_mplugin.getNumObjectives():
-                self.list_of['fbcObjectives'] = FbcListOfObjectives()
-            if fbc_mplugin.getNumGeneProducts():
-                self.list_of['fbcGeneProducts'] = FbcListOfGeneProducts()
-        if sbml_model.isPackageEnabled('groups'):
-            self.list_of['groups'] = GroupsListOfGroups()
+        for k, v in _lists_of.items():
+            sbml_func, assigned_class = v
+            if k.startswith('fbc'):
+                if sbml_model.isPackageEnabled('fbc'):
+                    fbc_mplugin = sbml_model.getPlugin('fbc')
+                    if sbml_func(fbc_mplugin):
+                        self.list_of[k] = assigned_class()
+            elif k == 'groups':
+                if sbml_model.isPackageEnabled('groups'):
+                    self.list_of[k] = assigned_class()
+            else:
+                if sbml_func(sbml_model):
+                      self.list_of[k] = assigned_class()
+
         for lo in self.list_of.values():
             lo.import_sbml(sbml_model)
 
@@ -268,33 +274,10 @@ class Model(SBase):
         self.sbml_container = SbmlContainer()
         self.sbml_container.from_df(model_dict['sbml'])
         self.isModel = True
-        self.list_of['modelAttrs'] = ModelAttrs()
-        if 'funcDefs' in model_dict:
-            self.list_of['funcDefs'] = ListOfFunctionDefs()
-        if 'unitDefs' in model_dict:
-            self.list_of['unitDefs'] = ListOfUnitDefs()
-        if 'compartments' in model_dict:
-            self.list_of['compartments'] = ListOfCompartments()
-        if 'species' in model_dict:
-            self.list_of['species'] = ListOfSpecies()
-        if 'parameters' in model_dict:
-            self.list_of['parameters'] = ListOfParameters()
-        if 'initAssign' in model_dict:
-            self.list_of['initAssign'] = ListOfInitAssign()
-        if 'rules' in model_dict:
-            self.list_of['rules'] = ListOfRules()
-        if 'constraints' in model_dict:
-            self.list_of['constraints'] = ListOfConstraints()
-        if 'reactions' in model_dict:
-            self.list_of['reactions'] = ListOfReactions()
-        if 'events' in model_dict:
-            self.list_of['events'] = ListOfEvents()
-        if 'fbcObjectives' in model_dict:
-            self.list_of['fbcObjectives'] = FbcListOfObjectives()
-        if 'fbcGeneProducts' in model_dict:
-            self.list_of['fbcGeneProducts'] = FbcListOfGeneProducts()
-        if 'groups' in model_dict:
-            self.list_of['groups'] = GroupsListOfGroups()
+        for k, v in _lists_of.items():
+            assigned_class = v[1]
+            if k in model_dict:
+                self.list_of[k] = assigned_class()
         try:
             for component, lo in self.list_of.items():
                 lo.from_df(model_dict[component])
