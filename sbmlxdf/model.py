@@ -268,7 +268,8 @@ class Model(SBase):
         return model_dict
 
     def from_df(self, model_dict):
-        if ('sbml' not in model_dict) or ('modelAttrs' not in model_dict):
+        if (('sbml' not in model_dict) or
+            ('modelAttrs' not in model_dict)):
             print('no valid model dict; sbml and modelAttrs required!')
             return False
         self.sbml_container = SbmlContainer()
@@ -313,6 +314,8 @@ class Model(SBase):
                     if _sheets[sheet] == IS_DF_INDEXED:
                         params['index_col'] = 0
                     df_raw = pd.read_excel(xlsx, **params)
+                    df_raw.replace(to_replace=r'^\s+$', value=np.nan,
+                                   regex=True, inplace=True)
                     m_dict[sheet] = df_raw.loc[df_raw.index.dropna()]
         return self.from_df(m_dict)
 
