@@ -83,5 +83,6 @@ class Compartment(SBase):
             self.size = float(c_dict['size'])
         if 'units' in c_dict:
             self.units = c_dict['units']
-        self.constant = (c_dict['constant']==str(True))
+        self.constant = (c_dict['constant']==str(True) or
+                         c_dict['constant']=='1')
         super().from_df(c_dict)

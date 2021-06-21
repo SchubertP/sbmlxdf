@@ -142,7 +142,8 @@ class Reaction(SBase):
         return r_dict
 
     def from_df(self, r_dict):
-        self.reversible = (r_dict['reversible']==str(True))
+        self.reversible = (r_dict['reversible']==str(True) or
+                           r_dict['reversible']=='1')
         if 'compartment' in r_dict:
             self.compartment = r_dict['compartment']
         if 'reactants' in r_dict:
@@ -241,7 +242,8 @@ class ReacSpeciesRef(SimpleSpeciesRef):
         sr_dict = extract_params(sr_str)
         if 'stoic' in sr_dict:
             self.stoichiometry = float(sr_dict['stoic'])
-        self.constant = (sr_dict['const']==str(True))
+        self.constant = (sr_dict['const']==str(True) or
+                         sr_dict['const']=='1')
         super().from_df(sr_dict)
 
 
@@ -274,7 +276,8 @@ class ProdSpeciesRef(SimpleSpeciesRef):
         sr_dict = extract_params(sr_str)
         if 'stoic' in sr_dict:
             self.stoichiometry = float(sr_dict['stoic'])
-        self.constant = (sr_dict['const']==str(True))
+        self.constant = (sr_dict['const']==str(True) or
+                         sr_dict['const']=='1')
         super().from_df(sr_dict)
 
 

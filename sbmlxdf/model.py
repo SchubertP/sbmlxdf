@@ -296,6 +296,9 @@ class Model(SBase):
                     params['header'] = False
                 if _sheets[sheet] == IS_DF_NOTINDEXED:
                     params['index'] = False
+                if file_name.endswith('.ods'):
+                    component.replace(False, value=0, inplace=True)
+                    component.replace(True, value=1, inplace=True)
                 component.to_excel(writer, **params)
 
     def from_excel(self, file_name):

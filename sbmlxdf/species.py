@@ -115,9 +115,12 @@ class Species(SBase):
         if 'substanceUnits' in s_dict:
             self.substance_units = s_dict['substanceUnits']
         self.has_only_substance_units = (
-            s_dict['has_only_substance_units']==str(True))
-        self.boundary_condition = (s_dict['boundary_condition']==str(True))
-        self.constant = (s_dict['constant']==str(True))
+            s_dict['has_only_substance_units']==str(True) or
+            s_dict['has_only_substance_units']=='1')
+        self.boundary_condition = (s_dict['boundary_condition']==str(True) or
+                                   s_dict['boundary_condition']=='1')
+        self.constant = (s_dict['constant']==str(True) or
+                         s_dict['constant']=='1')
         if 'conversionFactor' in s_dict:
             self.conversion_factor = s_dict['conversionFactor']
         if 'fbcCharge' in s_dict:

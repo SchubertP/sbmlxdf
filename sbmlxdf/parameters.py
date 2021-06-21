@@ -75,5 +75,6 @@ class Parameter(SBase):
             self.value = float(p_dict['value'])
         if 'units' in p_dict:
             self.units = p_dict['units']
-        self.constant = (p_dict['constant']==str(True))
+        self.constant = (p_dict['constant']==str(True) or
+                         p_dict['constant']=='1')
         super().from_df(p_dict)

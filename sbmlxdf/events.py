@@ -93,7 +93,8 @@ class Event(SBase):
         return e_dict
 
     def from_df(self, e_dict):
-        self.from_trigger_time = (e_dict['valFromTriggerTime']==str(True))
+        self.from_trigger_time = (e_dict['valFromTriggerTime']==str(True) or
+                                  e_dict['valFromTriggerTime']=='1')
         self.trigger = Trigger()
         self.trigger.from_df(e_dict)
         if Priority.is_in_df(e_dict):
@@ -144,8 +145,10 @@ class Trigger(SBase):
         return tr_dict
 
     def from_df(self, e_dict):
-        self.init_val = (e_dict['triggerInitVal']==str(True))
-        self.persistent = (e_dict['triggerPersistent']==str(True))
+        self.init_val = (e_dict['triggerInitVal']==str(True) or
+                         e_dict['triggerInitVal']=='1')
+        self.persistent = (e_dict['triggerPersistent']==str(True) or
+                           e_dict['triggerPersistent']=='1')
         self.math = e_dict['triggerMath']
         if 'triggerSboTerm' in e_dict:
             self.sboterm = e_dict['triggerSboTerm']

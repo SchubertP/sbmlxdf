@@ -41,8 +41,9 @@ class FbcListOfObjectives(SBase):
         return df_obj
 
     def from_df(self, lo_df):
-        if len(lo_df[lo_df['active']==str(True)]):
-            self.active = lo_df[lo_df['active']==str(True)].index[0]
+        mask = (lo_df['active']==str(True)) | (lo_df['active']=='1')
+        if sum(mask) >= 1:
+            self.active = lo_df[mask].index[0]
         for idx, o_s in lo_df.reset_index().iterrows():
             o = FbcObjective()
             o.from_df(o_s.dropna().to_dict())

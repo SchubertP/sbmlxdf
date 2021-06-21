@@ -89,5 +89,6 @@ class ModelAttrs(SBase):
         if 'conversionFactor' in ma_dict:
             self.conversion_factor = ma_dict['conversionFactor']
         if 'fbcStrict' in ma_dict:
-            self.fbc_strict = (ma_dict['fbcStrict']==str(True))
+            self.fbc_strict = (ma_dict['fbcStrict']==str(True) or
+                               ma_dict['fbcStrict']=='1')
         super().from_df(ma_dict)

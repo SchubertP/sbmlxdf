@@ -71,7 +71,8 @@ class SbmlContainer(SBase):
                     pkg_dict = extract_params(record)
                     self.packages[pkg_dict['name']] = {
                         'version': int(pkg_dict['version']),
-                        'required': pkg_dict['required']==str(True)
+                        'required': (pkg_dict['required']==str(True) or 
+                                     pkg_dict['required']=='1')
                         }
         except KeyError as err:
             print("KeyError: {0} in {1}".format(err, __name__))
