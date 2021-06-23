@@ -66,6 +66,8 @@ def check_vs_reference(model_dfs, ref_dfs):
     'test_SBML_L3V2_fbc_groups',
     'test_SBML_L3V2_distrib',
     'test_SBML_L3V2_distrib_warnings',
+    'test_SBML_L3V2_xml_annotation',
+    'test_SBML_L3V2_annotation_SHK',
     ])
 
 def test_sbml_features(model_name, tmp_path):
