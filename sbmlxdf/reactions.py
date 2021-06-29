@@ -221,29 +221,33 @@ class ReacSpeciesRef(SimpleSpeciesRef):
     def import_sbml(self, sbml_sr):
         if sbml_sr.isSetStoichiometry():
             self.stoichiometry = sbml_sr.getStoichiometry()
-        self.constant = sbml_sr.getConstant()
+        if sbml_sr.isSetConstant():
+            self.constant = sbml_sr.getConstant()
         super().import_sbml(sbml_sr)
 
     def export_sbml(self, sbml_r):
         sbml_sr = sbml_r.createReactant()
         if hasattr(self, 'stoichiometry'):
             sbml_sr.setStoichiometry(self.stoichiometry)
-        sbml_sr.setConstant(self.constant)
+        if hasattr(self, 'constant'):
+            sbml_sr.setConstant(self.constant)
         super().export_sbml(sbml_sr)
 
     def to_df(self):
         attr = super().to_df()
         if hasattr(self, 'stoichiometry'):
             attr.append('stoic=' + str(self.stoichiometry))
-        attr.append('const=' + str(self.constant))
+        if hasattr(self, 'constant'):
+            attr.append('const=' + str(self.constant))
         return ', '.join(attr)
 
     def from_df(self, sr_str):
         sr_dict = extract_params(sr_str)
         if 'stoic' in sr_dict:
             self.stoichiometry = float(sr_dict['stoic'])
-        self.constant = (sr_dict['const']==str(True) or
-                         sr_dict['const']=='1')
+        if 'const' in sr_dict:
+            self.constant = (sr_dict['const']==str(True) or
+                             sr_dict['const']=='1')
         super().from_df(sr_dict)
 
 
@@ -255,29 +259,33 @@ class ProdSpeciesRef(SimpleSpeciesRef):
     def import_sbml(self, sbml_sr):
         if sbml_sr.isSetStoichiometry():
             self.stoichiometry = sbml_sr.getStoichiometry()
-        self.constant = sbml_sr.getConstant()
+        if sbml_sr.isSetConstant():
+            self.constant = sbml_sr.getConstant()
         super().import_sbml(sbml_sr)
 
     def export_sbml(self, sbml_r):
         sbml_sr = sbml_r.createProduct()
         if hasattr(self, 'stoichiometry'):
             sbml_sr.setStoichiometry(self.stoichiometry)
-        sbml_sr.setConstant(self.constant)
+        if hasattr(self, 'constant'):
+            sbml_sr.setConstant(self.constant)
         super().export_sbml(sbml_sr)
 
     def to_df(self):
         attr = super().to_df()
         if hasattr(self, 'stoichiometry'):
             attr.append('stoic=' + str(self.stoichiometry))
-        attr.append('const=' + str(self.constant))
+        if hasattr(self, 'constant'):
+            attr.append('const=' + str(self.constant))
         return ', '.join(attr)
 
     def from_df(self, sr_str):
         sr_dict = extract_params(sr_str)
         if 'stoic' in sr_dict:
             self.stoichiometry = float(sr_dict['stoic'])
-        self.constant = (sr_dict['const']==str(True) or
-                         sr_dict['const']=='1')
+        if 'const' in sr_dict:
+            self.constant = (sr_dict['const']==str(True) or
+                             sr_dict['const']=='1')
         super().from_df(sr_dict)
 
 
