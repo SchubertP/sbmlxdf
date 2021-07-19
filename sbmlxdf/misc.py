@@ -220,16 +220,19 @@ def extract_lo_records(s):
     return lo_records
 
 
-def extract_xml_attrs(xml_annots, namespace):
-    """Extract attributes from xml-annotation for given namespace.
+def extract_xml_attrs(xml_annots, ns=None, token=None):
+    """Extract attributes from xml-annots string for given namespace and/or token.
 
     Parameters
     ----------
     xml_annots : str
         xml-annotation string from object
 
-    namespace : str
+    ns : str (optional)
         namespace for which attributes should be collected.
+
+    token : str
+        token for which attributes should be collected.
 
     Returns
     -------
@@ -240,8 +243,10 @@ def extract_xml_attrs(xml_annots, namespace):
     xml_attrs = {}
     for xml_str in xml_annots.split(';'):
         params = extract_params(xml_str)
-        if params['ns_uri'] == namespace:
-            for k, v in params.items():
-                if k not in {'ns_uri', 'prefix', 'token'}:
-                    xml_attrs[k] = v
+        if (((ns != None) and (params['ns_uri'] != ns)) or
+            ((token != None) and (params['token'] != token))):
+            continue
+        for k, v in params.items():
+            if k not in {'ns_uri', 'prefix', 'token'}:
+                xml_attrs[k] = v
     return xml_attrs

@@ -3,12 +3,12 @@ Install:
 
 $ python3 -m pip install git+https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
 
-or, for access to sample SBML files in /test/data/
+or, for access to sample SBML files in ./test/data/
 
 $ git clone https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
 
 
-Convert between SBML coded files and Pandas DataFrames
+Convert between SBML coded files and pandas DataFrames
 ======================================================
 
 sbmlxdf supports, with few exceptions, all functionality of
@@ -70,7 +70,7 @@ Example::
         print('SBML file valid:', is_valid_sbml)
 
         model_dfs = outm.to_df()
-        print('model exported to dict of Pandas dataframes')
+        print('model exported to dict of pandas dataframes')
         print(model_dfs.keys())
 
         df_r = model_dfs['reactions']
@@ -91,6 +91,7 @@ Methods
 |   sbmlxdf.Model()
 |   sbmlxdf.Model('model.xml')
 |   sbmlxdf.Model('model.xlsx')
+|   sbmlxdf.Model('model.ods')
 |   sbmlxdf.Model('model_dir')
 |
 | read/write SBML file
@@ -101,11 +102,15 @@ Methods
 |  sbmlxdf.Model.from_excel('model.xlsx')
 |  sbmlxdf.Model.to_excel('model.xlsx')
 |
+| read/write OpenOffice spreadsheet with model data
+|  sbmlxdf.Model.from_excel('model.ods')
+|  sbmlxdf.Model.to_excel('model.ods')
+|
 | read/write model coded in set of .csv files
 |   sbmlxdf.Model.from_csv('model_dir')
 |   sbmlxdf.Model.to_csv('model_dir')
 |
-| convert model data to/from dict of Pandas dataframes
+| convert model data to/from dict of pandas dataframes
 |   sbmlxdf.Model.to_df()
 |   sbmlxdf.Model.from_df(model_dict)
 |
@@ -119,52 +124,51 @@ Methods
 |     extract record from a list of records
 |   sbmlxdf.misc.extract_lo_records(lo_lo_records_str)
 |     extract list of records from a list of list of records
-|
+|   sbmlxdf.misc.extract_xml_attrs(xml_annots, ns=None, token=None)
+|     extract attributes from xml-annots str for given namespace and/or token
+
 
 Workflow for creating SBML files:
 ---------------------------------
-1. Create and Excel model. e.g. 'mymodel.xlsx'
+1. Create and Excel model. e.g. 'my_model.xlsx'
 
    You may start with an Excel model template, which you
    modify/configure to your needs. Excel model templates can be
    created by converting existing SBML models to Excel, e.g.
-   using models from *./test/data/* directory
+   using models from *./test/data directory
 
    ``model = sbmlxdf.Model('ReferenceSBMLmodel.xml')``
 
    ``model.to_excel('templateModel.xlsx')``
 
-2. Import Excel model
+2. Import Excel coded model
 
-   ``mymodel = sbmlxdf.Model('mymodel.xlsx')``
+   ``my_model = sbmlxdf.Model('my_model.xlsx')``
 
 3. Validate compliance with SBML standard
 
    A compliance report \*.txt will be created in the *./results*
    directory, with detailed warning and error messages generated
-   by libSBML validation. A corresponding \*.xlm document can be
+   by libSBML validation. A corresponding \*.xml document can be
    used to cross reference the line numbers.
 
-   ``mymodel.validate_sbml('tmp.xml')``
+   ``my_model.validate_sbml('tmp.xml')``
 
-4. Correct warnings/errors by updating your Excel model and go
+4. Correct warnings/errors by updating your Excel coded model and go
 back to step 2.
 
-5. Upon successful validation write out your SBML model
+5. Upon successful validation create your SBML coded model
 
-   ``mymodel.export_sbml('mySBMLmodel.xml')``
+   ``my_model.export_sbml('my_model.xml')``
 
 Sample Python script to generate SBML coded model from Excel coded model::
 
     # xslx2sbml.py
-    # a simple script to convert excel coded model into SBML coded model.
-    # Peter Schubert, HHU Duesseldorf, 10.06.2021
-
     import sys
     import os.path
     import sbmlxdf
 
-    # command line argument handling (simple)
+    # basic command line argument handling
     if len(sys.argv) > 1:
        excel_in = sys.argv[1]
        sbml_out = excel_in.replace('.xlsx', '.xml')
@@ -186,6 +190,25 @@ Sample Python script to generate SBML coded model from Excel coded model::
        print('correct xlsx and run converter again; -f option ignores warnings.\n')
        print(open(os.path.join('.', 'results', 'tmp.txt'), 'r').read())
 
+
+Sample Python script to generate Excel coded model from SBML coded model::
+
+    # sbml2xlsx.py
+    import sys
+    import os.path
+    import sbmlxdf
+
+    # basic command line argument handling
+    if len(sys.argv) == 2:
+        sbml_in = sys.argv[1]
+        xlsx_out = sbml_in.replace('.xml', '.xlsx')
+    else:
+        print('use:', os.path.basename(sys.argv[0]), 'sbml_file')
+        sys.exit()
+
+    model = sbmlxdf.Model(sbml_in)
+    model.to_excel(xlsx_out)
+    print('xlsx file created:', xlsx_out)
 
 
 Peter Schubert, October 2020

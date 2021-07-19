@@ -81,8 +81,8 @@ class Model(SBase):
         validate_sbml() : validate model against SBML specification
         export_sbml() : export model to sbml-file
 
-        to_df() : export model to dict of Pandas dataframes
-        from_df() : import model from dict of Pandas dataframes
+        to_df() : export model to dict of pandas dataframes
+        from_df() : import model from dict of pandas dataframes
 
         to_excel() : export model to Excel or OpenOffice spreadsheet
         from_excel() : import model from Excel or OpenOffice spreadsheet
@@ -98,11 +98,10 @@ class Model(SBase):
 
         Parameters
         ----------
-        import_file : str (optional)
-            During instantiation, model can be imported from file.
-            can be valid sbml file (.xml), Excel spreadsheet (.xlsx),
-            OpenOffice spreadsheet (.ods) or directory holding .csv files.
-
+            import_file : str (optional)
+                During instantiation, model can be imported from file.
+                can be valid sbml file (.xml), Excel spreadsheet (.xlsx),
+                OpenOffice spreadsheet (.ods) or directory holding .csv files.
         """
         self.isModel = False
         self.list_of = {}
@@ -117,6 +116,17 @@ class Model(SBase):
                 self.from_csv(import_file)
 
     def import_sbml(self, sbml_filename):
+        """Import model data from SBML file.
+
+        Parameters
+        ----------
+            sbml_filename : str
+                file name of model coded in SBML (.xml)
+        Returns
+        -------
+            boolean
+                success (True) of failure (False) of creating model
+        """
         if not os.path.exists(sbml_filename):
             print('SBML file not found: ' + sbml_filename)
             return False
@@ -161,7 +171,33 @@ class Model(SBase):
         for lo in self.list_of.values():
             lo.import_sbml(sbml_model)
 
-    def validate_sbml(self, sbml_filename, units_check=True):
+    def validate_sbml(self, sbml_filename='tmp.xml', units_check=True):
+        """Validate in memory model against SBML specifications.
+
+        Uses checkConsistency() method from libSBML. Model is exported as
+        a SBML file with name smbl_filename to directory ./results. This
+        directory is created, in case it does not exist. Line numbers in
+        Warning/Errors messages can be checked against the SBML file.
+        Warnings and Errors (detected by libSBML) are copied to a text file
+        with same name as sbml_filename, having extension (.txt).
+
+        Parameters
+        ----------
+            sbml_filename : str (optional, default 'tmp.xml')
+                sbml_file name for model export to sbml. Actually only required
+                during error correction process, to reference line numbers in
+                error report against the SBML model.
+
+            units_check : boolean, optional
+                indicates if consistency of units should be checked.
+                It is recommended to check units of measurements to improve
+                quality of the model.
+
+        Returns
+        -------
+            dict
+                containing types of errors as keys and occurences as values.
+        """
         sbml_compliance = False
         if not os.path.exists(results_dir):
             os.makedirs(results_dir)
@@ -203,6 +239,15 @@ class Model(SBase):
             return err_tot
 
     def export_sbml(self, sbml_filename):
+        """Export model to SBML file.
+
+        Note: Recommended to first check validity of the model (validate_sbml())
+
+        Parameters
+        ----------
+            sbml_filename : str
+                sbml_file name for model export to sbml.
+        """
         if hasattr(self, 'sbml_container'):
             sbml_doc = self.sbml_container.create_sbml_doc()
             if self.isModel:
@@ -215,7 +260,7 @@ class Model(SBase):
             writer.writeSBML(sbml_doc, sbml_filename)
 
     def get_s_matrix(self, sparse=False):
-        """Retrieve stoichiometric matrix of the modell.
+        """Retrieve stoichiometric matrix of the model.
 
         requires both species and reactions to be defined
 
@@ -226,9 +271,8 @@ class Model(SBase):
 
         Returns
         -------
-            Pandas DataFrame
+            pandas DataFrame
                 stoichiometric matrix normal or in sparse format (sparse=True)
-
         """
         if ('species' in self.list_of) and ('reactions' in self.list_of):
             df_species = self.list_of['species'].to_df()
@@ -255,6 +299,21 @@ class Model(SBase):
             return df_S
 
     def to_df(self):
+        """Convert model to set of pandas objects.
+
+        For each type of components defined in the model, Compartments,
+        Species, etc. data will be collected in a pandas DataFrame, except
+        for 'sbml' and 'modelAttrs', which are pandas Series objects.
+        Only defined attributes will be collected. I.e. optional compontents
+        and/or optional attributes not defined are not collected.
+        Data will is returned in a dict with key names set to component names.
+
+        Returns
+        -------
+        dict
+            keys are name of component type, values are pandas objects
+            index of DataFrames is usually set on 'id' attribute
+        """
         model_dict = {'sbml': self.sbml_container.to_df() }
         for key, lo in self.list_of.items():
             model_dict[key] = lo.to_df()
@@ -268,6 +327,30 @@ class Model(SBase):
         return model_dict
 
     def from_df(self, model_dict):
+        """Creates model from a set of pandas objects.
+
+        model_dict is a directory containing pandas DataFrames for each type
+        of component that should be created in the model, e.g. Compartments,
+        Species. 'sbml' and 'modelAttrs' are pandas Series.
+        Key names matter and have to correspond to component names.
+        Column names in dataframes (index names in series) matter, not their
+        order. 'id' attribute usually must be set as index. Only columns for
+        attributes to be set have to be provided.
+        Key names and column names can be queried by exportding a SBML model
+        using to_df()
+
+        Parameters
+        ----------
+            model_dict : dict
+                keys are name of component type, values are pandas objects
+                index of DataFrames is usually set on 'id' attribute.
+                names of component keys and dataframe columns are of relevance
+
+        Returns
+        -------
+            boolean
+                success (True) of failure (False) of creating model
+        """
         if (('sbml' not in model_dict) or
             ('modelAttrs' not in model_dict)):
             print('no valid model dict; sbml and modelAttrs required!')
@@ -289,6 +372,21 @@ class Model(SBase):
         return True
 
     def to_excel(self, file_name):
+        """Converts model to spreadsheet (*.xlsx or *.ods).
+
+        For each type of components defined in the model, e.g. Compartments,
+        Species, one sheet with the name of the component will be generated
+        in the spreadsheet document.
+        Sheets only contain colums for attributes defined in the model.
+        Attribute names are provided as column names. Sheets 'sbml' and
+        'modelAttrs' have attribute names in first column.
+
+        Parameters
+        ----------
+            file_name : str
+                file to be created for converted model.
+                Extensions *.xlsx and *.ods are supported
+        """
         with pd.ExcelWriter(file_name) as writer:
             for sheet, component in self.to_df().items():
                 params = {'sheet_name': sheet}
@@ -302,6 +400,29 @@ class Model(SBase):
                 component.to_excel(writer, **params)
 
     def from_excel(self, file_name):
+        """Creates model from spreadsheet (*.xlsx or *.ods).
+
+        The spreadsheet document must have sheets for each type of component
+        that should be created in the model. Sheets-names matter, not their
+        order. Only columns need to be provided for attributes that should be
+        created. Column names matter not their order, except of 'id' attribute,
+        which is being used as index. 'id' columns must be first. Sheets
+        'sbml' and 'modelAttrs' contain the attribute names in the first column.
+        Sheet names and attribute names can be queried by exporting an existing
+        SBML model to spreadsheet.
+
+        Parameters
+        ----------
+            file_name : dict
+                file name of spreadsheet to create model from.
+                Extensions *.xlsx and *.ods are supported.
+                Sheet names and column names matter.
+
+        Returns
+        -------
+            boolean
+                success (True) of failure (False) of creating model
+        """
         if not os.path.exists(file_name):
             print('Excel document not found: ' + file_name)
             return False
@@ -323,7 +444,21 @@ class Model(SBase):
         return self.from_df(m_dict)
 
     def to_csv(self, dir_name):
-        """ create and check directory, remove existing *.csv files """
+        """Converts model to a set of comma-separated-value files (*.csv).
+
+        For each type of components defined in the model, e.g. Compartments,
+        Species, one *.csv file will be generated in the directory provided.
+        Name of the files correspond to the component with ending *.csv.
+        Files only contain contain colums for attributes defined in the model.
+        Attribute names are provided as column names. Sheets 'sbml' and
+        'modelAttrs' have attribute names in first column.
+
+        Parameters
+        ----------
+            dir_name : str
+                directory name where *.csv files should be stored.
+                directory will be created if it does no exist.
+        """
         if os.path.exists(dir_name):
             for csv_file in glob.glob(os.path.join(dir_name, '*.csv')):
                 try:
@@ -341,6 +476,29 @@ class Model(SBase):
             component.to_csv(**params)
 
     def from_csv(self, dir_name):
+        """Creates model from *.csv files.
+
+        The directory must have files for each type of component
+        that should be created in the model. File names must correspond to
+        relevant commponent. Only columns need to be provided for attributes
+        that should be created. Column names matter not their order,
+        except of 'id' attribute, which is being used as index.
+        'id' columns must be first. Sheets 'sbml' and 'modelAttrs' contain
+        the attribute names in the first column. Sheet names and attribute
+        names can be queried by exporting an existing
+        SBML model to *.csv.
+
+        Parameters
+        ----------
+            dir_name : dict
+                directory name with *.csv files of components.
+                File names and column names matter.
+
+        Returns
+        -------
+            boolean
+                success (True) of failure (False) of creating model
+        """
         if not os.path.exists(dir_name):
             print('csv directory not found: ' + dir_name)
             return False
