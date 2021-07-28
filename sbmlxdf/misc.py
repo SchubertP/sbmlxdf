@@ -33,21 +33,20 @@ _map_mathml2numpy = (
 )
 
 def mathml2numpy(mformula, np_ns='np'):
-    """Convert mathml infix to a numpy formula.
+    """Convert mathml infix notation to a numpy formula.
 
-    Basically prefixes math functions with a numpy prefix.
-    Other mathml functions are converted to respective numpy equivalent.
-    Mathml functions that have no a simple numpy equivalent, are kept as is.
-    e.g. piecewise().
+    Prefixes math functions with a numpy prefix.
+    mathml functions are converted to numpy equivalenta where possible.
 
     Parameters
     ----------
     mformula : str
-        string with mathml infix notation extracted from SBML
+        String with mathml infix notation extracted from SBML,
+        e.g. collected from a math element.
 
-    np_ns : str
+    np_ns : str, optional
         numpy namespace prefix used in own Python code.
-        default: 'np'
+        Default: 'np'
 
     Returns
     -------
@@ -70,26 +69,21 @@ def mathml2numpy(mformula, np_ns='np'):
 
 
 def extract_params(s):
-    """Extract parameters from a record and return them in a dict.
+    """Extract parameters from a record.
 
     Parameters
     ----------
     s : str
-        record string containting key-value pairs 'key=value'
-        key-value pairs are separated by ','.
-        e.g. 'key1=value1, key2=value2, key3=value3'
-        white spaces are getting removed.
-        considers nested records in square brackets (key=[nested records])
-        values can be functions, e.g. math=gamma(shape_Z, scale_Z)
+        record string containting key-value pairs 'key=value' separated by ','.
+        e.g. 'key1=value1, key2=value2, key3=value3'.
+        wWhite space chars are removed.
+        Nested records must be in square brackets (key=[nested records]).
+        Values can also be functions, e.g. math=gamma(shape_Z, scale_Z).
 
     Returns
     -------
     dict
         keys and values extracted from record
-
-    see also:
-        extract_records()
-        extract_lo_records()
 
     """
     find_key = re.compile(r'\s*(?P<key>\w*)\s*=\s*')
@@ -131,26 +125,24 @@ def extract_params(s):
 
 
 def extract_records(s):
-    """Split group of records of into a list of individual records.
+    """Split group of records considering nesting.
+
+    Used for complicated Uncertainty definitions.
 
     Parameters
     ----------
     s : str
-        string with group of records that are separated by ';'
-        e.g. 'record1; record2; record3'
-        records consist of key-value pairs,
-        e.g. record1 = 'key1=value1, key2=value2, key3=value3'
-        considers nested records in square brackets (key=[nested records])
+        String with group of records that are separated by ';',
+        e.g. 'record1; record2; record3', where records
+        consist of comma separated key-value pairs.
+        Nested records must be in square brackets (key=[nested records])
 
     Returns
     -------
     list
-        list with strings of individual records
+        list with strings of individual records, 
         which can be processed by extract_params()
 
-    see also:
-        extract_params()
-        extract_lo_records()
     """
     records = []
     brackets = 0
@@ -171,25 +163,23 @@ def extract_records(s):
 
 
 def extract_lo_records(s):
-    """Split groups of groups of records into a list of groups of records.
+    """Split groups of groups of records considering nesting.
+
+    Used for complicated Uncertainty definitions.
 
     Parameters
     ----------
     s : str
-        string with groups of groups of records
-        groups of records are enclosed in square brackets and separated by ';'.
+        string with groups of groups of records, that are
+        enclosed in square brackets and separated by ';',
         e.g. '[record1; record2; ...];[record7; record8; ...]'
-        considers nested records in square brackets (key=[nested records])
+        Nested records must be in square brackets (key=[nested records])
 
     Returns
     -------
     list
-        list with strings of group of records
+        list with strings of group of records,
         which can be processed by extract_records()
-
-    see also:
-        extract_parmas()
-        extract_records()
 
     """
     # extract list of records from a list of list of records
@@ -221,23 +211,28 @@ def extract_lo_records(s):
 
 
 def extract_xml_attrs(xml_annots, ns=None, token=None):
-    """Extract attributes from xml-annots string for given namespace and/or token.
+    """Extract attributes from string for given namespace and/or token.
 
     Parameters
     ----------
     xml_annots : str
-        xml-annotation string from object
+        xml-annotation string. Can be a sequence of XML-annotations
+        separated by ';'
+        e.g. 'ns_uri=http://www.hhu.de/ccb/bgm/ns, prefix=bgm,
+        token=molecule, weight_Da=100'
 
     ns : str (optional)
         namespace for which attributes should be collected.
+        e.g. 'http://www.hhu.de/ccb/bgm/ns'
 
     token : str
         token for which attributes should be collected.
+        e.g. 'molecule'
 
     Returns
     -------
     dict
-        attribute key and attribute values extracted for specific namespace
+        Keys are attribute names and values are attributes values
 
     """
     xml_attrs = {}

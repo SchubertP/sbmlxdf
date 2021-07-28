@@ -28,6 +28,10 @@ class SbmlContainer(SBase):
             # there seems to be a bug, that l3v2extendedmath is returned
             if (idx == 0) and (pname=='l3v2extendedmath') and (pversion == 0):
                 continue
+
+            # for SBML L2V4 layout and render are autoamtically imported
+            if pname in ('layout', 'render'):
+                continue
             self.packages[pname] = {'version': pversion,
                                     'required': sbml_doc.getPkgRequired(pname)}
 
@@ -71,7 +75,7 @@ class SbmlContainer(SBase):
                     pkg_dict = extract_params(record)
                     self.packages[pkg_dict['name']] = {
                         'version': int(pkg_dict['version']),
-                        'required': (pkg_dict['required']==str(True) or 
+                        'required': (pkg_dict['required']==str(True) or
                                      pkg_dict['required']=='1')
                         }
         except KeyError as err:

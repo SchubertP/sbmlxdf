@@ -1,0 +1,436 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>sbmlxdf Methods &#8212; sbmlxdf 0.2.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="References" href="references.html" />
+    <link rel="prev" title="Command Line Scripts" href="scripts.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="sbmlxdf-methods">
+<h1>sbmlxdf Methods<a class="headerlink" href="#sbmlxdf-methods" title="Permalink to this headline">¶</a></h1>
+<section id="create-model-object">
+<h2>Create Model object:<a class="headerlink" href="#create-model-object" title="Permalink to this headline">¶</a></h2>
+<p>Instantiating a Model object without parameter requires you to subsequently
+import a model from SBML, spreadsheet or .csv.</p>
+</section>
+<section id="model-import-exports">
+<h2>Model import/exports<a class="headerlink" href="#model-import-exports" title="Permalink to this headline">¶</a></h2>
+<p><strong>Interface SBML models:</strong></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.Model.import_sbml">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">import_sbml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sbml_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.import_sbml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import SBML model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sbml_file</strong> (<em>str</em>) – file name of existing SBML model (.xml)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>success/failure of importing model</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.Model.export_sbml">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">export_sbml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sbml_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.export_sbml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create SBML model.</p>
+<p>Note: Recommended to first validate against SBML specification
+(validate_sbml())</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sbml_file</strong> (<em>str</em>) – File name of new SBML model (.xml).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p><strong>Interface spreadsheet documents:</strong></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.Model.from_excel">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">from_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.from_excel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import model from spreadsheet document (.xlsx or .ods).</p>
+<p>Sheet and header names are significant. Only known names
+are imported, but other names may exist in the document.
+With few exceptions, the ‘id’ column must be the first
+column in the spreadheet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>) – file name of spreadsheet document to import.
+Extensions .xlsx and .ods are supported.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>success/failure of importing spreadsheet document</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.Model.to_excel">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">to_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.to_excel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create spreadsheet document of model (.xlsx or .ods).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>) – Name of new spredsheet document.
+Extensions .xlsx and .ods are supported</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p><strong>Interface .csv files:</strong></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.Model.from_csv">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">from_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.from_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import model from .csv files.</p>
+<p>File names and header names are significant. Only known names
+are imported, but other names may exist.
+With few exceptions, the ‘id’ column must be the first
+column in the tables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dir_name</strong> (<em>str</em>) – directory name containing the .csv files.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>success/failure of importing .csv files</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.Model.to_csv">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create comma-separated-value files of model(.csv).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dir_name</strong> (<em>str</em>) – directory name where .csv files will be written to.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p><strong>Interface with pandas dataframes:</strong></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.Model.from_df">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">from_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.from_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loading model from a dict of pandas DataFrames.</p>
+<p>Keys of dict, header names and index of dataframes are significant.
+Only known names are imported, but other names may exist.
+With few exceptions, index should be set on ‘id’.
+Keys ‘sbml’ and ‘modelAttrs’ reference pandas Series objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model_dict</strong> (<em>dict</em>) – Keys are name of component types, values are pandas objects.
+Index to be set on ‘id’ attribute, with exceptions.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Success/failure of loading dataFrame</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.Model.to_df">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.to_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export model to a dict of pandas DataFrames.</p>
+<p>Keys ‘sbml’ and ‘modelAttrs’ reference pandas Series objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Keys are names of component types, values are pandas objects.
+Index of dataframes is genearally set on ‘id’ attribute</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="model-validation">
+<h2>Model validation<a class="headerlink" href="#model-validation" title="Permalink to this headline">¶</a></h2>
+<p><strong>Validate compliance with SBML specification:</strong></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.Model.validate_sbml">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">validate_sbml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sbml_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tmp.xml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.validate_sbml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate in memory model against SBML specifications.</p>
+<p>Uses checkConsistency() method from libSBML. Model is exported as
+a SBML file with name sbml_file to directory ./results. This
+directory is created, in case it does not exist. Line numbers in
+warning/errors messages can be checked against the SBML file.
+Warnings and errors are copied to a text file
+with same name as sbml_file, having extension (.txt).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sbml_file</strong> (<em>str</em><em>, </em><em>optional</em>) – sbml_file name for temporary SBML model. Only required
+during error correction process to cross-reference line numbers in
+error report.</p></li>
+<li><p><strong>units_check</strong> (<em>boolean</em><em>, </em><em>optional</em>) – To deactivate units of measurement check.
+For imporved model quality it is recommended to have correct
+units of measurements.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Keys are error types, values are number of occurences.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="miscellanious">
+<h2>Miscellanious<a class="headerlink" href="#miscellanious" title="Permalink to this headline">¶</a></h2>
+<p><strong>Data extraction helper functions.</strong></p>
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.Model.get_s_matrix">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">get_s_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.get_s_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve stoichiometric matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sparse</strong> (<em>boolean</em><em>, </em><em>optional</em>) – S-matrix in normal/sparse format.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Stoichiometric matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.misc.extract_xml_attrs">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.misc.</span></span><span class="sig-name descname"><span class="pre">extract_xml_attrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml_annots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.misc.extract_xml_attrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract attributes from string for given namespace and/or token.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xml_annots</strong> (<em>str</em>) – xml-annotation string. Can be a sequence of XML-annotations
+separated by ‘;’
+e.g. ‘ns_uri=http://www.hhu.de/ccb/bgm/ns, prefix=bgm,
+token=molecule, weight_Da=100’</p></li>
+<li><p><strong>ns</strong> (<em>str</em><em> (</em><em>optional</em><em>)</em>) – namespace for which attributes should be collected.
+e.g. ‘<a class="reference external" href="http://www.hhu.de/ccb/bgm/ns">http://www.hhu.de/ccb/bgm/ns</a>’</p></li>
+<li><p><strong>token</strong> (<em>str</em>) – token for which attributes should be collected.
+e.g. ‘molecule’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Keys are attribute names and values are attributes values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.misc.extract_params">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.misc.</span></span><span class="sig-name descname"><span class="pre">extract_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.misc.extract_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract parameters from a record.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – record string containting key-value pairs ‘key=value’ separated by ‘,’.
+e.g. ‘key1=value1, key2=value2, key3=value3’.
+wWhite space chars are removed.
+Nested records must be in square brackets (key=[nested records]).
+Values can also be functions, e.g. math=gamma(shape_Z, scale_Z).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>keys and values extracted from record</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.misc.extract_records">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.misc.</span></span><span class="sig-name descname"><span class="pre">extract_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.misc.extract_records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split group of records considering nesting.</p>
+<p>Used for complicated Uncertainty definitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – String with group of records that are separated by ‘;’,
+e.g. ‘record1; record2; record3’, where records
+consist of comma separated key-value pairs.
+Nested records must be in square brackets (key=[nested records])</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list with strings of individual records,
+which can be processed by extract_params()</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.misc.extract_lo_records">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.misc.</span></span><span class="sig-name descname"><span class="pre">extract_lo_records</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.misc.extract_lo_records" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split groups of groups of records considering nesting.</p>
+<p>Used for complicated Uncertainty definitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – string with groups of groups of records, that are
+enclosed in square brackets and separated by ‘;’,
+e.g. ‘[record1; record2; …];[record7; record8; …]’
+Nested records must be in square brackets (key=[nested records])</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list with strings of group of records,
+which can be processed by extract_records()</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sbmlxdf.misc.mathml2numpy">
+<span class="sig-prename descclassname"><span class="pre">sbmlxdf.misc.</span></span><span class="sig-name descname"><span class="pre">mathml2numpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mformula</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">np_ns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'np'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.misc.mathml2numpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert mathml infix notation to a numpy formula.</p>
+<p>Prefixes math functions with a numpy prefix.
+mathml functions are converted to numpy equivalenta where possible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mformula</strong> (<em>str</em>) – String with mathml infix notation extracted from SBML,
+e.g. collected from a math element.</p></li>
+<li><p><strong>np_ns</strong> (<em>str</em><em>, </em><em>optional</em>) – numpy namespace prefix used in own Python code.
+Default: ‘np’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>containing mathml operators and functions converted
+to numpy notation. Sting could be further processed and
+converted to a numpy function.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">sbmlxdf</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scripts.html">Command Line Scripts</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">sbmlxdf Methods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-model-object">Create Model object:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-import-exports">Model import/exports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#model-validation">Model validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#miscellanious">Miscellanious</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="scripts.html" title="previous chapter">Command Line Scripts</a></li>
+      <li>Next: <a href="references.html" title="next chapter">References</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Peter Schubert.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/methods.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
