@@ -1,11 +1,7 @@
 Install:
 ========
 
-$ python3 -m pip install git+https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
-
-or, for access to sample SBML files in ./test/data/
-
-$ git clone https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
+$ pip install sbmlxdf
 
 
 Convert between SBML coded files and pandas DataFrames

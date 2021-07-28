@@ -1,8 +1,11 @@
+LICENSE.txt
 MANIFEST.in
 README.rst
+pyproject.toml
 setup.py
 sbmlxdf/__init__.py
 sbmlxdf/_version.py
+sbmlxdf/annotation.py
 sbmlxdf/compartments.py
 sbmlxdf/constraints.py
 sbmlxdf/events.py
@@ -25,3 +28,4 @@ sbmlxdf.egg-info/SOURCES.txt
 sbmlxdf.egg-info/dependency_links.txt
 sbmlxdf.egg-info/requires.txt
 sbmlxdf.egg-info/top_level.txt
+test/test_sbml_features.py
