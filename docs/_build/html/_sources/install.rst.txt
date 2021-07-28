@@ -5,9 +5,9 @@ You need python3 installed on your system.
 
 **sbmlxdf** can be installed via standard pip command
 
-.. prompt:: bash $
+.. code-block:: bash
 
-   pip install sbmlxdf
+   $ pip install sbmlxdf
 
 .. note ::
 
@@ -25,6 +25,6 @@ Should you be interested in sample SBML files, extracted from the
 SBML specification documentation, you could clone the
 repository.
 
-.. prompt:: bash $
+.. code-block:: bash
 
-   git clone https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
+   $ git clone https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf

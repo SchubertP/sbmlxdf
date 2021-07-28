@@ -41,7 +41,7 @@ an existing SBML model.
 Example (assuming the SBML model ``other_model.xml`` in
 directory ``./SBML_models``):
 
-.. prompt:: bash $ auto
+.. code-block:: bash
 
   $ python3 sbml2xlsx.py SBML_models/other_model.xml
   spreadsheet created: SBML_models/other_model.xlsx
@@ -100,7 +100,7 @@ It is a two step process:
 Example (assuming an speadsheet document ``my_model.xlsx`` in
 directory ``./SBML_models``):
 
-.. prompt:: bash $ auto
+.. code-block:: bash
 
   $ python3 xlsx2sbml.py SBML_models/my_model.xlsx
   Validation result: {'Errors': 2}
@@ -126,7 +126,7 @@ however species ``L`` is not yet defined.
 Add species ``L`` to your spreadsheet document (sheet ``species``) and
 run the converter again.
 
-.. prompt:: bash $ auto
+.. code-block:: bash
 
    $ python3 xlsx2sbml.py SBML_models/my_model.xlsx
    Validation result: {}

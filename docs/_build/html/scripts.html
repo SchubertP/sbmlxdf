@@ -66,13 +66,11 @@ and converts it to the corresponding spreadsheet document.</p>
 an existing SBML model.</p>
 <p>Example (assuming the SBML model <code class="docutils literal notranslate"><span class="pre">other_model.xml</span></code> in
 directory <code class="docutils literal notranslate"><span class="pre">./SBML_models</span></code>):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><style type="text/css">
-span.prompt1:before {
-  content: "$ ";
-}
-</style><span class="prompt1">python3 sbml2xlsx.py SBML_models/other_model.xml
-spreadsheet created: SBML_models/other_model.xlsx</span>
-</pre></div></div><p>Python code for script <code class="docutils literal notranslate"><span class="pre">sbml2xlsx.py</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3 sbml2xlsx.py SBML_models/other_model.xml
+spreadsheet created: SBML_models/other_model.xlsx
+</pre></div>
+</div>
+<p>Python code for script <code class="docutils literal notranslate"><span class="pre">sbml2xlsx.py</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># sbml2xlsx.py</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">os.path</span>
@@ -120,7 +118,7 @@ SBML model despite warning messages.
 </div>
 <p>Example (assuming an speadsheet document <code class="docutils literal notranslate"><span class="pre">my_model.xlsx</span></code> in
 directory <code class="docutils literal notranslate"><span class="pre">./SBML_models</span></code>):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">python3 xlsx2sbml.py SBML_models/my_model.xlsx
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3 xlsx2sbml.py SBML_models/my_model.xlsx
 Validation result: <span class="o">{</span><span class="s1">&#39;Errors&#39;</span>: <span class="m">2</span><span class="o">}</span>
 Please correct spreadsheet and re-run converter
 
@@ -135,16 +133,20 @@ line <span class="m">778</span>: <span class="o">(</span><span class="m">21111</
 attribute must be the identifier of an existing &lt;species&gt; <span class="k">in</span> the model.
 Reference: L3V2 Section <span class="m">4</span>.11.3
  The &lt;speciesReference&gt; <span class="k">in</span> the &lt;reaction&gt; with id <span class="s1">&#39;mr_e9&#39;</span>
- references species <span class="s1">&#39;L&#39;</span>, which is undefined.</span>
-</pre></div></div><p>During validation two errors were detected. The SBML file is not created.
+ references species <span class="s1">&#39;L&#39;</span>, which is undefined.
+</pre></div>
+</div>
+<p>During validation two errors were detected. The SBML file is not created.
 The error messages indicate that species <code class="docutils literal notranslate"><span class="pre">L</span></code> is used in two reactions,
 however species <code class="docutils literal notranslate"><span class="pre">L</span></code> is not yet defined.</p>
 <p>Add species <code class="docutils literal notranslate"><span class="pre">L</span></code> to your spreadsheet document (sheet <code class="docutils literal notranslate"><span class="pre">species</span></code>) and
 run the converter again.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span class="prompt1">python3 xlsx2sbml.py SBML_models/my_model.xlsx
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3 xlsx2sbml.py SBML_models/my_model.xlsx
 Validation result: <span class="o">{}</span>
-SBML model created: SBML_models/my_model.xml</span>
-</pre></div></div><p>This time validation was successful and the SBML model was created.</p>
+SBML model created: SBML_models/my_model.xml
+</pre></div>
+</div>
+<p>This time validation was successful and the SBML model was created.</p>
 <p>Python code for script <code class="docutils literal notranslate"><span class="pre">sbml2xlsx.py</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># xslx2sbml.py</span>
 <span class="kn">import</span> <span class="nn">sys</span>
