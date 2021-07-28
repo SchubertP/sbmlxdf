@@ -8,7 +8,6 @@ setup_kwargs = {}
 
 with open('README.md') as f:
     setup_kwargs['long_description'] = f.read()
-setup_kwargs['long_description_content_type']="text/markdown",
 
 # version from file
 with open(os.path.join('sbmlxdf','_version.py')) as f:
@@ -31,6 +30,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     license='GPLv3',
+    long_description_content_type = 'text/markdown',
     packages=find_packages(exclude=('docs')),
     install_requires = ['pandas>=0.25.0',
                         'xlrd>=1.1.0',

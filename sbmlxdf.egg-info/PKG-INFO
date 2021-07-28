@@ -12,7 +12,7 @@ Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
 Classifier: Operating System :: OS Independent
 Requires-Python: >=3.7
-Description-Content-Type: ('text/markdown',)
+Description-Content-Type: text/markdown
 License-File: LICENSE.txt
 
 # Install:
