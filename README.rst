@@ -32,7 +32,7 @@ should be re-installed using pip install.
   15(1), 20170082.
 
 .. [3] Hucka, M., & Smith, L. P. (2016). SBML Level 3 package: Groups,
-  Version 1 Release 1. _Journal of Integrative Bioinformatics_, 13(3), 290.
+  Version 1 Release 1. _Journal of Integrative Bioinformatics, 13(3), 290.
 
 .. [4] Smith, L. P., Moodie, S. L., Bergmann, F. T., Gillespie, C., Keating,
   S. M., König, M., Myers, C. J., Swat, M. J., Wilkinson, D. J., and Hucka,

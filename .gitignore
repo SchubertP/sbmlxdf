@@ -8,3 +8,4 @@ results/
 *.o
 *.pyc
 .DS_Store
+sbmlxdf.egg-info/

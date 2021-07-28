@@ -1,20 +1,3 @@
-Metadata-Version: 2.1
-Name: sbmlxdf
-Version: 0.2.2
-Summary: convert between SBML and tabular structures
-Home-page: https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
-Author: Peter Schubert
-Author-email: peter.schubert@hhu.de
-License: GPLv3
-Project-URL: Bug Tracker, https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf/-/issues
-Platform: UNKNOWN
-Classifier: Programming Language :: Python :: 3
-Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
-Classifier: Operating System :: OS Independent
-Requires-Python: >=3.7
-Description-Content-Type: ('text/markdown',)
-License-File: LICENSE.txt
-
 # Install:
 
 \$ pip install sbmlxdf
@@ -223,5 +206,3 @@ Peter Schubert, October 2020
 [^5]: Bornstein, B. J., Keating, S. M., Jouraku, A., and Hucka M. (2008)
     LibSBML: An API Library for SBML. Bioinformatics, 24(6):880--881,
     <doi:10.1093/bioinformatics/btn051>.
-
-

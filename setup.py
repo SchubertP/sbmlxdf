@@ -6,9 +6,9 @@ from setuptools import setup, find_packages
 
 setup_kwargs = {}
 
-with open('README.rst') as f:
+with open('README.md') as f:
     setup_kwargs['long_description'] = f.read()
-setup_kwargs['long_description_content_type']="text/x-rst",
+setup_kwargs['long_description_content_type']="text/markdown",
 
 # version from file
 with open(os.path.join('sbmlxdf','_version.py')) as f:
