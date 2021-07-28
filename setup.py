@@ -22,12 +22,16 @@ setup(
     author='Peter Schubert',
     author_email='peter.schubert@hhu.de',
     url='https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf',
-    project_urls={ "Bug Tracker":
-        'https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf/-/issues'},
+    project_urls={
+       "Source Code": 'https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf',
+	   "Documentation": 'https://sbmlxdf.readthedocs.io',
+       "Bug Tracker":
+           'https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf/-/issues'},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
         "Operating System :: OS Independent",
+        "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
     license='GPLv3',
     long_description_content_type = 'text/markdown',
@@ -37,5 +41,6 @@ setup(
                         'openpyxl>=2.6.0',
                         'python-libsbml-experimental>=5.18.0'],
     python_requires=">=3.7",
+    keywords =  [ 'modeling', 'standardization', 'SBML'],
     **setup_kwargs
 )
