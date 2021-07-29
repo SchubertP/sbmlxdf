@@ -165,7 +165,7 @@ class Model(SBase):
         :type sbml_file: str
         :param units_check: units check on/off (default: on)
         :type units_check: bool, optional
-        :returns: Error types and number of occurences
+        :returns: Error types and number of occurrences
         :rtype: dict
         """
         sbml_compliance = False
@@ -265,7 +265,7 @@ class Model(SBase):
         """Export model to a dict of pandas DataFrames.
 
         Keys 'sbml' and 'modelAttrs' reference pandas Series objects.
-        Index of dataframes is genearally set on 'id' attribute.
+        Index of dataframes is generally set on 'id' attribute.
 
         :returns: pandas DataFrames of model components
         :rtype: dict
@@ -283,12 +283,12 @@ class Model(SBase):
         return model_dict
 
     def from_df(self, model_dict):
-        """Loading model from a dict of pandas DataFrames.
+        """Loading model from a dict of pandas dataframes.
 
         Keys of dict, header names and index of dataframes are significant.
         Only known names are imported, other names may exist.
         With few exceptions, index must be set on 'id'.
-        Keys 'sbml' and 'modelAttrs' reference pandas Series objects.
+        Keys 'sbml' and 'modelAttrs' reference pandas series objects.
 
         :param model_dict: pandas DataFrames of model components
         :type model_dict: dict
@@ -318,7 +318,7 @@ class Model(SBase):
     def to_excel(self, file_name):
         """Create spreadsheet document of model (.xlsx or .ods).
 
-        :param file_name: file name of new spredsheet document (.xlsx or .ods)
+        :param file_name: file name of new spreadsheet document (.xlsx or .ods)
         :type file_name: str
         """
         with pd.ExcelWriter(file_name) as writer:

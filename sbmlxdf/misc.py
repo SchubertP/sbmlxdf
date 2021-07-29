@@ -197,7 +197,7 @@ def extract_xml_attrs(xml_annots, ns=None, token=None):
     Example of xml_annots: 'ns_uri=http://www.hhu.de/ccb/bgm/ns, prefix=bgm,
     token=molecule, weight_Da=100'
 
-    :param xml_annots: XML-annotations separeted by ";"
+    :param xml_annots: XML-annotations separated by ";"
     :type xml_annots: str
     :param ns: namespace from which to collect attributes
     :type ns: str, optional

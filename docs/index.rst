@@ -25,7 +25,7 @@ Welcome to sbmlxdf's documentation!
 
 Convert between SBML and tabular structures
 -------------------------------------------
-**sbmlxdf** is a ligthweight and transparent converter from
+**sbmlxdf** is lightweight and transparent converter from
 SBML to pandas Dataframes (sbml2df) and
 from pandas Dataframes to SBML (df2sbml).
 
@@ -63,7 +63,7 @@ Features
   - units of measurement
   - local/global parameters
   - function definitions
-  - Flux Balance Constaints package [SBML_fbc]_
+  - Flux Balance Constraints package [SBML_fbc]_
   - Groups package [SBML_groups]_
   - Distributions package [SBML_distrib]_
 

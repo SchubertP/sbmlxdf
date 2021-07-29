@@ -17,8 +17,8 @@ This is a kinetic SBML model based on a scientific publication from
 Kholodenko [MAPK]_.
 
 Assuming the model is in the directory where you execute
-you Python code. Do the follwing to convert this SBML model to a spreadsheet
-document.
+you Python code. This SBML model can be converted to a spreadsheet
+document as follows:
 
 .. code-block:: python
 
@@ -67,7 +67,7 @@ The **reaction** sheet contains all information related to reactions this model:
 
    SBML kinetics are change of **amount per time unit** and not change of
    concentration per time unit. In the kinetic laws you usually will
-   pre-multipy the 'traditional' kinetic law with the compartment volume.
+   pre-multiply the 'traditional' kinetic law with the compartment volume.
 
 .. note::
 
@@ -97,7 +97,7 @@ We convert the spreadsheet to SBML with following commands:
 
 .. note::
 
-   Orignal and newly created SBML files are not eaxtly identical.
+   Original and newly created SBML files are not exactly identical.
    sbmlxdf inserts a XML-comment with sbmlxdf creation time,
    libsbml version used and the model creation time.
    Sequence of XML elements and XML attributes might change.
@@ -120,8 +120,8 @@ to spreadsheet.
 -----------------------------------------------
 
 Continuing from above. Though we successfully created a SBML model from
-a spreadsheet document, we have not checked if this model acutally complies fully
-to SBML specifications. To improve model quality it is recommended to first
+a spreadsheet document, we have not checked if this model actually complies fully
+to SBML specifications. To improve model quality, it is recommended to first
 validate the model and only after successful validation create the SBML file.
 
 **libSBML**, the API used in the background to access SBML data structures,
@@ -166,7 +166,7 @@ first few lines of ``./results/tmp.txt``::
   expression.
 
 
-These 10 warnings are all realated to consistency of units of measurements.
+These 10 warnings are all related to consistency of units of measurements.
 Line numbers in the report refer to related SBML document './results/tmp.xml'.
 
 While warnings are not critical and the SBML model could still be created,
@@ -181,11 +181,11 @@ Continuing from above we'll correct the warning messages in the spreadsheet
 document ``BIO10_upd.xlsx``. Also note that the SBML version is still at
 Level 2 Version 4. Updates required for higher SBML versions would be more.
 
-From the scientic paper [MAPK]_ we know that Michaelis constants are in the
+From the scientific paper [MAPK]_ we know that Michaelis constants are in the
 range of nanomolar (nM).
 
 Let us try to introduce units into the model and also some other smaller
-modifications. This is actually an interractive step for the modeler. He will
+modifications. This is actually an interactive step for the modeler. He will
 update the spreadsheet, import the spreadsheet with SBML and validate the model.
 In case of Warnings or Errors, further correction is required.
 
@@ -206,7 +206,7 @@ Updates to model reactions. We had to implement several configurations
   We introduced a local parameter ``one``, which has the unit ``dimensionless``
   assigned. Note: SBML L3V2 supports ``1 dimensionless`` in the formula.
 - We also modified the cryptic ``metaids``. This is not to correct any of the
-  warnings. It rather demonstrates how we can change attributs to our liking.
+  warnings. It rather demonstrates how we can change attributes to our liking.
 
 .. image:: ./images/upd_reactions_L2V4.png
 
@@ -252,7 +252,7 @@ To get rid of these warnings, we have to add following attributes to sheet
 
 .. image:: ./images/upd_modelAttrs_L3V2.png
 
-In sheet ``reactions`` we should add ``stoich`` and ``const`` attributes
+In sheet ``reactions`` we should add ``stoic`` and ``const`` attributes
 to ``reactants`` and ``products``. ``constant`` is a mandatory attribute in
 SBML L3V2.
 With SBML L3V2 we also could change back the kinetics of reaction ``J0``, i.e.
@@ -279,10 +279,10 @@ units of measurements added, ``BIO10_L3V2_with_units.xml``.
 
 Python programmers might require access to SBML data. Going through the pains
 of interacting directly with **libsbml** can be avoided. sbmlxdf provides
-access to SBML model data on the level of pandas DataFrames.
-You can extact SBML components and attributes, e.g. for use
-in your optimiztion code. ``kineticLaws`` and other mathematical
-constucts can be converted to Python functions, e.g. for ODE analysis.
+access to SBML model data on the level of pandas dataframes.
+You can extract SBML components and attributes, e.g. for use
+in your optimization code. ``kineticLaws`` and other mathematical
+constructs can be converted to Python functions, e.g. for ODE analysis.
 
 To access SBML data, import a model and convert it to a set of dataframes:
 
