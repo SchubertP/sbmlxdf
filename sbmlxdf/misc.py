@@ -33,28 +33,18 @@ _map_mathml2numpy = (
 )
 
 def mathml2numpy(mformula, np_ns='np'):
-    """Convert mathml infix notation to a numpy formula.
+    """Convert mathml infix notation to a numpy notation
 
-    Prefixes math functions with a numpy prefix.
-    mathml functions are converted to numpy equivalenta where possible.
+    mathml functions and operators are converted to numpy equivalents,
+    where possible. Functions are prefixed with numpy namespace
+        
+    :param mformula: mathml infix notation extracted from SBML
+    :type mformula: str
+    :param np_ns: numpy namespace prefix used in own Python code. Default: 'np'
+    :type np_ns: str
 
-    Parameters
-    ----------
-    mformula : str
-        String with mathml infix notation extracted from SBML,
-        e.g. collected from a math element.
-
-    np_ns : str, optional
-        numpy namespace prefix used in own Python code.
-        Default: 'np'
-
-    Returns
-    -------
-    str
-        containing mathml operators and functions converted
-        to numpy notation. Sting could be further processed and
-        converted to a numpy function.
-
+    :returns: mathml converted to numpy notation
+    :rtype: str
     """
     np_formula = ' ' + mformula
     np_formula = re.sub(r'\s?dimensionless\s?', ' ', np_formula)
@@ -71,20 +61,20 @@ def mathml2numpy(mformula, np_ns='np'):
 def extract_params(s):
     """Extract parameters from a record.
 
-    Parameters
-    ----------
-    s : str
-        record string containting key-value pairs 'key=value' separated by ','.
-        e.g. 'key1=value1, key2=value2, key3=value3'.
-        wWhite space chars are removed.
-        Nested records must be in square brackets (key=[nested records]).
-        Values can also be functions, e.g. math=gamma(shape_Z, scale_Z).
+    A record consists of comma separated key-value pairs.
+    Values may containing nested records (key=[record_x, record_y, ...]),
+    values can also be functions with several parameters, e.g. math=gamma(shape_Z, scale_Z)
 
-    Returns
-    -------
-    dict
-        keys and values extracted from record
+    Example: 'key1=val1, key2=val2, ...' is converted to
+    {key1: val1, key2: val2, ...}
 
+    see also: :func:`extract_records`
+    see also: :func:`extract_lo_records`
+
+    :param s: key '=' value pairs separated by ","
+    :type s: str
+    :returns: key and values of record
+    :rtype: dict
     """
     find_key = re.compile(r'\s*(?P<key>\w*)\s*=\s*')
     params = {}
@@ -125,24 +115,21 @@ def extract_params(s):
 
 
 def extract_records(s):
-    """Split group of records considering nesting.
+    """Split string of records into individual records.
 
-    Used for complicated Uncertainty definitions.
+    Each record consists of comma separated key-value pairs.
+    E.g. record1 = 'key1=val1, key2=val2, ...'.
+    Values may containing nested records (key=[record_x, record_y, ...]).
 
-    Parameters
-    ----------
-    s : str
-        String with group of records that are separated by ';',
-        e.g. 'record1; record2; record3', where records
-        consist of comma separated key-value pairs.
-        Nested records must be in square brackets (key=[nested records])
+    Example: 'record1; record2; ...' is converted to [record1, record2, ...]
 
-    Returns
-    -------
-    list
-        list with strings of individual records, 
-        which can be processed by extract_params()
+    see also: :func:`extract_params`
+    see also: :func:`extract_lo_records`
 
+    :param s: records separated by ";"
+    :type s: str
+    :returns: elements contain individual records
+    :rtype: list of str
     """
     records = []
     brackets = 0
@@ -163,24 +150,21 @@ def extract_records(s):
 
 
 def extract_lo_records(s):
-    """Split groups of groups of records considering nesting.
+    """Split string of groups of records into strings of records per group.
 
-    Used for complicated Uncertainty definitions.
+    Supporting values with containing nested records
+    (key=[record_x, record_y, ...]).
 
-    Parameters
-    ----------
-    s : str
-        string with groups of groups of records, that are
-        enclosed in square brackets and separated by ';',
-        e.g. '[record1; record2; ...];[record7; record8; ...]'
-        Nested records must be in square brackets (key=[nested records])
+    Example: '[record1; record2; ...];[record7; record8; ...]' is
+    converted to ['record1; record2; ...', 'record7; record8; ...']
 
-    Returns
-    -------
-    list
-        list with strings of group of records,
-        which can be processed by extract_records()
+    see also: :func:`extract_params`
+    see also: :func:`extract_records`
 
+    :param s: string with groups of records enclosed in square brackets, separated by ";"
+    :type s: str
+    :returns: elements contain the string of records for each group
+    :rtype: list of str
     """
     # extract list of records from a list of list of records
     # list of records are enclosed by square brackets and separated by ';'
@@ -211,29 +195,19 @@ def extract_lo_records(s):
 
 
 def extract_xml_attrs(xml_annots, ns=None, token=None):
-    """Extract attributes from string for given namespace and/or token.
+    """Extract XML-attributes from given namespace and/or token.
 
-    Parameters
-    ----------
-    xml_annots : str
-        xml-annotation string. Can be a sequence of XML-annotations
-        separated by ';'
-        e.g. 'ns_uri=http://www.hhu.de/ccb/bgm/ns, prefix=bgm,
-        token=molecule, weight_Da=100'
+    Example of xml_annots: 'ns_uri=http://www.hhu.de/ccb/bgm/ns, prefix=bgm,
+    token=molecule, weight_Da=100'
 
-    ns : str (optional)
-        namespace for which attributes should be collected.
-        e.g. 'http://www.hhu.de/ccb/bgm/ns'
-
-    token : str
-        token for which attributes should be collected.
-        e.g. 'molecule'
-
-    Returns
-    -------
-    dict
-        Keys are attribute names and values are attributes values
-
+    :param xml_annots: XML-annotations separeted by ";"
+    :type xml_annots: str
+    :param ns: namespace from which to collect attributes
+    :type ns: str, optional
+    :param token: token from which to collect attributes
+    :type token: str, optional
+    :returns: keys are attribute names and values are attributes values
+    :rtype: dict
     """
     xml_attrs = {}
     for xml_str in xml_annots.split(';'):
