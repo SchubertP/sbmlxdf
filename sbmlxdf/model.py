@@ -71,38 +71,20 @@ class SbmlFileError(Exception):
 
 
 class Model(SBase):
-    """Main Model class to represent the SBML model.
-
-    Methods
-    -------
-        __init__() : constructor, empty model or from file (e.g. SBML, Excel)
-
-        import_sbml() : import model from sbml-file
-        validate_sbml() : validate model against SBML specification
-        export_sbml() : export model to sbml-file
-
-        to_df() : export model to dict of pandas dataframes
-        from_df() : import model from dict of pandas dataframes
-
-        to_excel() : export model to Excel or OpenOffice spreadsheet
-        from_excel() : import model from Excel or OpenOffice spreadsheet
-
-        to_csv() : export model to a set of .csv files
-        from_csv : import model from a directory with a set of .csv files
-
-        get_s_matrix() : retrieve stoichiometric matrix of the model.
-    """
 
     def __init__(self, import_file=None):
         """Constructor.
 
-        Parameters
-        ----------
-        import_file : str, optional
-            During instantiation, model can be imported from file.
-            can be valid sbml file (.xml), Excel spreadsheet (.xlsx),
-            OpenOffice spreadsheet (.ods) or directory holding .csv files.
+        During instantiation model can be imported.
+        Alternatively import model in a subsequent step.
 
+        see also: :func:`import_sbml`, :func:`from_excel`, :func:`from_csv`,
+        :func:`from_df`
+
+        :param import_file: filename of SBML (.xml) model, spreadsheet document (.xlsc or .ods) directory of .csv files with model data
+        :type import_file: str, optional
+        :returns: success/failure
+        :rtype: bool
         """
         self.isModel = False
         self.list_of = {}
@@ -115,20 +97,15 @@ class Model(SBase):
                 self.from_excel(import_file)
             elif os.path.exists(import_file):
                 self.from_csv(import_file)
+        return True
 
     def import_sbml(self, sbml_file):
         """Import SBML model.
 
-        Parameters
-        ----------
-        sbml_file : str
-            file name of existing SBML model (.xml)
-
-        Returns
-        -------
-        boolean
-            success/failure of importing model
-
+        :param sbml_file: file name of SBML model (.xml)
+        :type sbml_file: str
+        :returns: success/failure
+        :rtype: bool
         """
         if not os.path.exists(sbml_file):
             print('SBML file not found: ' + sbml_file)
@@ -175,32 +152,21 @@ class Model(SBase):
             lo.import_sbml(sbml_model)
 
     def validate_sbml(self, sbml_file='tmp.xml', units_check=True):
-        """Validate in memory model against SBML specifications.
+        """Validate model against SBML specifications.
 
         Uses checkConsistency() method from libSBML. Model is exported as
-        a SBML file with name sbml_file to directory ./results. This
-        directory is created, in case it does not exist. Line numbers in
-        warning/errors messages can be checked against the SBML file.
+        a SBML model with name sbml_file and written to directory ./results.
+        Directory is created, if not existing. Line numbers in
+        warning/errors messages can be checked against SBML file.
         Warnings and errors are copied to a text file
         with same name as sbml_file, having extension (.txt).
 
-        Parameters
-        ----------
-        sbml_file : str, optional
-            sbml_file name for temporary SBML model. Only required
-            during error correction process to cross-reference line numbers in
-            error report.
-
-        units_check : boolean, optional
-            To deactivate units of measurement check.
-            For imporved model quality it is recommended to have correct
-            units of measurements.
-
-        Returns
-        -------
-        dict
-            Keys are error types, values are number of occurences.
-
+        :param sbml_file: file name of temporary SBML model (default: tmp.xml)
+        :type sbml_file: str
+        :param units_check: units check on/off (default: on)
+        :type units_check: bool, optional
+        :returns: Error types and number of occurences
+        :rtype: dict
         """
         sbml_compliance = False
         if not os.path.exists(results_dir):
@@ -245,14 +211,12 @@ class Model(SBase):
     def export_sbml(self, sbml_file):
         """Create SBML model.
 
-        Note: Recommended to first validate against SBML specification
-        (validate_sbml())
+        It is recommended to first validate model against SBML specification.
 
-        Parameters
-        ----------
-        sbml_file : str
-            File name of new SBML model (.xml).
+        see also: :func:`validate_sbml`
 
+        :param sbml_file: file name of new SBML model (.xml).
+        :type sbml_file: str
         """
         if hasattr(self, 'sbml_container'):
             sbml_doc = self.sbml_container.create_sbml_doc()
@@ -268,16 +232,10 @@ class Model(SBase):
     def get_s_matrix(self, sparse=False):
         """Retrieve stoichiometric matrix.
 
-        Parameters
-        ----------
-        sparse : boolean, optional
-            S-matrix in normal/sparse format.
-
-        Returns
-        -------
-        pandas DataFrame
-            Stoichiometric matrix
-
+        :param sparse: S-matrix in normal/sparse format (default: normal)
+        :type sparse: bool, optional
+        :returns: stoichiometric matrix
+        :rtype: pandas DataFrame
         """
         if ('species' in self.list_of) and ('reactions' in self.list_of):
             df_species = self.list_of['species'].to_df()
@@ -307,13 +265,10 @@ class Model(SBase):
         """Export model to a dict of pandas DataFrames.
 
         Keys 'sbml' and 'modelAttrs' reference pandas Series objects.
+        Index of dataframes is genearally set on 'id' attribute.
 
-        Returns
-        -------
-        dict
-            Keys are names of component types, values are pandas objects.
-            Index of dataframes is genearally set on 'id' attribute
-
+        :returns: pandas DataFrames of model components
+        :rtype: dict
         """
         model_dict = {'sbml': self.sbml_container.to_df() }
         for key, lo in self.list_of.items():
@@ -331,21 +286,14 @@ class Model(SBase):
         """Loading model from a dict of pandas DataFrames.
 
         Keys of dict, header names and index of dataframes are significant.
-        Only known names are imported, but other names may exist.
-        With few exceptions, index should be set on 'id'.
+        Only known names are imported, other names may exist.
+        With few exceptions, index must be set on 'id'.
         Keys 'sbml' and 'modelAttrs' reference pandas Series objects.
 
-        Parameters
-        ----------
-        model_dict : dict
-            Keys are name of component types, values are pandas objects.
-            Index to be set on 'id' attribute, with exceptions.
-
-        Returns
-        -------
-        boolean
-            Success/failure of loading dataFrame
-
+        :param model_dict: pandas DataFrames of model components
+        :type model_dict: dict
+        :returns: success/failure
+        :rtype: bool
         """
         if (('sbml' not in model_dict) or
             ('modelAttrs' not in model_dict)):
@@ -370,12 +318,8 @@ class Model(SBase):
     def to_excel(self, file_name):
         """Create spreadsheet document of model (.xlsx or .ods).
 
-        Parameters
-        ----------
-        file_name : str
-            Name of new spredsheet document.
-            Extensions .xlsx and .ods are supported
-
+        :param file_name: file name of new spredsheet document (.xlsx or .ods)
+        :type file_name: str
         """
         with pd.ExcelWriter(file_name) as writer:
             for sheet, component in self.to_df().items():
@@ -393,21 +337,14 @@ class Model(SBase):
         """Import model from spreadsheet document (.xlsx or .ods).
 
         Sheet and header names are significant. Only known names
-        are imported, but other names may exist in the document.
+        are imported, other names may exist in the document.
         With few exceptions, the 'id' column must be the first
-        column in the spreadheet.
+        column in sheets.
 
-        Parameters
-        ----------
-        file_name : str
-            file name of spreadsheet document to import.
-            Extensions .xlsx and .ods are supported.
-
-        Returns
-        -------
-        boolean
-            success/failure of importing spreadsheet document
-
+        :param file_name: file name of spreadsheet document with model info
+        :type file_name: str
+        :returns: success/failure
+        :rtype: bool
         """
         if not os.path.exists(file_name):
             print('Excel document not found: ' + file_name)
@@ -432,11 +369,8 @@ class Model(SBase):
     def to_csv(self, dir_name):
         """Create comma-separated-value files of model(.csv).
 
-        Parameters
-        ----------
-        dir_name : str
-            directory name where .csv files will be written to.
-
+        :param dir_name: directory name for .csv files
+        :type dir_name: str
         """
         if os.path.exists(dir_name):
             for csv_file in glob.glob(os.path.join(dir_name, '*.csv')):
@@ -458,20 +392,14 @@ class Model(SBase):
         """Import model from .csv files.
 
         File names and header names are significant. Only known names
-        are imported, but other names may exist.
+        are imported, other names may exist.
         With few exceptions, the 'id' column must be the first
         column in the tables.
 
-        Parameters
-        ----------
-        dir_name : str
-            directory name containing the .csv files.
-
-        Returns
-        -------
-        boolean
-            success/failure of importing .csv files
-
+        :param dir_name: directory name containing the .csv files of model
+        :type dir_name: str
+        :returns: success/failure
+        :rtype: bool
         """
         if not os.path.exists(dir_name):
             print('csv directory not found: ' + dir_name)

@@ -9,3 +9,6 @@ results/
 *.pyc
 .DS_Store
 sbmlxdf.egg-info/
+docs/_build/
+docs/_static/
+docs/_templates/

@@ -1,16 +1,12 @@
 sbmlxdf Methods
 ===============
 
+
 Create Model object:
 --------------------
 
-Instantiating a Model object without parameter requires you to subsequently
-import a model from SBML, spreadsheet or .csv.
-
-.. comment
-
-    .. autofunction:: sbmlxdf.Model.__init__
-
+.. autoclass:: sbmlxdf.Model
+   :members: __init__
 
 Model import/exports
 --------------------
@@ -34,6 +30,7 @@ Model import/exports
 
 .. autofunction:: sbmlxdf.Model.from_df
 .. autofunction:: sbmlxdf.Model.to_df
+
 
 Model validation
 ----------------

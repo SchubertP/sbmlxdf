@@ -37,12 +37,11 @@ def mathml2numpy(mformula, np_ns='np'):
 
     mathml functions and operators are converted to numpy equivalents,
     where possible. Functions are prefixed with numpy namespace
-        
+
     :param mformula: mathml infix notation extracted from SBML
     :type mformula: str
     :param np_ns: numpy namespace prefix used in own Python code. Default: 'np'
     :type np_ns: str
-
     :returns: mathml converted to numpy notation
     :rtype: str
     """
@@ -63,17 +62,17 @@ def extract_params(s):
 
     A record consists of comma separated key-value pairs.
     Values may containing nested records (key=[record_x, record_y, ...]),
-    values can also be functions with several parameters, e.g. math=gamma(shape_Z, scale_Z)
+    values can also be functions with several parameters, e.g.
+    math=gamma(shape_Z, scale_Z)
 
     Example: 'key1=val1, key2=val2, ...' is converted to
     {key1: val1, key2: val2, ...}
 
-    see also: :func:`extract_records`
-    see also: :func:`extract_lo_records`
+    see also: :func:`extract_records` and :func:`extract_lo_records`
 
     :param s: key '=' value pairs separated by ","
     :type s: str
-    :returns: key and values of record
+    :returns: key-values pairs
     :rtype: dict
     """
     find_key = re.compile(r'\s*(?P<key>\w*)\s*=\s*')
@@ -123,8 +122,7 @@ def extract_records(s):
 
     Example: 'record1; record2; ...' is converted to [record1, record2, ...]
 
-    see also: :func:`extract_params`
-    see also: :func:`extract_lo_records`
+    see also: :func:`extract_params` and :func:`extract_lo_records`
 
     :param s: records separated by ";"
     :type s: str
@@ -158,8 +156,7 @@ def extract_lo_records(s):
     Example: '[record1; record2; ...];[record7; record8; ...]' is
     converted to ['record1; record2; ...', 'record7; record8; ...']
 
-    see also: :func:`extract_params`
-    see also: :func:`extract_records`
+    see also: :func:`extract_params` and :func:`extract_records`
 
     :param s: string with groups of records enclosed in square brackets, separated by ";"
     :type s: str
@@ -206,7 +203,7 @@ def extract_xml_attrs(xml_annots, ns=None, token=None):
     :type ns: str, optional
     :param token: token from which to collect attributes
     :type token: str, optional
-    :returns: keys are attribute names and values are attributes values
+    :returns: attribute names corresponding values
     :rtype: dict
     """
     xml_attrs = {}
