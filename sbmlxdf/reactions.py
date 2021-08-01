@@ -207,8 +207,6 @@ class SimpleSpeciesRef(SBase):
             self.id = sr_dict['id']
         if 'species' in sr_dict:
             self.species = sr_dict['species']
-        if 'value' in sr_dict:
-            self.value = sr_dict['value']
         if 'sboterm' in sr_dict:
             self.sboterm = sr_dict['sboterm']
 
