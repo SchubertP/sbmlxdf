@@ -9,7 +9,7 @@ These spreadsheet documents contain sheets for SBML components.
 Comma-separated-value files (\*.csv) are supported as well, one file for
 each SBML component.
 
-In case you are not a Python programmer, ask a colleague to set up Phython 3
+In case you are not a Python programmer, ask a colleague to set up Python 3
 on your system, install sbmlxdf, create the two Python scripts given below
 and show you how these command line scripts can be used.
 
@@ -19,7 +19,7 @@ and show you how these command line scripts can be used.
    design are required. Same holds for column names in tables.
 
    Names of sheets / csv-file are significant. Your spreadsheet may
-   contain additional sheets not recognised by smblxdf. Such sheets may be
+   contain additional sheets not recognized by smblxdf. Such sheets may be
    of help when creating/modifying models.
 
 .. tip::
@@ -74,7 +74,7 @@ Excel -> SBML
 This command line script takes as input a spreadsheet document and
 converts it to the corresponding SBML model.
 
-It is a two step process:
+It is a two-step process:
 
 - First, the model is checked against SBML standards, using libsbml
   functionality.
@@ -97,7 +97,7 @@ It is a two step process:
     SBML model despite warning messages.
     (Error messages require correction in any case.)
 
-Example (assuming an speadsheet document ``my_model.xlsx`` in
+Example (assuming a spreadsheet document ``my_model.xlsx`` in
 directory ``./SBML_models``):
 
 .. code-block:: bash

@@ -96,9 +96,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#model-update">4. Model Update</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sbml-model-in-latest-sbml-version">5. SBML model in latest SBML version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-access-to-sbml-model-data">6. Python access to SBML model data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-time-course-analysis">7. Run time course analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#time-course-analysis-in-copasi">7.1 Time course analysis in COPASI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#time-course-in-tellurium">7.2 Time course in tellurium</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-application-specific-annotations">8. Adding application specific annotations</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Command Line Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spreadsheet.html">Spreadsheet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="methods.html">sbmlxdf Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
@@ -177,12 +184,12 @@ back to SBML, for this please check <a class="reference internal" href="scripts.
 <div class="section" id="convert-sbml-model-to-spreadsheet">
 <h2>1. Convert SBML model to spreadsheet<a class="headerlink" href="#convert-sbml-model-to-spreadsheet" title="Permalink to this headline">¶</a></h2>
 <p>As an example, download from BioModels database the SBML model
-<a class="reference external" href="https://www.ebi.ac.uk/biomodels/BIOMD0000000010#Files">BIOMD0000000010_url.xml</a> .
+<a class="reference external" href="https://www.ebi.ac.uk/biomodels/BIOMD0000000010#Files">BIOMD0000000010_url.xml</a>.
 This is a kinetic SBML model based on a scientific publication from
 Kholodenko <a class="reference internal" href="references.html#mapk" id="id1"><span>[MAPK]</span></a>.</p>
 <p>Assuming the model is in the directory where you execute
-you Python code. Do the follwing to convert this SBML model to a spreadsheet
-document.</p>
+you Python code. This SBML model can be converted to a spreadsheet
+document as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sbmlxdf</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">sbmlxdf</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;BIOMD0000000010_url.xml&#39;</span><span class="p">)</span>
@@ -228,7 +235,7 @@ or global</p></li>
 <p class="admonition-title">Note</p>
 <p>SBML kinetics are change of <strong>amount per time unit</strong> and not change of
 concentration per time unit. In the kinetic laws you usually will
-pre-multipy the ‘traditional’ kinetic law with the compartment volume.</p>
+pre-multiply the ‘traditional’ kinetic law with the compartment volume.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -253,7 +260,7 @@ information gets lost during transfer and none of the attribute values change.</
 <code class="docutils literal notranslate"><span class="pre">BIOMD0000000010_url.xml</span></code>, at least it should contain the same information.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Orignal and newly created SBML files are not eaxtly identical.
+<p>Original and newly created SBML files are not exactly identical.
 sbmlxdf inserts a XML-comment with sbmlxdf creation time,
 libsbml version used and the model creation time.
 Sequence of XML elements and XML attributes might change.</p>
@@ -272,8 +279,8 @@ to spreadsheet.</p>
 <div class="section" id="checking-compliance-with-sbml-specifications">
 <h2>3. Checking compliance with SBML specifications<a class="headerlink" href="#checking-compliance-with-sbml-specifications" title="Permalink to this headline">¶</a></h2>
 <p>Continuing from above. Though we successfully created a SBML model from
-a spreadsheet document, we have not checked if this model acutally complies fully
-to SBML specifications. To improve model quality it is recommended to first
+a spreadsheet document, we have not checked if this model actually complies fully
+to SBML specifications. To improve model quality, it is recommended to first
 validate the model and only after successful validation create the SBML file.</p>
 <p><strong>libSBML</strong>, the API used in the background to access SBML data structures,
 contains methods for checking compliance to SBML standards. These validation
@@ -311,7 +318,7 @@ directory <code class="docutils literal notranslate"><span class="pre">./results
 <span class="n">expression</span><span class="o">.</span>
 </pre></div>
 </div>
-<p>These 10 warnings are all realated to consistency of units of measurements.
+<p>These 10 warnings are all related to consistency of units of measurement.
 Line numbers in the report refer to related SBML document ‘./results/tmp.xml’.</p>
 <p>While warnings are not critical and the SBML model could still be created,
 here we try correcting the issues in the spreadsheet <code class="docutils literal notranslate"><span class="pre">BIO10_upd.xlsx</span></code> and
@@ -323,10 +330,10 @@ units of measurement.</p>
 <p>Continuing from above we’ll correct the warning messages in the spreadsheet
 document <code class="docutils literal notranslate"><span class="pre">BIO10_upd.xlsx</span></code>. Also note that the SBML version is still at
 Level 2 Version 4. Updates required for higher SBML versions would be more.</p>
-<p>From the scientic paper <a class="reference internal" href="references.html#mapk" id="id2"><span>[MAPK]</span></a> we know that Michaelis constants are in the
+<p>From the scientific paper <a class="reference internal" href="references.html#mapk" id="id2"><span>[MAPK]</span></a> we know that Michaelis constants are in the
 range of nanomolar (nM).</p>
 <p>Let us try to introduce units into the model and also some other smaller
-modifications. This is actually an interractive step for the modeler. He will
+modifications. This is actually an interactive step for the modeler. He will
 update the spreadsheet, import the spreadsheet with SBML and validate the model.
 In case of Warnings or Errors, further correction is required.</p>
 <p>Finally following updates to the model remove any of the warning messages:</p>
@@ -343,7 +350,7 @@ e.g. <code class="docutils literal notranslate"><span class="pre">n</span></code
 We introduced a local parameter <code class="docutils literal notranslate"><span class="pre">one</span></code>, which has the unit <code class="docutils literal notranslate"><span class="pre">dimensionless</span></code>
 assigned. Note: SBML L3V2 supports <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">dimensionless</span></code> in the formula.</p></li>
 <li><p>We also modified the cryptic <code class="docutils literal notranslate"><span class="pre">metaids</span></code>. This is not to correct any of the
-warnings. It rather demonstrates how we can change attributs to our liking.</p></li>
+warnings. It rather demonstrates how we can change attributes to our liking.</p></li>
 </ul>
 <img alt="_images/upd_reactions_L2V4.png" src="_images/upd_reactions_L2V4.png" />
 <p>In the sheet <code class="docutils literal notranslate"><span class="pre">modelAttrs</span></code> we could add the <strong>current time</strong> to the
@@ -377,7 +384,7 @@ Level 2 version 4.</p>
 <li><p><strong>extentUnits</strong></p></li>
 </ul>
 <img alt="_images/upd_modelAttrs_L3V2.png" src="_images/upd_modelAttrs_L3V2.png" />
-<p>In sheet <code class="docutils literal notranslate"><span class="pre">reactions</span></code> we should add <code class="docutils literal notranslate"><span class="pre">stoich</span></code> and <code class="docutils literal notranslate"><span class="pre">const</span></code> attributes
+<p>In sheet <code class="docutils literal notranslate"><span class="pre">reactions</span></code> we should add <code class="docutils literal notranslate"><span class="pre">stoic</span></code> and <code class="docutils literal notranslate"><span class="pre">const</span></code> attributes
 to <code class="docutils literal notranslate"><span class="pre">reactants</span></code> and <code class="docutils literal notranslate"><span class="pre">products</span></code>. <code class="docutils literal notranslate"><span class="pre">constant</span></code> is a mandatory attribute in
 SBML L3V2.
 With SBML L3V2 we also could change back the kinetics of reaction <code class="docutils literal notranslate"><span class="pre">J0</span></code>, i.e.
@@ -395,13 +402,13 @@ inserting <code class="docutils literal notranslate"><span class="pre">1</span> 
 <h2>6. Python access to SBML model data<a class="headerlink" href="#python-access-to-sbml-model-data" title="Permalink to this headline">¶</a></h2>
 <p>Continuing from above we have generated from the SBML Biomodel
 <code class="docutils literal notranslate"><span class="pre">BIOMD0000000010_url.xml</span></code> an updated SBML model in Level 3 Version 2 with
-units of measurements added, <code class="docutils literal notranslate"><span class="pre">BIO10_L3V2_with_units.xml</span></code>.</p>
+units of measurement added, <code class="docutils literal notranslate"><span class="pre">BIO10_L3V2_with_units.xml</span></code>.</p>
 <p>Python programmers might require access to SBML data. Going through the pains
 of interacting directly with <strong>libsbml</strong> can be avoided. sbmlxdf provides
-access to SBML model data on the level of pandas DataFrames.
-You can extact SBML components and attributes, e.g. for use
-in your optimiztion code. <code class="docutils literal notranslate"><span class="pre">kineticLaws</span></code> and other mathematical
-constucts can be converted to Python functions, e.g. for ODE analysis.</p>
+access to SBML model data on the level of pandas dataframes.
+You can extract SBML components and attributes, e.g. for use
+in your optimization code. <code class="docutils literal notranslate"><span class="pre">kineticLaws</span></code> and other mathematical
+constructs can be converted to Python functions, e.g. for ODE analysis.</p>
 <p>To access SBML data, import a model and convert it to a set of dataframes:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">sbmlxdf</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;BIO10_L3V2_with_units.xml&#39;</span><span class="p">)</span>
 <span class="n">model_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
@@ -462,6 +469,121 @@ key-value pairs from a record, e.g. to get all attributes of a reactant.</p>
 <span class="n">MAPK</span>     <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">1.0</span>
 <span class="n">MAPK_P</span>   <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">1.0</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="mf">1.0</span> <span class="o">-</span><span class="mf">1.0</span>
 <span class="n">MAPK_PP</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">0.0</span>  <span class="mf">1.0</span> <span class="o">-</span><span class="mf">1.0</span>  <span class="mf">0.0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="run-time-course-analysis">
+<h2>7. Run time course analysis<a class="headerlink" href="#run-time-course-analysis" title="Permalink to this headline">¶</a></h2>
+<p>Once we have a SBML model, we might want to run a time course
+analysis to see the change of concentrations over time.
+Let us use the SBML model ‘BIO10_L3V2_with_units.xml’.</p>
+<p>I’ll present two methods for time course analysis.
+Users without Python programming experience can use the graphical tool
+<a class="reference external" href="copasi.org">COPASI</a>. Alternatively, you can use the Python package
+<a class="reference external" href="http://tellurium.analogmachine.org">tellurium</a>, but this requires
+some coding.</p>
+<div class="section" id="time-course-analysis-in-copasi">
+<h3>7.1 Time course analysis in COPASI<a class="headerlink" href="#time-course-analysis-in-copasi" title="Permalink to this headline">¶</a></h3>
+<p>Assuming you already installed <strong>COPASI</strong> on your system. The example below
+is based on COPASI 4.33 (Build 246).</p>
+<p>These are the steps for generating a time course plot:</p>
+<ul>
+<li><p>open <strong>COPASI</strong> application</p></li>
+<li><p>import the SBML model via menu <code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">-&gt;</span> <span class="pre">Import</span> <span class="pre">SBML</span> <span class="pre">...</span></code>,
+select SBML file <code class="docutils literal notranslate"><span class="pre">BIO10_L3V2_with_units.xml</span></code>.
+In my system a warning messages comes up, informing me that <em>length unit</em> and
+<em>area unit</em> are not defined. Don’t worry, these units are not used
+in our model.</p>
+<p>COPASI converts the SBML model into its internal format.</p>
+<img alt="_images/copasi_model.png" src="_images/copasi_model.png" />
+</li>
+<li><p>create a plot:
+<code class="docutils literal notranslate"><span class="pre">COPASI</span> <span class="pre">-&gt;</span> <span class="pre">Output</span> <span class="pre">Specifications</span> <span class="pre">-&gt;</span> <span class="pre">Plots[0]</span></code>.
+Add a <code class="docutils literal notranslate"><span class="pre">New</span></code> plot and add a <code class="docutils literal notranslate"><span class="pre">New</span> <span class="pre">Curve</span></code>,
+select for <code class="docutils literal notranslate"><span class="pre">X-Axis</span></code> <code class="docutils literal notranslate"><span class="pre">Time</span> <span class="pre">-&gt;</span> <span class="pre">Model</span> <span class="pre">Time</span></code>,
+select for <code class="docutils literal notranslate"><span class="pre">Y-Axis</span></code> <code class="docutils literal notranslate"><span class="pre">Species</span> <span class="pre">-&gt;</span> <span class="pre">Transient</span> <span class="pre">Concentrations</span></code> and confirm.</p>
+<img alt="_images/copasi_plot_definition.png" src="_images/copasi_plot_definition.png" />
+</li>
+<li><p>preform time course analysis:
+<code class="docutils literal notranslate"><span class="pre">COPASI</span> <span class="pre">-&gt;</span> <span class="pre">Tasks</span> <span class="pre">-&gt;</span> <span class="pre">Time</span> <span class="pre">Course</span></code>
+Set <code class="docutils literal notranslate"><span class="pre">Duration</span> <span class="pre">[s]</span></code> to <code class="docutils literal notranslate"><span class="pre">1800</span></code> and <code class="docutils literal notranslate"><span class="pre">Intervals</span></code> to <code class="docutils literal notranslate"><span class="pre">1000</span></code>.
+Press <code class="docutils literal notranslate"><span class="pre">Run</span></code></p>
+<img alt="_images/copasi_timecourse.png" src="_images/copasi_timecourse.png" />
+</li>
+<li><p>a plot showing the concentrations over time should appear. It not, the plot
+window might be hidden by other windows.</p>
+<img alt="_images/copasi_plot_result.png" src="_images/copasi_plot_result.png" />
+</li>
+</ul>
+</div>
+<div class="section" id="time-course-in-tellurium">
+<h3>7.2 Time course in tellurium<a class="headerlink" href="#time-course-in-tellurium" title="Permalink to this headline">¶</a></h3>
+<p>Assuming you already pip installed the tellurium package.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tellurium</span> <span class="k">as</span> <span class="nn">te</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">te</span><span class="o">.</span><span class="n">loadSBMLModel</span><span class="p">(</span><span class="s1">&#39;BIO10_L3V2_with_units.xml&#39;</span><span class="p">)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1800</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">r</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/tellurium_plot_result.png"><img alt="_images/tellurium_plot_result.png" src="_images/tellurium_plot_result.png" style="width: 374.0px; height: 248.0px;" /></a>
+</div>
+</div>
+<div class="section" id="adding-application-specific-annotations">
+<h2>8. Adding application specific annotations<a class="headerlink" href="#adding-application-specific-annotations" title="Permalink to this headline">¶</a></h2>
+<p>As an implementer of optimization methods you might require application
+specific attributes on SBML components. This can be done using the annotation
+mechanism provided by SBML.</p>
+<p>Continuing from the model above, we might be interested in the molecular
+weight of the species involved in the reactions and possibly the length of the
+proteins. We might required these attributes to configure additional
+constraints during optimization. We could add this information as SBML
+parameters to the <code class="docutils literal notranslate"><span class="pre">parameters</span></code> sheet (not discussed yet).
+However, we would have difficulties linking <code class="docutils literal notranslate"><span class="pre">species</span></code>
+objects with corresponding <code class="docutils literal notranslate"><span class="pre">parameters</span></code> object.</p>
+<p>Using the annotation mechanism we can directly add our required attributes
+on the level of <code class="docutils literal notranslate"><span class="pre">species</span></code>. Let us extend our spreadsheet <code class="docutils literal notranslate"><span class="pre">BIO10_upd.xlsx</span></code>.</p>
+<p>To benefit from spreadsheet features, we
+add a sheet <code class="docutils literal notranslate"><span class="pre">helpers</span></code> and copy relevant information from the
+<code class="docutils literal notranslate"><span class="pre">species</span></code> sheet. The <code class="docutils literal notranslate"><span class="pre">miriam-annotation</span></code> values provide references
+to <code class="docutils literal notranslate"><span class="pre">UniProt</span></code> database. We manually lookup
+<a class="reference external" href="https://www.uniprot.org">UniProt</a> and search for the <strong>unitprot ids</strong> used
+in our model. In the <strong>Sequence</strong> section we find protein length and
+molecular weight, which we add to our table.
+Just as an example, we also add weights of inorganic phosphates.
+Using Excel <code class="docutils literal notranslate"><span class="pre">concat()</span></code> function we create <code class="docutils literal notranslate"><span class="pre">xml-annotations</span></code>
+using fixed namespace, token and prefix and
+variable values from our table. Note: Here I define an arbitrary namespace.</p>
+<img alt="_images/upd_helper_xml.png" src="_images/upd_helper_xml.png" />
+<p>Subsequently we <strong>copy</strong> the <code class="docutils literal notranslate"><span class="pre">xml-annotation</span></code> column and
+<strong>Paste Special - Values</strong> it into our <code class="docutils literal notranslate"><span class="pre">species</span></code> sheet.
+I also updated the <code class="docutils literal notranslate"><span class="pre">metaid</span></code> values.</p>
+<img alt="_images/upd_species_xml.png" src="_images/upd_species_xml.png" />
+<p>We import the spreadsheet, validate it and create our new SBML
+<code class="docutils literal notranslate"><span class="pre">BIO10_L3V2_with_XML_annot.xml</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">upd_model</span> <span class="o">=</span> <span class="n">sbmlxdf</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;BIO10_upd.xlsx&#39;</span><span class="p">)</span>
+<span class="n">upd_model</span><span class="o">.</span><span class="n">validate_sbml</span><span class="p">(</span><span class="s1">&#39;tmp.xml&#39;</span><span class="p">)</span>
+<span class="p">{}</span>
+<span class="n">upd_model</span><span class="o">.</span><span class="n">export_sbml</span><span class="p">(</span><span class="s1">&#39;BIO10_L3V2_with_XML_annot.xml&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As a Python programmer you now have access to the additional attributes,
+which is demonstrated in below code block:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">sbmlxdf</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;BIO10_L3V2_with_XML_annot.xml&#39;</span><span class="p">)</span>
+<span class="n">model_df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+<span class="n">df_s</span> <span class="o">=</span> <span class="n">model_df</span><span class="p">[</span><span class="s1">&#39;species&#39;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">species</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df_s</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">sbmlxdf</span><span class="o">.</span><span class="n">misc</span><span class="o">.</span><span class="n">extract_xml_attrs</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;xml-annotation&#39;</span><span class="p">],</span> <span class="n">token</span><span class="o">=</span><span class="s1">&#39;molecule&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">species</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
+
+<span class="n">MKKK</span> <span class="p">{</span><span class="s1">&#39;weight_Da&#39;</span><span class="p">:</span> <span class="s1">&#39;71960&#39;</span><span class="p">,</span> <span class="s1">&#39;prot_len&#39;</span><span class="p">:</span> <span class="s1">&#39;638&#39;</span><span class="p">}</span>
+<span class="n">MKKK_P</span> <span class="p">{</span><span class="s1">&#39;weight_Da&#39;</span><span class="p">:</span> <span class="s1">&#39;72039&#39;</span><span class="p">,</span> <span class="s1">&#39;prot_len&#39;</span><span class="p">:</span> <span class="s1">&#39;638&#39;</span><span class="p">}</span>
+<span class="n">MKK</span> <span class="p">{</span><span class="s1">&#39;weight_Da&#39;</span><span class="p">:</span> <span class="s1">&#39;43900&#39;</span><span class="p">,</span> <span class="s1">&#39;prot_len&#39;</span><span class="p">:</span> <span class="s1">&#39;395&#39;</span><span class="p">}</span>
+<span class="n">MKK_P</span> <span class="p">{</span><span class="s1">&#39;weight_Da&#39;</span><span class="p">:</span> <span class="s1">&#39;43821&#39;</span><span class="p">,</span> <span class="s1">&#39;prot_len&#39;</span><span class="p">:</span> <span class="s1">&#39;395&#39;</span><span class="p">}</span>
+<span class="n">MKK_PP</span> <span class="p">{</span><span class="s1">&#39;weight_Da&#39;</span><span class="p">:</span> <span class="s1">&#39;43900&#39;</span><span class="p">,</span> <span class="s1">&#39;prot_len&#39;</span><span class="p">:</span> <span class="s1">&#39;395&#39;</span><span class="p">}</span>
+<span class="n">MAPK</span> <span class="p">{</span><span class="s1">&#39;weight_Da&#39;</span><span class="p">:</span> <span class="s1">&#39;41257&#39;</span><span class="p">,</span> <span class="s1">&#39;prot_len&#39;</span><span class="p">:</span> <span class="s1">&#39;361&#39;</span><span class="p">}</span>
+<span class="n">MAPK_P</span> <span class="p">{</span><span class="s1">&#39;weight_Da&#39;</span><span class="p">:</span> <span class="s1">&#39;41336&#39;</span><span class="p">,</span> <span class="s1">&#39;prot_len&#39;</span><span class="p">:</span> <span class="s1">&#39;361&#39;</span><span class="p">}</span>
+<span class="n">MAPK_PP</span> <span class="p">{</span><span class="s1">&#39;weight_Da&#39;</span><span class="p">:</span> <span class="s1">&#39;41415&#39;</span><span class="p">,</span> <span class="s1">&#39;prot_len&#39;</span><span class="p">:</span> <span class="s1">&#39;361&#39;</span><span class="p">}</span>
 </pre></div>
 </div>
 </div>

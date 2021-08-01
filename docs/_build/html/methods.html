@@ -42,7 +42,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="References" href="references.html" />
-    <link rel="prev" title="Command Line Scripts" href="scripts.html" /> 
+    <link rel="prev" title="Spreadsheet" href="spreadsheet.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -91,11 +91,12 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts.html">Command Line Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spreadsheet.html">Spreadsheet</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">sbmlxdf Methods</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#create-model-object">Create Model object:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-model-object">Create Model object</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#model-import-exports">Model import/exports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#model-validation">Model validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#miscellanious">Miscellanious</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#miscellaneous">Miscellaneous</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
@@ -169,7 +170,7 @@
   <div class="section" id="sbmlxdf-methods">
 <h1>sbmlxdf Methods<a class="headerlink" href="#sbmlxdf-methods" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="create-model-object">
-<h2>Create Model object:<a class="headerlink" href="#create-model-object" title="Permalink to this headline">¶</a></h2>
+<h2>Create Model object<a class="headerlink" href="#create-model-object" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="sbmlxdf.Model">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">sbmlxdf.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">import_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sbmlxdf/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sbmlxdf.Model" title="Permalink to this definition">¶</a></dt>
@@ -199,7 +200,7 @@ Alternatively import model in a subsequent step.</p>
 </div>
 <div class="section" id="model-import-exports">
 <h2>Model import/exports<a class="headerlink" href="#model-import-exports" title="Permalink to this headline">¶</a></h2>
-<p><strong>Interface SBML models:</strong></p>
+<p><strong>Interface SBML models</strong></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="sbmlxdf.Model.import_sbml">
 <span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">import_sbml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sbml_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.import_sbml" title="Permalink to this definition">¶</a></dt>
@@ -230,7 +231,7 @@ Alternatively import model in a subsequent step.</p>
 </dl>
 </dd></dl>
 
-<p><strong>Interface spreadsheet documents:</strong></p>
+<p><strong>Interface spreadsheet documents</strong></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="sbmlxdf.Model.from_excel">
 <span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">from_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.from_excel" title="Permalink to this definition">¶</a></dt>
@@ -258,12 +259,12 @@ column in sheets.</p>
 <dd><p>Create spreadsheet document of model (.xlsx or .ods).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>) – file name of new spredsheet document (.xlsx or .ods)</p>
+<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>) – file name of new spreadsheet document (.xlsx or .ods)</p>
 </dd>
 </dl>
 </dd></dl>
 
-<p><strong>Interface .csv files:</strong></p>
+<p><strong>Interface .csv files</strong></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="sbmlxdf.Model.from_csv">
 <span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">from_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.from_csv" title="Permalink to this definition">¶</a></dt>
@@ -296,15 +297,15 @@ column in the tables.</p>
 </dl>
 </dd></dl>
 
-<p><strong>Interface with pandas dataframes:</strong></p>
+<p><strong>Interface with pandas dataframes</strong></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="sbmlxdf.Model.from_df">
 <span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">from_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.from_df" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loading model from a dict of pandas DataFrames.</p>
+<dd><p>Loading model from a dict of pandas dataframes.</p>
 <p>Keys of dict, header names and index of dataframes are significant.
 Only known names are imported, other names may exist.
 With few exceptions, index must be set on ‘id’.
-Keys ‘sbml’ and ‘modelAttrs’ reference pandas Series objects.</p>
+Keys ‘sbml’ and ‘modelAttrs’ reference pandas series objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>model_dict</strong> (<em>dict</em>) – pandas DataFrames of model components</p>
@@ -323,7 +324,7 @@ Keys ‘sbml’ and ‘modelAttrs’ reference pandas Series objects.</p>
 <span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.to_df" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export model to a dict of pandas DataFrames.</p>
 <p>Keys ‘sbml’ and ‘modelAttrs’ reference pandas Series objects.
-Index of dataframes is genearally set on ‘id’ attribute.</p>
+Index of dataframes is generally set on ‘id’ attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>pandas DataFrames of model components</p>
@@ -337,7 +338,7 @@ Index of dataframes is genearally set on ‘id’ attribute.</p>
 </div>
 <div class="section" id="model-validation">
 <h2>Model validation<a class="headerlink" href="#model-validation" title="Permalink to this headline">¶</a></h2>
-<p><strong>Validate compliance with SBML specification:</strong></p>
+<p><strong>Validate compliance with SBML specification</strong></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="sbmlxdf.Model.validate_sbml">
 <span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">validate_sbml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sbml_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tmp.xml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.validate_sbml" title="Permalink to this definition">¶</a></dt>
@@ -356,7 +357,7 @@ with same name as sbml_file, having extension (.txt).</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Error types and number of occurences</p>
+<dd class="field-even"><p>Error types and number of occurrences</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
@@ -365,9 +366,9 @@ with same name as sbml_file, having extension (.txt).</p>
 </dd></dl>
 
 </div>
-<div class="section" id="miscellanious">
-<h2>Miscellanious<a class="headerlink" href="#miscellanious" title="Permalink to this headline">¶</a></h2>
-<p><strong>Data extraction helper functions.</strong></p>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p><strong>Data extraction helper functions</strong></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="sbmlxdf.Model.get_s_matrix">
 <span class="sig-prename descclassname"><span class="pre">sbmlxdf.Model.</span></span><span class="sig-name descname"><span class="pre">get_s_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sbmlxdf.Model.get_s_matrix" title="Permalink to this definition">¶</a></dt>
@@ -394,7 +395,7 @@ token=molecule, weight_Da=100’</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xml_annots</strong> (<em>str</em>) – XML-annotations separeted by “;”</p></li>
+<li><p><strong>xml_annots</strong> (<em>str</em>) – XML-annotations separated by “;”</p></li>
 <li><p><strong>ns</strong> (<em>str</em><em>, </em><em>optional</em>) – namespace from which to collect attributes</p></li>
 <li><p><strong>token</strong> (<em>str</em><em>, </em><em>optional</em>) – token from which to collect attributes</p></li>
 </ul>
@@ -508,7 +509,7 @@ where possible. Functions are prefixed with numpy namespace</p>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="references.html" class="btn btn-neutral float-right" title="References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="scripts.html" class="btn btn-neutral float-left" title="Command Line Scripts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="spreadsheet.html" class="btn btn-neutral float-left" title="Spreadsheet" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

@@ -12,7 +12,7 @@ back to SBML, for this please check :doc:`/scripts`.
 ------------------------------------
 
 As an example, download from BioModels database the SBML model
-`BIOMD0000000010_url.xml <https://www.ebi.ac.uk/biomodels/BIOMD000000001\0#Files>`_ .
+`BIOMD0000000010_url.xml <https://www.ebi.ac.uk/biomodels/BIOMD000000001\0#Files>`_.
 This is a kinetic SBML model based on a scientific publication from
 Kholodenko [MAPK]_.
 
@@ -166,7 +166,7 @@ first few lines of ``./results/tmp.txt``::
   expression.
 
 
-These 10 warnings are all related to consistency of units of measurements.
+These 10 warnings are all related to consistency of units of measurement.
 Line numbers in the report refer to related SBML document './results/tmp.xml'.
 
 While warnings are not critical and the SBML model could still be created,
@@ -275,7 +275,7 @@ Now we can generate from out spreadsheet a SBML L3V2 compliant model.
 
 Continuing from above we have generated from the SBML Biomodel
 ``BIOMD0000000010_url.xml`` an updated SBML model in Level 3 Version 2 with
-units of measurements added, ``BIO10_L3V2_with_units.xml``.
+units of measurement added, ``BIO10_L3V2_with_units.xml``.
 
 Python programmers might require access to SBML data. Going through the pains
 of interacting directly with **libsbml** can be avoided. sbmlxdf provides
@@ -353,3 +353,142 @@ It is also possible to retrieve the stoichiometric matrix using:
    MAPK     0.0  0.0  0.0  0.0  0.0  0.0 -1.0  0.0  0.0  1.0
    MAPK_P   0.0  0.0  0.0  0.0  0.0  0.0  1.0 -1.0  1.0 -1.0
    MAPK_PP  0.0  0.0  0.0  0.0  0.0  0.0  0.0  1.0 -1.0  0.0
+
+
+7. Run time course analysis
+------------------------------------------
+
+Once we have a SBML model, we might want to run a time course
+analysis to see the change of concentrations over time.
+Let us use the SBML model 'BIO10_L3V2_with_units.xml'.
+
+I'll present two methods for time course analysis.
+Users without Python programming experience can use the graphical tool
+`COPASI <copasi.org>`_. Alternatively, you can use the Python package
+`tellurium  <http://tellurium.analogmachine.org>`_, but this requires
+some coding.
+
+7.1 Time course analysis in COPASI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Assuming you already installed **COPASI** on your system. The example below
+is based on COPASI 4.33 (Build 246).
+
+These are the steps for generating a time course plot:
+
+- open **COPASI** application
+- import the SBML model via menu ``File -> Import SBML ...``,
+  select SBML file ``BIO10_L3V2_with_units.xml``.
+  In my system a warning messages comes up, informing me that *length unit* and
+  *area unit* are not defined. Don't worry, these units are not used
+  in our model.
+
+  COPASI converts the SBML model into its internal format.
+
+  .. image:: ./images/copasi_model.png
+
+- create a plot:
+  ``COPASI -> Output Specifications -> Plots[0]``.
+  Add a ``New`` plot and add a ``New Curve``,
+  select for ``X-Axis`` ``Time -> Model Time``,
+  select for ``Y-Axis`` ``Species -> Transient Concentrations`` and confirm.
+
+  .. image:: ./images/copasi_plot_definition.png
+
+- preform time course analysis:
+  ``COPASI -> Tasks -> Time Course``
+  Set ``Duration [s]`` to ``1800`` and ``Intervals`` to ``1000``.
+  Press ``Run``
+
+  .. image:: ./images/copasi_timecourse.png
+
+- a plot showing the concentrations over time should appear. It not, the plot
+  window might be hidden by other windows.
+
+  .. image:: ./images/copasi_plot_result.png
+
+
+7.2 Time course in tellurium
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Assuming you already pip installed the tellurium package.
+
+.. code-block:: python
+
+  import tellurium as te
+
+  r = te.loadSBMLModel('BIO10_L3V2_with_units.xml')
+  r.simulate(0, 1800, 1000)
+  r.plot()
+
+.. image:: ./images/tellurium_plot_result.png
+   :scale: 50 %
+
+8. Adding application specific annotations
+------------------------------------------
+
+As an implementer of optimization methods you might require application
+specific attributes on SBML components. This can be done using the annotation
+mechanism provided by SBML.
+
+Continuing from the model above, we might be interested in the molecular
+weight of the species involved in the reactions and possibly the length of the
+proteins. We might required these attributes to configure additional
+constraints during optimization. We could add this information as SBML
+parameters to the ``parameters`` sheet (not discussed yet).
+However, we would have difficulties linking ``species``
+objects with corresponding ``parameters`` object.
+
+Using the annotation mechanism we can directly add our required attributes
+on the level of ``species``. Let us extend our spreadsheet ``BIO10_upd.xlsx``.
+
+To benefit from spreadsheet features, we
+add a sheet ``helpers`` and copy relevant information from the
+``species`` sheet. The ``miriam-annotation`` values provide references
+to ``UniProt`` database. We manually lookup
+`UniProt <https://www.uniprot.org>`_ and search for the **unitprot ids** used
+in our model. In the **Sequence** section we find protein length and
+molecular weight, which we add to our table.
+Just as an example, we also add weights of inorganic phosphates.
+Using Excel ``concat()`` function we create ``xml-annotations``
+using fixed namespace, token and prefix and
+variable values from our table. Note: Here I define an arbitrary namespace.
+
+.. image:: ./images/upd_helper_xml.png
+
+Subsequently we **copy** the ``xml-annotation`` column and
+**Paste Special - Values** it into our ``species`` sheet.
+I also updated the ``metaid`` values.
+
+.. image:: ./images/upd_species_xml.png
+
+We import the spreadsheet, validate it and create our new SBML
+``BIO10_L3V2_with_XML_annot.xml``.
+
+.. code-block:: python
+
+    upd_model = sbmlxdf.Model('BIO10_upd.xlsx')
+    upd_model.validate_sbml('tmp.xml')
+    {}
+    upd_model.export_sbml('BIO10_L3V2_with_XML_annot.xml')
+
+As a Python programmer you now have access to the additional attributes,
+which is demonstrated in below code block:
+
+.. code-block:: python
+
+  model = sbmlxdf.Model('BIO10_L3V2_with_XML_annot.xml')
+  model_df = model.to_df()
+  df_s = model_df['species']
+  for species, row in df_s.iterrows():
+      attrs = sbmlxdf.misc.extract_xml_attrs(row['xml-annotation'], token='molecule')
+      print(species, attrs)
+
+  MKKK {'weight_Da': '71960', 'prot_len': '638'}
+  MKKK_P {'weight_Da': '72039', 'prot_len': '638'}
+  MKK {'weight_Da': '43900', 'prot_len': '395'}
+  MKK_P {'weight_Da': '43821', 'prot_len': '395'}
+  MKK_PP {'weight_Da': '43900', 'prot_len': '395'}
+  MAPK {'weight_Da': '41257', 'prot_len': '361'}
+  MAPK_P {'weight_Da': '41336', 'prot_len': '361'}
+  MAPK_PP {'weight_Da': '41415', 'prot_len': '361'}

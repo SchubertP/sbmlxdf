@@ -17,6 +17,7 @@ Heinrich-Heine-University Duesseldorf, Germany
    install
    tutorial
    scripts
+   spreadsheet
    methods
    references
 
@@ -76,11 +77,3 @@ Features
    i.e. **Hierarchical Model Composition**,
    **Multistate and Multicomponent Species** and **Qualitative Models** are
    not supported at the moment, but might be included in future versions.
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

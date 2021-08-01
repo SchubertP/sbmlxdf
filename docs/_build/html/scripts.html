@@ -41,7 +41,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="sbmlxdf Methods" href="methods.html" />
+    <link rel="next" title="Spreadsheet" href="spreadsheet.html" />
     <link rel="prev" title="Tutorial" href="tutorial.html" /> 
 </head>
 
@@ -95,6 +95,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#excel-sbml">Excel -&gt; SBML</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="spreadsheet.html">Spreadsheet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="methods.html">sbmlxdf Methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
 </ul>
@@ -172,7 +173,7 @@ SBML coded models and the tabular format.</p>
 These spreadsheet documents contain sheets for SBML components.
 Comma-separated-value files (*.csv) are supported as well, one file for
 each SBML component.</p>
-<p>In case you are not a Python programmer, ask a colleague to set up Phython 3
+<p>In case you are not a Python programmer, ask a colleague to set up Python 3
 on your system, install sbmlxdf, create the two Python scripts given below
 and show you how these command line scripts can be used.</p>
 <div class="admonition note">
@@ -180,7 +181,7 @@ and show you how these command line scripts can be used.</p>
 <p>Only sheets / csv-files for SBML components used in your model
 design are required. Same holds for column names in tables.</p>
 <p>Names of sheets / csv-file are significant. Your spreadsheet may
-contain additional sheets not recognised by smblxdf. Such sheets may be
+contain additional sheets not recognized by smblxdf. Such sheets may be
 of help when creating/modifying models.</p>
 </div>
 <div class="admonition tip">
@@ -225,7 +226,7 @@ spreadsheet created: SBML_models/other_model.xlsx
 <h2>Excel -&gt; SBML<a class="headerlink" href="#excel-sbml" title="Permalink to this headline">¶</a></h2>
 <p>This command line script takes as input a spreadsheet document and
 converts it to the corresponding SBML model.</p>
-<p>It is a two step process:</p>
+<p>It is a two-step process:</p>
 <ul>
 <li><p>First, the model is checked against SBML standards, using libsbml
 functionality.
@@ -247,7 +248,7 @@ optional parameter <code class="docutils literal notranslate"><span class="pre">
 SBML model despite warning messages.
 (Error messages require correction in any case.)</p>
 </div>
-<p>Example (assuming an speadsheet document <code class="docutils literal notranslate"><span class="pre">my_model.xlsx</span></code> in
+<p>Example (assuming a spreadsheet document <code class="docutils literal notranslate"><span class="pre">my_model.xlsx</span></code> in
 directory <code class="docutils literal notranslate"><span class="pre">./SBML_models</span></code>):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python3 xlsx2sbml.py SBML_models/my_model.xlsx
 Validation result: <span class="o">{</span><span class="s1">&#39;Errors&#39;</span>: <span class="m">2</span><span class="o">}</span>
@@ -317,7 +318,7 @@ SBML model created: SBML_models/my_model.xml
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="methods.html" class="btn btn-neutral float-right" title="sbmlxdf Methods" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="spreadsheet.html" class="btn btn-neutral float-right" title="Spreadsheet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
