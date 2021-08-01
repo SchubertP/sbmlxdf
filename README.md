@@ -1,15 +1,21 @@
-# Install:
+## sbmlxdf - convert between SBML and tabular structures
 
-\$ pip install sbmlxdf
+<img src="./docs/images/ccb_logo-2.0.1.png" width="200">
 
-# Convert between SBML coded files and pandas DataFrames
+
+![sbmlxdf](./docs/images/sbmlxdf_diagramm.png)
+
+
+**sbmlxdf** is lightweight and transparent converter from
+SBML to pandas Dataframes (sbml2df) and
+from pandas Dataframes to SBML (df2sbml).
 
 sbmlxdf supports, with few exceptions, all functionality of **SBML L3V2
-core** package[^1] and extension packages **Flux Balance Constraints
-(fbc)**[^2], **Groups (groups)**[^3] and **Distributions
-(distrib)**[^4].
+core** package [1] and extension packages **Flux Balance Constraints
+(fbc)** [2], **Groups (groups)** [3] and **Distributions
+(distrib)** [4].
 
-using **libSBML API** for accessing SBML[^5].
+using **libSBML API** for accessing SBML [5].
 
 Note: **python-libsbml-experimental** package is used to support
 features in distrib package. It is imported with `import libsbml`. If
@@ -17,192 +23,122 @@ python-libsbml package is installed subsequently, e.g. as requirement
 for another tool, some functionality might get lost. In such case
 python-libsbml-experimental should be re-installed using pip install.
 
-Example:
+## Benefits
 
-    import sbmlxdf
+### kinetic modelers with and without programming skills
+- overcome hesitation of creating own models in SBML
+- have a tool for flexible kinetic modelling using spreadsheets
+- inspect SBML models
+- create/extend SBML models
+- use latest SBML features
+- generate ‘correct’ SBML models
 
-    input_xml = 'SBML_Models/e_coli_core.xml'
+### Python programmers
+- get access to SBML model data via pandas DataFrames,
+  e.g. for use in their optimizers
+- can evaluate different model design strategies
 
-    model = sbmlxdf.Model()
-    if model.import_sbml(input_xml):
-        print('SBML model imported:', input_xml)
-        model.to_excel('model.xlsx')
-        print('SBML model written to Excel: model.xlsx')
-        model.to_csv('model')
-        print('also SBML model written to .csv: ./model/*.csv')
+## Features
+- support of SBML L3V2 core [1], including:
 
-        # read model from Excel spreadsheet
-        outm = sbmlxdf.Model('model.xlsx')
-        print('SBML model imported from model.xlsx')
-        is_valid_sbml = outm.validate_sbml('checkModel.xml')
-        print('SBML file valid:', is_valid_sbml)
+  - model history, miriam-annotations, xml-annotations
+  - units of measurement
+  - local/global parameters
+  - function definitions
+  - Flux Balance Constraints package [2]
+  - Groups package [3]
+  - Distributions package [4]
 
-        model_dfs = outm.to_df()
-        print('model exported to dict of pandas dataframes')
-        print(model_dfs.keys())
+ **sbmxdf** does not intent to support SBML packages related to graphical
+ representations of network models. I.e. packages **Layout** and
+ **Rendering** are not supported. Other released SBML packages as of July
+ 2021, see [package status](http://sbml.org/Documents/Specifications)
+ i.e. **Hierarchical Model Composition**,
+ **Multistate and Multicomponent Species** and **Qualitative Models** are
+ not supported at the moment, but might be included in future versions.
 
-        df_r = model_dfs['reactions']
-        print(len(df_r), 'reactions found, first reaction:' )
-        print(df_r.iloc[0])
-        print('reactants and products for some reactions:')
-        for id, reaction in df_r.head().iterrows():
-            print('reaction:', id)
-            for record in sbmlxdf.extract_records(reaction['reactants']):
-                print('  reactant: ', sbmlxdf.extract_params(record))
-            for record in sbmlxdf.extract_records(reaction['products']):
-                print('  product:  ', sbmlxdf.extract_params(record))
+## Small Python examples
 
-## Methods
+(Note: Users without programming experience may use a command line interface
+to convert between SBML format and spreadsheet format)
 
- create Model object, empty or from file
-   sbmlxdf.Model()
-   sbmlxdf.Model(\'model.xml\')
-   sbmlxdf.Model(\'model.xlsx\')
-   sbmlxdf.Model(\'model.ods\')
-   sbmlxdf.Model(\'model_dir\')
+   1. Convert SBML model to spreadsheet
+   2. Check SBML compliance of spreadsheet model and convert to SBML
+   3. Access SBML model data
 
- read/write SBML file
-   sbmlxdf.Model.import_sbml(\'model.xml\')
-   sbmlxdf.Model.export_sbml(\'model.xml\')
+```python
+>>> import sbmlxdf
+>>>
+>>> model = sbmlxdf.Model('BIOMD0000000010_url.xml')
+>>> model.to_excel('BIOMD0000000010_ulr.xlsx')
+```
 
- read/write Excel spreadsheet with model data
-  sbmlxdf.Model.from_excel(\'model.xlsx\')
-  sbmlxdf.Model.to_excel(\'model.xlsx\')
+```python
+>>> import sbmlxdf
+>>>
+>>> upd_model = sbmlxdf.Model('BIO10_upd.xlsx')
+>>> print('SBML validation result:', upd_model.validate_sbml('tmp.xml'))
+>>> upd_model.export_sbml('BIO10_upd.xml')
+```
 
- read/write OpenOffice spreadsheet with model data
-  sbmlxdf.Model.from_excel(\'model.ods\')
-  sbmlxdf.Model.to_excel(\'model.ods\')
+```python
+>>> import sbmlxdf
+>>>
+>>> model = sbmlxdf.Model('BIO10_upd.xml')
+>>> model_df = model.to_df()
+>>> print(model_df.keys())
+>>>
+>>> df_r = model_df['reactions']
+>>>
+>>> print(len(df_r), 'reactions found, first reaction:' )
+>>> print(df_r.iloc[0])
+>>>
+>>> for id, reaction in df_r.iterrows():
+>>>   print('reaction:', id)
+>>>   for record in sbmlxdf.extract_records(reaction['reactants']):
+>>>      print('  reactant: ', sbmlxdf.extract_params(record))
+>>>   for record in sbmlxdf.extract_records(reaction['products']):
+>>>      print('  product:  ', sbmlxdf.extract_params(record))
+```
 
- read/write model coded in set of .csv files
-   sbmlxdf.Model.from_csv(\'model_dir\')
-   sbmlxdf.Model.to_csv(\'model_dir\')
+## Documentation
 
- convert model data to/from dict of pandas dataframes
-   sbmlxdf.Model.to_df()
-   sbmlxdf.Model.from_df(model_dict)
+Introductory tutorials, how-to's and other useful documentation are available
+on [Read the Docs](https://sbmlxdf.readthedocs.io/en/latest/index.html)
 
- validate compliance with SBML specification (units check
-  enabled/disabled)
-   sbmlxdf.Model.validate_sbml(\'tmp.xml\', units_check=True)
+## Installing
 
- miscellanious - data extraction helper functions
-   sbmlxdf.misc.extract_params(record_str)
-     extract dict of parameters from record
-   sbmlxdf.misc.extract_records(lo_record_str)
-     extract record from a list of records
-   sbmlxdf.misc.extract_lo_records(lo_lo_records_str)
-     extract list of records from a list of list of records
-   sbmlxdf.misc.extract_xml_attrs(xml_annots, ns=None, token=None)
-     extract attributes from xml-annots str for given namespace and/or
-  token
+**sbmlxdf** is available on PyPI:
 
-## Workflow for creating SBML files:
+```console
+$ python -m pip install sbmlxdf
+```
 
-1.  Create and Excel model. e.g. \'my_model.xlsx\'
+## License
 
-    You may start with an Excel model template, which you
-    modify/configure to your needs. Excel model templates can be created
-    by converting existing SBML models to Excel, e.g. using models from
-    \*./test/data directory
+[GPLv3](LICENSE.txt)
 
-    `model = sbmlxdf.Model('ReferenceSBMLmodel.xml')`
-
-    `model.to_excel('templateModel.xlsx')`
-
-2.  Import Excel coded model
-
-    `my_model = sbmlxdf.Model('my_model.xlsx')`
-
-3.  Validate compliance with SBML standard
-
-    A compliance report \*.txt will be created in the *./results*
-    directory, with detailed warning and error messages generated by
-    libSBML validation. A corresponding \*.xml document can be used to
-    cross reference the line numbers.
-
-    `my_model.validate_sbml('tmp.xml')`
-
-4\. Correct warnings/errors by updating your Excel coded model and go
-back to step 2.
-
-5.  Upon successful validation create your SBML coded model
-
-    `my_model.export_sbml('my_model.xml')`
-
-Sample Python script to generate SBML coded model from Excel coded
-model:
-
-    # xslx2sbml.py
-    import sys
-    import os.path
-    import sbmlxdf
-
-    # basic command line argument handling
-    if len(sys.argv) > 1:
-       excel_in = sys.argv[1]
-       sbml_out = excel_in.replace('.xlsx', '.xml')
-    else:
-       print('use:', os.path.basename(sys.argv[0]), 'xlsx_file [-f]')
-       print('     -f: forced; write SBML despite warnings')
-       sys.exit()
-    forced = (len(sys.argv) > 2) and (sys.argv[2] == '-f')
-
-    # read in excel file
-    model = sbmlxdf.Model(excel_in)
-    # check compliance with SBML specification
-    val_result = model.validate_sbml('tmp.xml')
-    print('validation result:', val_result)
-    if (len(val_result) == 0) or (forced and ('Errors' not in val_result.keys())):
-       model.export_sbml(sbml_out)
-       print('SBML file created:', sbml_out)
-    else:
-       print('correct xlsx and run converter again; -f option ignores warnings.\n')
-       print(open(os.path.join('.', 'results', 'tmp.txt'), 'r').read())
-
-Sample Python script to generate Excel coded model from SBML coded
-model:
-
-    # sbml2xlsx.py
-    import sys
-    import os.path
-    import sbmlxdf
-
-    # basic command line argument handling
-    if len(sys.argv) == 2:
-        sbml_in = sys.argv[1]
-        xlsx_out = sbml_in.replace('.xml', '.xlsx')
-    else:
-        print('use:', os.path.basename(sys.argv[0]), 'sbml_file')
-        sys.exit()
-
-    model = sbmlxdf.Model(sbml_in)
-    model.to_excel(xlsx_out)
-    print('xlsx file created:', xlsx_out)
 
 Peter Schubert, October 2020
 
-[^1]: The Systems Biology Markup Language (SBML): Language Specification
-    for Level 3 Version 2 Core (Release 2) Authors: Michael Hucka, Frank
-    T. Bergmann, Claudine Chaouiya, Andreas Dräger, Stefan Hoops, Sarah
-    M. Keating, Matthias König, Nicolas Le Novère, Chris J. Myers, Brett
-    G. Olivier, Sven Sahle, James C. Schaff, Rahuman Sheriff, Lucian P.
-    Smith, Dagmar Waltemath, Darren J. Wilkinson, and Fengkai Zhang
+### References
 
-[^2]: Olivier, B. G., & Bergmann, F. T. (2018). SBML Level 3 Package:
-    Flux Balance Constraints version 2. Journal of Integrative
-    Bioinformatics, 15(1), 20170082.
+[1]: The Systems Biology Markup Language (SBML): Language Specification for
+Level 3 Version 2 Core (Release 2) Authors: Michael Hucka, Frank T. Bergmann,
+Claudine Chaouiya, Andreas Dräger, Stefan Hoops, Sarah M. Keating, Matthias
+König, Nicolas Le Novère, Chris J. Myers, Brett G. Olivier, Sven Sahle,
+James C. Schaff, Rahuman Sheriff, Lucian P. Smith, Dagmar Waltemath,
+Darren J. Wilkinson, and Fengkai Zhang
 
-[^3]: Hucka, M., & Smith, L. P. (2016). SBML Level 3 package: Groups,
-    Version 1 Release 1. \_Journal of Integrative Bioinformatics, 13(3),
-    290.
+[2]: Olivier, B. G., & Bergmann, F. T. (2018). SBML Level 3 Package:
+Flux Balance Constraints version 2. Journal of Integrative Bioinformatics,
+15(1), 20170082.
 
-[^4]: Smith, L. P., Moodie, S. L., Bergmann, F. T., Gillespie, C.,
-    Keating, S. M., König, M., Myers, C. J., Swat, M. J., Wilkinson, D.
-    J., and Hucka, M. (2020). The Distributions Package for SBML Level
-    3. Retrieved from from COMBINE,
-    <https://identifiers.org/combine.specifications/>
-    sbml.level-3.version-1.distrib.version-1.release-1
+[3]: Hucka, M., & Smith, L. P. (2016). SBML Level 3 package: Groups,
+Version 1 Release 1. Journal of Integrative Bioinformatics, 13(3), 290.
 
-[^5]: Bornstein, B. J., Keating, S. M., Jouraku, A., and Hucka M. (2008)
-    LibSBML: An API Library for SBML. Bioinformatics, 24(6):880--881,
-    <doi:10.1093/bioinformatics/btn051>.
+[4]: Smith, L. P., Moodie, S. L., Bergmann, F. T., Gillespie, C., Keating,
+S. M., König, M., Myers, C. J., Swat, M. J., Wilkinson, D.J.,
+and Hucka, M. (2020). The Distributions Package for SBML Level 3.
+Retrieved from from COMBINE, https://identifiers.org/combine.specifications/
+sbml.level-3.version-1.distrib.version-1.release-1
