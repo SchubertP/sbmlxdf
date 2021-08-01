@@ -95,8 +95,8 @@ class Species(SBase):
             s_dict['initialConcentration'] = self.initial_concentration
         if hasattr(self, 'substance_units'):
             s_dict['substanceUnits'] = self.substance_units
-        s_dict['has_only_substance_units'] = self.has_only_substance_units
-        s_dict['boundary_condition'] = self.boundary_condition
+        s_dict['hasOnlySubstanceUnits'] = self.has_only_substance_units
+        s_dict['boundaryCondition'] = self.boundary_condition
         s_dict['constant'] = self.constant
         if hasattr(self, 'conversion_factor'):
             s_dict['conversionFactor'] = self.conversion_factor
@@ -115,10 +115,10 @@ class Species(SBase):
         if 'substanceUnits' in s_dict:
             self.substance_units = s_dict['substanceUnits']
         self.has_only_substance_units = (
-            s_dict['has_only_substance_units']==str(True) or
-            s_dict['has_only_substance_units']=='1')
-        self.boundary_condition = (s_dict['boundary_condition']==str(True) or
-                                   s_dict['boundary_condition']=='1')
+            s_dict['hasOnlySubstanceUnits']==str(True) or
+            s_dict['hasOnlySubstanceUnits']=='1')
+        self.boundary_condition = (s_dict['boundaryCondition']==str(True) or
+                                   s_dict['boundaryCondition']=='1')
         self.constant = (s_dict['constant']==str(True) or
                          s_dict['constant']=='1')
         if 'conversionFactor' in s_dict:

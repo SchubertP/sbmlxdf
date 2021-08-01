@@ -1,16 +1,20 @@
 Metadata-Version: 2.1
 Name: sbmlxdf
-Version: 0.2.2
+Version: 0.2.3
 Summary: convert between SBML and tabular structures
 Home-page: https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
 Author: Peter Schubert
 Author-email: peter.schubert@hhu.de
 License: GPLv3
+Project-URL: Source Code, https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf
+Project-URL: Documentation, https://sbmlxdf.readthedocs.io
 Project-URL: Bug Tracker, https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf/-/issues
+Keywords: modeling,standardization,SBML
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)
 Classifier: Operating System :: OS Independent
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 License-File: LICENSE.txt

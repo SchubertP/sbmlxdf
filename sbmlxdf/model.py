@@ -97,7 +97,6 @@ class Model(SBase):
                 self.from_excel(import_file)
             elif os.path.exists(import_file):
                 self.from_csv(import_file)
-        return True
 
     def import_sbml(self, sbml_file):
         """Import SBML model.

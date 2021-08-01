@@ -388,15 +388,15 @@ Attributes:
 - **id**: (M), in first column
 - **compartment**: (M), string, referencing an ``id`` in ``compartments``
 - **constant**: (M), boolean
-- **has_only_substance_units**: (M), boolean
-- **boundary_condition**: (M), boolean
+- **hasOnlySubstanceUnits**: (M), boolean
+- **boundaryCondition**: (M), boolean
 - **initialAmount**: float, mutual exclusive with **initialConcentration**
 - **initialConcentration**: float, mutual exclusive with **initialAmount**
 - **substanceUnits**: string, referencing a base unit or an ``id`` in
   ``unitDefs`` (recommended to specify, unless specified in ``modelAttrs``)
 - **conversionFactor**: string, referencing an ``id`` in ``parameters``
-- **fbc_charge**: signed integer, requires ``fbc`` package, see :ref:`sbml`.
-- **fbc_chem_formula**: string, requires ``fbc`` package
+- **fbcCharge**: signed integer, requires ``fbc`` package, see :ref:`sbml`.
+- **fbcChemicalFormula**: string, requires ``fbc`` package
 
   Example::
 
@@ -629,4 +629,4 @@ Attributes:
 
   Example::
 
-    idRef=G_b3952
+    idRef=R_GLXCL; idRef=R_GLYCK; idRef=R_GLYCLTDx; idRef=R_GLYCLTDy
