@@ -7,7 +7,7 @@ import pandas as pd
 import libsbml
 
 from sbmlxdf.sbase import SBase
-from sbmlxdf.misc import extract_params
+from sbmlxdf.misc import extract_params, get_bool_val
 
 
 class FbcListOfObjectives(SBase):
