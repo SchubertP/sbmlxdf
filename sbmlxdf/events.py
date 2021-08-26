@@ -8,7 +8,7 @@ import sys
 import libsbml
 
 from sbmlxdf.sbase import SBase
-from sbmlxdf.misc import extract_params
+from sbmlxdf.misc import extract_params, get_bool_val
 
 
 class ListOfEvents(SBase):
@@ -93,8 +93,7 @@ class Event(SBase):
         return e_dict
 
     def from_df(self, e_dict):
-        self.from_trigger_time = (e_dict['valFromTriggerTime']==str(True) or
-                                  e_dict['valFromTriggerTime']=='1')
+        self.from_trigger_time = get_bool_val(e_dict['valFromTriggerTime'])
         self.trigger = Trigger()
         self.trigger.from_df(e_dict)
         if Priority.is_in_df(e_dict):
@@ -145,10 +144,8 @@ class Trigger(SBase):
         return tr_dict
 
     def from_df(self, e_dict):
-        self.init_val = (e_dict['triggerInitVal']==str(True) or
-                         e_dict['triggerInitVal']=='1')
-        self.persistent = (e_dict['triggerPersistent']==str(True) or
-                           e_dict['triggerPersistent']=='1')
+        self.init_val = get_bool_val(e_dict['triggerInitVal'])
+        self.persistent = get_bool_val(e_dict['triggerPersistent'])
         self.math = e_dict['triggerMath']
         if 'triggerSboTerm' in e_dict:
             self.sboterm = e_dict['triggerSboTerm']

@@ -7,6 +7,7 @@ import pandas as pd
 import libsbml
 
 from sbmlxdf.sbase import SBase
+from sbmlxdf.misc import get_bool_val
 
 
 class ListOfCompartments(SBase):
@@ -83,6 +84,6 @@ class Compartment(SBase):
             self.size = float(c_dict['size'])
         if 'units' in c_dict:
             self.units = c_dict['units']
-        self.constant = (c_dict['constant']==str(True) or
-                         c_dict['constant']=='1')
+        self.constant = get_bool_val(c_dict['constant'])
+
         super().from_df(c_dict)

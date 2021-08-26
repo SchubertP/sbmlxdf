@@ -10,7 +10,7 @@ import sys
 import libsbml
 
 from sbmlxdf.sbase import SBase
-from sbmlxdf.misc import extract_params
+from sbmlxdf.misc import extract_params, get_bool_val
 
 
 class ListOfReactions(SBase):
@@ -142,8 +142,7 @@ class Reaction(SBase):
         return r_dict
 
     def from_df(self, r_dict):
-        self.reversible = (r_dict['reversible']==str(True) or
-                           r_dict['reversible']=='1')
+        self.reversible = get_bool_val(r_dict['reversible'])
         if 'compartment' in r_dict:
             self.compartment = r_dict['compartment']
         if 'reactants' in r_dict:
@@ -244,8 +243,7 @@ class ReacSpeciesRef(SimpleSpeciesRef):
         if 'stoic' in sr_dict:
             self.stoichiometry = float(sr_dict['stoic'])
         if 'const' in sr_dict:
-            self.constant = (sr_dict['const']==str(True) or
-                             sr_dict['const']=='1')
+            self.constant = get_bool_val(sr_dict['const'])
         super().from_df(sr_dict)
 
 
@@ -282,8 +280,7 @@ class ProdSpeciesRef(SimpleSpeciesRef):
         if 'stoic' in sr_dict:
             self.stoichiometry = float(sr_dict['stoic'])
         if 'const' in sr_dict:
-            self.constant = (sr_dict['const']==str(True) or
-                             sr_dict['const']=='1')
+            self.constant = get_bool_val(sr_dict['const'])
         super().from_df(sr_dict)
 
 

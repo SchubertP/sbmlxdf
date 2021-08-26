@@ -51,10 +51,29 @@ def mathml2numpy(mformula, np_ns='np'):
     np_formula = re.sub(r'\s?&&\s?', ' & ', np_formula)
     np_formula = re.sub(r'\s?\|\|\s?', ' | ', np_formula)
     for mathml_f, np_f in _map_mathml2numpy:
-        np_formula = re.sub(r'\s+' + mathml_f + '\(',
+        np_formula = re.sub(r'\s+' + mathml_f + r'\(',
                             ' ' + np_f.replace('NP_NS', np_ns) + '(',
                             np_formula)
     return np_formula.strip()
+
+def get_bool_val(parameter):
+    """Get boolean value from parameter
+
+    Values imported from spreadsheets are all converted to string
+    objects, while parameters coming from Model.to_df() may contain
+    boolean values.
+    'True' objects from spreadsheets my be represented as
+    'True' or as numerical 1, getting converted to string.
+
+    :param parameter: parameter to retrieve boolean value from
+    :type parameter: bool or str
+    :returns: boolean value of parameter
+    :rtype: bool
+    """
+    if type(parameter) == bool:
+        return parameter
+    else:
+        return (parameter.upper()==str('TRUE') or parameter=='1')
 
 
 def extract_params(s):
@@ -170,7 +189,7 @@ def extract_lo_records(s):
     lo_records = []
     pos = 0
     while pos < len(s):
-        m = re.search('\[',s[pos:])
+        m = re.search(r'\[', s[pos:])
         if m:
             pos += m.end(0)
             brackets = 1

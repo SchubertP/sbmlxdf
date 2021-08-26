@@ -7,6 +7,7 @@ import pandas as pd
 import libsbml
 
 from sbmlxdf.sbase import SBase
+from sbmlxdf.misc import get_bool_val
 
 
 class ListOfParameters(SBase):
@@ -75,6 +76,5 @@ class Parameter(SBase):
             self.value = float(p_dict['value'])
         if 'units' in p_dict:
             self.units = p_dict['units']
-        self.constant = (p_dict['constant']==str(True) or
-                         p_dict['constant']=='1')
+        self.constant = get_bool_val(p_dict['constant'])
         super().from_df(p_dict)

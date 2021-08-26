@@ -8,6 +8,7 @@ import pandas as pd
 import libsbml
 
 from sbmlxdf.sbase import SBase
+from sbmlxdf.misc import get_bool_val
 
 
 class ListOfSpecies(SBase):
@@ -114,13 +115,10 @@ class Species(SBase):
             self.initial_concentration = float(s_dict['initialConcentration'])
         if 'substanceUnits' in s_dict:
             self.substance_units = s_dict['substanceUnits']
-        self.has_only_substance_units = (
-            s_dict['hasOnlySubstanceUnits']==str(True) or
-            s_dict['hasOnlySubstanceUnits']=='1')
-        self.boundary_condition = (s_dict['boundaryCondition']==str(True) or
-                                   s_dict['boundaryCondition']=='1')
-        self.constant = (s_dict['constant']==str(True) or
-                         s_dict['constant']=='1')
+        self.has_only_substance_units = get_bool_val(
+                                            s_dict['hasOnlySubstanceUnits'])
+        self.boundary_condition = get_bool_val(s_dict['boundaryCondition'])
+        self.constant = get_bool_val(s_dict['constant'])
         if 'conversionFactor' in s_dict:
             self.conversion_factor = s_dict['conversionFactor']
         if 'fbcCharge' in s_dict:

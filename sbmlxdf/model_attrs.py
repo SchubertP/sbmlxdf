@@ -7,7 +7,7 @@ import pandas as pd
 import libsbml
 
 from sbmlxdf.sbase import SBase
-
+from sbmlxdf.misc import get_bool_val
 
 class ModelAttrs(SBase):
 
@@ -89,6 +89,5 @@ class ModelAttrs(SBase):
         if 'conversionFactor' in ma_dict:
             self.conversion_factor = ma_dict['conversionFactor']
         if 'fbcStrict' in ma_dict:
-            self.fbc_strict = (ma_dict['fbcStrict']==str(True) or
-                               ma_dict['fbcStrict']=='1')
+            self.fbc_strict = get_bool_val(ma_dict['fbcStrict'])
         super().from_df(ma_dict)

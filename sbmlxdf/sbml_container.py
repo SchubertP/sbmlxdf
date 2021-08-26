@@ -7,7 +7,7 @@ import pandas as pd
 import libsbml
 
 from sbmlxdf.sbase import SBase
-from sbmlxdf.misc import extract_records, extract_params
+from sbmlxdf.misc import extract_records, extract_params, get_bool_val
 
 
 class SbmlContainer(SBase):
@@ -75,8 +75,7 @@ class SbmlContainer(SBase):
                     pkg_dict = extract_params(record)
                     self.packages[pkg_dict['name']] = {
                         'version': int(pkg_dict['version']),
-                        'required': (pkg_dict['required']==str(True) or
-                                     pkg_dict['required']=='1')
+                        'required': get_bool_val(pkg_dict['required'])
                         }
         except KeyError as err:
             print("KeyError: {0} in {1}".format(err, __name__))
