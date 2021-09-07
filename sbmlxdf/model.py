@@ -314,14 +314,20 @@ class Model(SBase):
             return False
         return True
 
-    def to_excel(self, file_name):
+    def to_excel(self, file_name, model_dict=None):
         """Create spreadsheet document of model (.xlsx or .ods).
+           alternatively provide the model in mdict format (for additional
+           attributes).
 
         :param file_name: file name of new spreadsheet document (.xlsx or .ods)
         :type file_name: str
+        :param model_dict: optional, pandas DataFrames of model components
+        :type sbml_file: dict
         """
         with pd.ExcelWriter(file_name) as writer:
-            for sheet, component in self.to_df().items():
+            if model_dict is None:
+                model_dict = self.to_df()
+            for sheet, component in model_dict.items():
                 params = {'sheet_name': sheet}
                 if _sheets[sheet] == IS_SERIES:
                     params['header'] = False
