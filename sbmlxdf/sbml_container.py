@@ -14,6 +14,8 @@ class SbmlContainer(SBase):
 
     def __init__(self):
         self.packages = {}
+        self.level = None
+        self.version = None
         super().__init__()
 
     def import_sbml(self, sbml_doc):
@@ -24,9 +26,9 @@ class SbmlContainer(SBase):
         for idx in range(sbml_doc.getNumPlugins()):
             p = sbml_doc.getPlugin(idx)
             pname = p.getPackageName()
-            pversion =  p.getPackageVersion()
+            pversion = p.getPackageVersion()
             # there seems to be a bug, that l3v2extendedmath is returned
-            if (idx == 0) and (pname=='l3v2extendedmath') and (pversion == 0):
+            if (idx == 0) and (pname == 'l3v2extendedmath') and (pversion == 0):
                 continue
 
             # for SBML L2V4 layout and render are autoamtically imported
@@ -41,8 +43,8 @@ class SbmlContainer(SBase):
             success = sbml_container.addPackageNamespace(
                       pname, self.packages[pname]['version'])
             if success != libsbml.LIBSBML_OPERATION_SUCCESS:
-                print('Error adding package: [{}]. Try '\
-                    '"pip install python-libsbml-experimental".'.format(pname))
+                print('Error adding package: [{}]. Try '
+                      '"pip install python-libsbml-experimental".'.format(pname))
         sbml_doc = libsbml.SBMLDocument(sbml_container)
         self.export_sbml(sbml_doc)
         return sbml_doc
@@ -53,9 +55,8 @@ class SbmlContainer(SBase):
             sbml_doc.setPackageRequired(pname, self.packages[pname]['required'])
 
     def to_df(self):
-        sc_dict = {}
-        sc_dict['level'] = self.level
-        sc_dict['version'] = self.version
+        sc_dict = {'level': self.level,
+                   'version': self.version}
         attr = []
         if len(self.packages) > 0:
             for pname, val in self.packages.items():

@@ -1,36 +1,36 @@
-"""Implementation of miscellanious functions.
+"""Implementation of miscellaneous functions.
 
-Peter Schubert, HHU Duesseldorf, October 2020
+Peter Schubert, HHU Dusseldorf, October 2020
 """
 import re
-import libsbml
 
 _map_mathml2numpy = (
-# arithmetic operators
+    # arithmetic operators
     ('abs', 'NP_NS.absolute'), ('exp', 'NP_NS.exp'), ('sqrt', 'NP_NS.sqrt'),
     ('sqr', 'NP_NS.square'), ('ln', 'NP_NS.log'), ('log10', 'NP_NS.log10'),
     ('floor', 'NP_NS.floor'), ('ceil', 'NP_NS.ceil'),
     ('factorial', 'NP_NS.math.factorial'), ('rem', 'NP_NS.fmod'),
-# relational operators
+    # relational operators
     ('eq', 'NP_NS.equal'), ('neq', 'NP_NS.not_equal'), ('gt', 'NP_NS.greater'),
     ('lt', 'NP_NS.less'), ('geq', 'NP_NS.greater_equal'),
     ('leq', 'NP_NS.less_equal'),
-# logical operators
+    # logical operators
     ('and', 'NP_NS.logical_and'), ('or', 'NP_NS.logical_or'),
     ('xor', 'NP_NS.logical_xor'), ('not', 'NP_NS.logical_not'),
     ('and', 'NP_NS.logical_and'), ('or', 'NP_NS.logical_or'),
     ('xor', 'NP_NS.logical_xor'), ('not', 'NP_NS.logical_not'),
-# trigonometric operators
+    # trigonometric operators
     ('sin', 'NP_NS.sin'), ('cos', 'NP_NS.cos'), ('tan', 'NP_NS.tan'),
     ('sec', '1.0/NP_NS.cos'), ('csc', '1.0/NP_NS.sin'),
     ('cot', '1.0/NP_NS.tan'),
     ('sinh', 'NP_NS.sinh'), ('cosh', 'NP_NS.cosh'), ('tanh', 'NP_NS.tanh'),
-    ('sech', '1.0/NP_NS.cosh'), ('csch',' 1.0/NP_NS.sinh'),
+    ('sech', '1.0/NP_NS.cosh'), ('csch', ' 1.0/NP_NS.sinh'),
     ('coth', '1.0/NP_NS.tanh'),
     ('asin', 'NP_NS.arcsin'), ('acos', 'NP_NS.arccos'),
     ('atan', 'NP_NS.arctan'), ('arcsinh', 'NP_NS.arcsinh'),
     ('arccosh', 'NP_NS.arccosh'), ('arctanh', 'NP_NS.arctanh'),
 )
+
 
 def mathml2numpy(mformula, np_ns='np'):
     """Convert mathml infix notation to a numpy notation
@@ -56,6 +56,7 @@ def mathml2numpy(mformula, np_ns='np'):
                             np_formula)
     return np_formula.strip()
 
+
 def get_bool_val(parameter):
     """Get boolean value from parameter
 
@@ -73,7 +74,7 @@ def get_bool_val(parameter):
     if type(parameter) == bool:
         return parameter
     else:
-        return (parameter.upper()==str('TRUE') or parameter=='1')
+        return parameter.upper() == str('TRUE') or parameter == '1'
 
 
 def extract_params(s):
@@ -136,8 +137,8 @@ def extract_records(s):
     """Split string of records into individual records.
 
     Each record consists of comma separated key-value pairs.
-    E.g. record1 = 'key1=val1, key2=val2, ...'.
-    Values may containing nested records (key=[record_x, record_y, ...]).
+    E.g. record1: 'key1=val1, key2=val2, ...'.
+    Values may contain nested records (key=[record_x, record_y, ...]).
 
     Example: 'record1; record2; ...' is converted to [record1, record2, ...]
 
@@ -228,8 +229,8 @@ def extract_xml_attrs(xml_annots, ns=None, token=None):
     xml_attrs = {}
     for xml_str in xml_annots.split(';'):
         params = extract_params(xml_str)
-        if (((ns != None) and (params['ns_uri'] != ns)) or
-            ((token != None) and (params['token'] != token))):
+        if (((ns is not None) and (params['ns_uri'] != ns)) or
+                ((token is not None) and (params['token'] != token))):
             continue
         for k, v in params.items():
             if k not in {'ns_uri', 'prefix', 'token'}:

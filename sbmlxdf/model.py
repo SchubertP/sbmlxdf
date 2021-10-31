@@ -37,7 +37,7 @@ IS_DF_INDEXED = 2
 IS_DF_NOTINDEXED = 3
 _sheets = {
     'sbml': IS_SERIES, 'modelAttrs': IS_SERIES, 'funcDefs': IS_DF_INDEXED,
-    'unitDefs' : IS_DF_INDEXED, 'compartments' : IS_DF_INDEXED,
+    'unitDefs': IS_DF_INDEXED, 'compartments': IS_DF_INDEXED,
     'species': IS_DF_INDEXED, 'parameters': IS_DF_INDEXED,
     'initAssign': IS_DF_INDEXED, 'rules': IS_DF_NOTINDEXED,
     'constraints': IS_DF_NOTINDEXED, 'reactions': IS_DF_INDEXED,
@@ -72,6 +72,8 @@ class SbmlFileError(Exception):
 
 class Model(SBase):
 
+    in_sbml: str
+
     def __init__(self, import_file=None):
         """Constructor.
 
@@ -81,7 +83,8 @@ class Model(SBase):
         see also: :func:`import_sbml`, :func:`from_excel`, :func:`from_csv`,
         :func:`from_df`
 
-        :param import_file: filename of SBML (.xml) model, spreadsheet document (.xlsc or .ods) directory of .csv files with model data
+        :param import_file: filename of SBML (.xml) model, 
+            spreadsheet document (.xlsc or .ods) directory of .csv files with model data
         :type import_file: str, optional
         :returns: success/failure
         :rtype: bool
@@ -145,7 +148,7 @@ class Model(SBase):
                     self.list_of[k] = assigned_class()
             else:
                 if sbml_func(sbml_model):
-                      self.list_of[k] = assigned_class()
+                    self.list_of[k] = assigned_class()
 
         for lo in self.list_of.values():
             lo.import_sbml(sbml_model)
@@ -167,7 +170,6 @@ class Model(SBase):
         :returns: Error types and number of occurrences
         :rtype: dict
         """
-        sbml_compliance = False
         if not os.path.exists(results_dir):
             os.makedirs(results_dir)
         basename = os.path.basename(sbml_file).split('.')[0]
@@ -175,7 +177,6 @@ class Model(SBase):
         result_file = os.path.join('results', basename + '.txt')
         if hasattr(self, 'sbml_container'):
             self.export_sbml(xml_file)
-            reader = libsbml.SBMLReader()
             sbml_doc = libsbml.readSBML(xml_file)
             sbml_doc.getErrorLog().clearLog()
             if not units_check:
@@ -198,7 +199,7 @@ class Model(SBase):
                     err_tot['Fatals'] = err_tot.get('Fatals', 0) + 1
             with open(result_file, 'w') as f:
                 f.write(str(err_tot))
-                if ('Errors' in err_tot ) or ('Fatals' in err_tot):
+                if ('Errors' in err_tot) or ('Fatals' in err_tot):
                     f.write(' NOK: not SBML compliant, see results file!\n')
                 else:
                     f.write(' OK: SBML compliant\n')
@@ -240,25 +241,25 @@ class Model(SBase):
             df_species = self.list_of['species'].to_df()
             df_reactions = self.list_of['reactions'].to_df()
 
-            df_S = pd.DataFrame(np.zeros((len(df_species), len(df_reactions))),
-                                index=df_species.index.values,
-                                columns=df_reactions.index.values)
+            df_smat = pd.DataFrame(np.zeros((len(df_species), len(df_reactions))),
+                                   index=df_species.index.values,
+                                   columns=df_reactions.index.values)
             for idx, r in df_reactions.iterrows():
                 if type(r['reactants']) == str:
-                  for reac in r['reactants'].split(';'):
-                    s_d = extract_params(reac)
-                    df_S.at[s_d['species'], idx] -= float(s_d.get('stoic', 1.0))
+                    for reac in r['reactants'].split(';'):
+                        s_d = extract_params(reac)
+                        df_smat.at[s_d['species'], idx] -= float(s_d.get('stoic', 1.0))
                 if type(r['products']) == str:
-                  for prod in r['products'].split(';'):
-                    s_d = extract_params(prod)
-                    df_S.at[s_d['species'], idx] += float(s_d.get('stoic', 1.0))
+                    for prod in r['products'].split(';'):
+                        s_d = extract_params(prod)
+                        df_smat.at[s_d['species'], idx] += float(s_d.get('stoic', 1.0))
         else:
-            df_S = pd.DataFrame(np.zeros((0,0)))
+            df_smat = pd.DataFrame(np.zeros((0, 0)))
 
-        if sparse==True:
-            return df_S.astype(pd.SparseDtype('float', 0.0))
+        if sparse:
+            return df_smat.astype(pd.SparseDtype('float', 0.0))
         else:
-            return df_S
+            return df_smat
 
     def to_df(self):
         """Export model to a dict of pandas DataFrames.
@@ -269,16 +270,16 @@ class Model(SBase):
         :returns: pandas DataFrames of model components
         :rtype: dict
         """
-        model_dict = {'sbml': self.sbml_container.to_df() }
+        model_dict = {'sbml': self.sbml_container.to_df()}
         for key, lo in self.list_of.items():
             model_dict[key] = lo.to_df()
         if ('reactions' in model_dict) and ('parameters' in model_dict):
             if 'fbcLowerFluxBound' in model_dict['reactions'].columns:
                 params = model_dict['parameters']['value'].to_dict()
                 model_dict['reactions']['fbcLb'] = \
-                  model_dict['reactions']['fbcLowerFluxBound'].replace(params)
+                    model_dict['reactions']['fbcLowerFluxBound'].replace(params)
                 model_dict['reactions']['fbcUb'] = \
-                  model_dict['reactions']['fbcUpperFluxBound'].replace(params)
+                    model_dict['reactions']['fbcUpperFluxBound'].replace(params)
         return model_dict
 
     def from_df(self, model_dict):
@@ -294,8 +295,7 @@ class Model(SBase):
         :returns: success/failure
         :rtype: bool
         """
-        if (('sbml' not in model_dict) or
-            ('modelAttrs' not in model_dict)):
+        if ('sbml' not in model_dict) or ('modelAttrs' not in model_dict):
             print('no valid model dict; sbml and modelAttrs required!')
             return False
         self.sbml_container = SbmlContainer()
@@ -322,7 +322,7 @@ class Model(SBase):
         :param file_name: file name of new spreadsheet document (.xlsx or .ods)
         :type file_name: str
         :param model_dict: optional, pandas DataFrames of model components
-        :type sbml_file: dict
+        :type model_dict: dict
         """
         with pd.ExcelWriter(file_name) as writer:
             if model_dict is None:

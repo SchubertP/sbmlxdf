@@ -1,10 +1,8 @@
 """Implementation of fbc ext. package components.
 
-Peter Schubert, HHU Duesseldorf, October 2020
+Peter Schubert, HHU Dusseldorf, October 2020
 """
 import pandas as pd
-
-import libsbml
 
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import extract_params, get_bool_val
@@ -14,6 +12,7 @@ class FbcListOfObjectives(SBase):
 
     def __init__(self):
         self.objectives = []
+        self.active = None
         super().__init__()
 
     def import_sbml(self, sbml_model):
@@ -42,7 +41,7 @@ class FbcListOfObjectives(SBase):
 
     def from_df(self, lo_df):
         for obj, active in lo_df['active'].iteritems():
-            if get_bool_val(active) == True:
+            if get_bool_val(active):
                 self.active = obj
                 break
         for idx, o_s in lo_df.reset_index().iterrows():
@@ -56,6 +55,7 @@ class FbcObjective(SBase):
 
     def __init__(self):
         self.flux_objectives = []
+        self.type = ''
         super().__init__()
 
     def import_sbml(self, sbml_o):
@@ -93,6 +93,8 @@ class FbcObjective(SBase):
 class FbcFluxObjective(SBase):
 
     def __init__(self):
+        self.reaction = ''
+        self.coefficient = float('nan')
         super().__init__()
 
     def import_sbml(self, sbml_fo):
@@ -163,6 +165,8 @@ class FbcListOfGeneProducts(SBase):
 class FbcGeneProduct(SBase):
 
     def __init__(self):
+        self.label = ''
+        self.associated = ''
         super().__init__()
 
     def import_sbml(self, sbml_gp):
