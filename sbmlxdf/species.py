@@ -5,8 +5,6 @@ Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
 
-import libsbml
-
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import get_bool_val
 
@@ -44,6 +42,16 @@ class ListOfSpecies(SBase):
 class Species(SBase):
 
     def __init__(self):
+        self.compartment = None
+        self.initial_amount = None
+        self.initial_concentration = None
+        self.substance_units = None
+        self.has_only_substance_units = None
+        self.boundary_condition = None
+        self.constant = None
+        self.conversion_factor = None
+        self.fbc_chem_formula = None
+        self.fbc_charge = None
         super().__init__()
 
     def import_sbml(self, sbml_s):
@@ -70,40 +78,40 @@ class Species(SBase):
     def export_sbml(self, sbml_model):
         sbml_s = sbml_model.createSpecies()
         sbml_s.setCompartment(self.compartment)
-        if hasattr(self, 'initial_amount'):
+        if self.initial_amount is not None:
             sbml_s.setInitialAmount(self.initial_amount)
-        if hasattr(self, 'initial_concentration'):
+        if self.initial_concentration is not None:
             sbml_s.setInitialConcentration(self.initial_concentration)
-        if hasattr(self, 'substance_units'):
+        if self.substance_units is not None:
             sbml_s.setSubstanceUnits(self.substance_units)
         sbml_s.setHasOnlySubstanceUnits(self.has_only_substance_units)
         sbml_s.setBoundaryCondition(self.boundary_condition)
         sbml_s.setConstant(self.constant)
-        if hasattr(self, 'conversion_factor'):
+        if self.conversion_factor is not None:
             sbml_s.setConversionFactor(self.conversion_factor)
-        if hasattr(self, 'fbc_charge'):
+        if self.fbc_charge is not None:
             sbml_s.getPlugin('fbc').setCharge(self.fbc_charge)
-        if hasattr(self, 'fbc_chem_formula'):
+        if self.fbc_chem_formula is not None:
             sbml_s.getPlugin('fbc').setChemicalFormula(self.fbc_chem_formula)
         super().export_sbml(sbml_s)
 
     def to_df(self):
         s_dict = super().to_df()
         s_dict['compartment'] = self.compartment
-        if hasattr(self, 'initial_amount'):
+        if self.initial_amount is not None:
             s_dict['initialAmount'] = self.initial_amount
-        if hasattr(self, 'initial_concentration'):
+        if self.initial_concentration is not None:
             s_dict['initialConcentration'] = self.initial_concentration
-        if hasattr(self, 'substance_units'):
+        if self.substance_units is not None:
             s_dict['substanceUnits'] = self.substance_units
         s_dict['hasOnlySubstanceUnits'] = self.has_only_substance_units
         s_dict['boundaryCondition'] = self.boundary_condition
         s_dict['constant'] = self.constant
-        if hasattr(self, 'conversion_factor'):
+        if self.conversion_factor is not None:
             s_dict['conversionFactor'] = self.conversion_factor
-        if hasattr(self, 'fbc_charge'):
+        if self.fbc_charge is not None:
             s_dict['fbcCharge'] = self.fbc_charge
-        if hasattr(self, 'fbc_chem_formula'):
+        if self.fbc_chem_formula is not None:
             s_dict['fbcChemicalFormula'] = self.fbc_chem_formula
         return s_dict
 
@@ -115,8 +123,7 @@ class Species(SBase):
             self.initial_concentration = float(s_dict['initialConcentration'])
         if 'substanceUnits' in s_dict:
             self.substance_units = s_dict['substanceUnits']
-        self.has_only_substance_units = get_bool_val(
-                                            s_dict['hasOnlySubstanceUnits'])
+        self.has_only_substance_units = get_bool_val(s_dict['hasOnlySubstanceUnits'])
         self.boundary_condition = get_bool_val(s_dict['boundaryCondition'])
         self.constant = get_bool_val(s_dict['constant'])
         if 'conversionFactor' in s_dict:

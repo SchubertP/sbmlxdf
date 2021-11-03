@@ -18,6 +18,7 @@ from sbmlxdf.misc import extract_params, extract_records, extract_lo_records
 # RDF namespace for MIRIAM type annotations
 rdf_namespace = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 
+
 class SBase(ABC):
     """Abstract Class SBase, the base Class for any model object.
 
@@ -37,13 +38,20 @@ class SBase(ABC):
     annotation: list of bgmsim.core.CVTerms
         MIRIAM annotations connected with the object.
         Empty list, if not assigned.
-    note: dict
+    notes: dict
         Optional dict of note (used on Model Level)
     No checks of validity are done.
     """
 
     @abstractmethod
     def __init__(self):
+        self.id = None
+        self.name = None
+        self.metaid = None
+        self.sboterm = None
+        self.annotation = None
+        self.notes = None
+        self.lo_uncertainties = None
         pass
 
     @abstractmethod
@@ -52,60 +60,60 @@ class SBase(ABC):
             self.id = sbml_obj.getIdAttribute()
         if sbml_obj.isSetName():
             self.name = sbml_obj.getName()
-        if sbml_obj.isSetMetaId():
-            self.metaid = sbml_obj.getMetaId()
         if sbml_obj.isSetSBOTerm():
             self.sboterm = sbml_obj.getSBOTermID()
+        if sbml_obj.isSetMetaId():
+            self.metaid = sbml_obj.getMetaId()
         if sbml_obj.isSetAnnotation():
             self.annotation = Annotation()
             self.annotation.import_sbml(sbml_obj)
         if sbml_obj.isSetNotes():
             self.notes = sbml_obj.getNotesString()
         distrib_plugin = sbml_obj.getPlugin('distrib')
-        if (distrib_plugin != None
-            and sbml_obj.getElementName() != 'sbml'
-            and distrib_plugin.getNumUncertainties()):
+        if (distrib_plugin is not None
+                and sbml_obj.getElementName() != 'sbml'
+                and distrib_plugin.getNumUncertainties()):
             self.lo_uncertainties = ListOfUncertainties()
             self.lo_uncertainties.import_sbml(sbml_obj)
 
     @abstractmethod
     def export_sbml(self, sbml_obj):
-        if hasattr(self, 'id'):
+        if self.id is not None:
             sbml_obj.setId(self.id)
-        if hasattr(self, 'name'):
+        if self.name is not None:
             sbml_obj.setName(self.name)
-        if hasattr(self, 'metaid'):
-            sbml_obj.setMetaId(self.metaid)
-        if hasattr(self, 'sboterm'):
+        if self.sboterm is not None:
             sbml_obj.setSBOTerm(self.sboterm)
-        if hasattr(self, 'annotation'):
+        if self.metaid is not None:
+            sbml_obj.setMetaId(self.metaid)
+        if self.annotation is not None:
             self.annotation.export_sbml(sbml_obj)
-        if hasattr(self, 'notes'):
+        if self.notes is not None:
             sbml_obj.setNotes(self.notes)
-        if hasattr(self, 'lo_uncertainties'):
+        if self.lo_uncertainties is not None:
             self.lo_uncertainties.export_sbml(sbml_obj)
 
     @abstractmethod
     def to_df(self):
         sb_dict = {}
-        if hasattr(self, 'id'):
+        if self.id is not None:
             sb_dict['id'] = self.id
-        if hasattr(self, 'name'):
+        if self.name is not None:
             sb_dict['name'] = self.name
-        if hasattr(self, 'metaid'):
+        if self.metaid is not None:
             sb_dict['metaid'] = self.metaid
-        if hasattr(self, 'sboterm'):
+        if self.sboterm is not None:
             sb_dict['sboterm'] = self.sboterm
-        if hasattr(self, 'annotation'):
+        if self.annotation is not None:
             sb_dict.update(self.annotation.to_df())
-        if hasattr(self, 'notes'):
+        if self.notes is not None:
             xnotes = libsbml.XMLNode.convertStringToXMLNode(self.notes)
             if isinstance(xnotes, libsbml.XMLNode) and xnotes.getNumChildren():
-              sb_dict['notes'] = ''
-              xbody = xnotes.getChild(0)
-              for child in range(xbody.getNumChildren()):
-                sb_dict['notes'] += xbody.getChild(child).toXMLString().strip()
-        if hasattr(self, 'lo_uncertainties'):
+                sb_dict['notes'] = ''
+                xbody = xnotes.getChild(0)
+                for child in range(xbody.getNumChildren()):
+                    sb_dict['notes'] += xbody.getChild(child).toXMLString().strip()
+        if self.lo_uncertainties is not None:
             sb_dict['uncertainties'] = self.lo_uncertainties.to_df()
         return sb_dict
 
@@ -150,7 +158,7 @@ class ListOfUncertainties(SBase):
 
     def import_sbml(self, sbml_obj):
         distrib_plugin = sbml_obj.getPlugin('distrib')
-        if distrib_plugin != None:
+        if distrib_plugin is not None:
             sbml_lu = distrib_plugin.getListOfUncertainties()
             for sbml_u in sbml_lu:
                 u = Uncertainty()
@@ -160,7 +168,7 @@ class ListOfUncertainties(SBase):
 
     def export_sbml(self, sbml_obj):
         distrib_plugin = sbml_obj.getPlugin('distrib')
-        if distrib_plugin != None:
+        if distrib_plugin is not None:
             for u in self.uncertainties:
                 sbml_u = distrib_plugin.createUncertainty()
                 u.export_sbml(sbml_u)
@@ -222,6 +230,14 @@ class Uncertainty(SBase):
 class UncertParameter(SBase):
 
     def __init__(self):
+        self.element = None
+        self.type = None
+        self.value = None
+        self.var = None
+        self.units = None
+        self.url = None
+        self.math = None
+        self.lo_uncert_parameters = None
         super().__init__()
 
     def import_sbml(self, sbml_up):
@@ -244,43 +260,43 @@ class UncertParameter(SBase):
 
     def export_sbml(self, sbml_up):
         sbml_up.setType(self.type)
-        if hasattr(self, 'value'):
+        if self.value is not None:
             sbml_up.setValue(self.value)
-        if hasattr(self, 'var'):
+        if self.var is not None:
             sbml_up.setVar(self.var)
-        if hasattr(self, 'units'):
+        if self.units is not None:
             sbml_up.setUnits(self.units)
-        if hasattr(self, 'url'):
+        if self.url is not None:
             sbml_up.setDefinitionURL(self.url)
-        if hasattr(self, 'math'):
+        if self.math is not None:
             math = libsbml.parseL3Formula(self.math)
             if math:
                 sbml_up.setMath(math)
             else:
                 print(libsbml.getLastParseL3Error())
                 sys.exit()
-        if hasattr(self, 'lo_uncert_parameters'):
+        if self.lo_uncert_parameters is not None:
             self.lo_uncert_parameters.export_sbml(sbml_up)
         super().export_sbml(sbml_up)
 
     def to_df(self):
         attr = ['param=' + self.type]
-        if hasattr(self, 'value'):
+        if self.value is not None:
             attr.append('val=' + str(self.value))
-        if hasattr(self, 'var'):
+        if self.var is not None:
             attr.append('var=' + self.var)
-        if hasattr(self, 'units'):
+        if self.units is not None:
             attr.append('units=' + self.units)
-        if hasattr(self, 'url'):
+        if self.url is not None:
             attr.append('url=' + self.url)
-        if hasattr(self, 'math'):
+        if self.math is not None:
             attr.append('math=' + self.math)
         for key, val in super().to_df().items():
             if val:
                 attr.append(key + '=' + val)
-        if hasattr(self, 'lo_uncert_parameters'):
+        if self.lo_uncert_parameters is not None:
             lup_str = self.lo_uncert_parameters.to_df()
-            attr.append('lup=' + lup_str )
+            attr.append('lup=' + lup_str)
         return attr
 
     def from_df(self, up_str):
@@ -310,6 +326,10 @@ class UncertParameter(SBase):
 class UncertScan(UncertParameter):
 
     def __init__(self):
+        self.value_lower = None
+        self.value_upper = None
+        self.var_lower = None
+        self.var_upper = None
         super().__init__()
 
     def import_sbml(self, sbml_up):
@@ -324,26 +344,26 @@ class UncertScan(UncertParameter):
         super().import_sbml(sbml_up)
 
     def export_sbml(self, sbml_up):
-        if hasattr(self, 'value_lower'):
+        if self.value_lower is not None:
             sbml_up.setValueLower(self.value_lower)
-        if hasattr(self, 'value_upper'):
+        if self.value_upper is not None:
             sbml_up.setValueUpper(self.value_upper)
-        if hasattr(self, 'var_lower'):
+        if self.var_lower is not None:
             sbml_up.setVarLower(self.var_lower)
-        if hasattr(self, 'var_upper'):
+        if self.var_upper is not None:
             sbml_up.setVarUpper(self.var_upper)
         super().export_sbml(sbml_up)
 
     def to_df(self):
         attr = super().to_df()
         attr[0] = attr[0].replace('param', 'scan', 1)
-        if hasattr(self, 'value_lower'):
+        if self.value_lower is not None:
             attr.append('vall=' + str(self.value_lower))
-        if hasattr(self, 'value_upper'):
+        if self.value_upper is not None:
             attr.append('valu=' + str(self.value_upper))
-        if hasattr(self, 'var_lower'):
+        if self.var_lower is not None:
             attr.append('varl=' + self.var_lower)
-        if hasattr(self, 'var_upper'):
+        if self.var_upper is not None:
             attr.append('varu=' + self.var_upper)
         return attr
 

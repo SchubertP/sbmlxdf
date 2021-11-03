@@ -44,6 +44,10 @@ class Event(SBase):
 
     def __init__(self):
         self.event_assignments = {}
+        self.from_trigger_time = None
+        self.trigger = None
+        self.priority = None
+        self.delay = None
         super().__init__()
 
     def import_sbml(self, sbml_e):
@@ -66,9 +70,9 @@ class Event(SBase):
         sbml_e = sbml_model.createEvent()
         sbml_e.setUseValuesFromTriggerTime(self.from_trigger_time)
         self.trigger.export_sbml(sbml_e)
-        if hasattr(self, 'priority'):
+        if self.priority is not None:
             self.priority.export_sbml(sbml_e)
-        if hasattr(self, 'delay'):
+        if self.delay is not None:
             self.delay.export_sbml(sbml_e)
         for ea in self.event_assignments.values():
             ea.export_sbml(sbml_e)
@@ -79,10 +83,10 @@ class Event(SBase):
         e_dict['valFromTriggerTime'] = self.from_trigger_time
         for key, val in self.trigger.to_df().items():
             e_dict[key] = val
-        if hasattr(self, 'priority'):
+        if self.priority is not None:
             for key, val in self.priority.to_df().items():
                 e_dict[key] = val
-        if hasattr(self, 'delay'):
+        if self.delay is not None:
             for key, val in self.delay.to_df().items():
                 e_dict[key] = val
         if len(self.event_assignments):
@@ -113,6 +117,10 @@ class Event(SBase):
 class Trigger(SBase):
 
     def __init__(self):
+        self.init_val = None
+        self.persistent = None
+        self.math = None
+        self.sboterm = None
         super().__init__()
 
     def import_sbml(self, sbml_e):
@@ -135,11 +143,10 @@ class Trigger(SBase):
         super().export_sbml(sbml_t)
 
     def to_df(self):
-        tr_dict = {}
-        tr_dict['triggerInitVal'] = self.init_val
-        tr_dict['triggerPersistent'] = self.persistent
-        tr_dict['triggerMath'] = self.math
-        if hasattr(self, 'sboterm'):
+        tr_dict = {'triggerInitVal': self.init_val,
+                   'triggerPersistent': self.persistent,
+                   'triggerMath': self.math}
+        if self.sboterm is not None:
             tr_dict['triggerSboTerm'] = self.sboterm
         return tr_dict
 
@@ -153,7 +160,13 @@ class Trigger(SBase):
 
 class Priority(SBase):
 
+    @classmethod
+    def is_in_df(cls, e_dict):
+        return 'priorityMath' in e_dict
+
     def __init__(self):
+        self.math = None
+        self.sboterm = None
         super().__init__()
 
     def import_sbml(self, sbml_e):
@@ -172,14 +185,10 @@ class Priority(SBase):
         super().export_sbml(sbml_p)
 
     def to_df(self):
-        pr_dict = {}
-        pr_dict['priorityMath'] = self.math
-        if hasattr(self, 'sboterm'):
+        pr_dict = {'priorityMath': self.math}
+        if self.sboterm is not None:
             pr_dict['prioritySboTerm'] = self.sboterm
         return pr_dict
-
-    def is_in_df(e_dict):
-        return 'priorityMath' in e_dict
 
     def from_df(self, e_dict):
         self.math = e_dict['priorityMath']
@@ -189,7 +198,13 @@ class Priority(SBase):
 
 class Delay(SBase):
 
+    @ classmethod
+    def is_in_df(cls, e_dict):
+        return 'delayMath' in e_dict
+
     def __init__(self):
+        self.math = None
+        self.sboterm = None
         super().__init__()
 
     def import_sbml(self, sbml_e):
@@ -208,14 +223,10 @@ class Delay(SBase):
         super().export_sbml(sbml_d)
 
     def to_df(self):
-        de_dict = {}
-        de_dict['delayMath'] = self.math
-        if hasattr(self, 'sboterm'):
+        de_dict = {'delayMath': self.math}
+        if self.sboterm is not None:
             de_dict['delaySboTerm'] = self.sboterm
         return de_dict
-
-    def is_in_df(e_dict):
-        return 'delayMath' in e_dict
 
     def from_df(self, de_dict):
         self.math = de_dict['delayMath']
@@ -226,6 +237,9 @@ class Delay(SBase):
 class EventAssignment(SBase):
 
     def __init__(self):
+        self.variable = None
+        self.math = None
+        self.sboterm = None
         super().__init__()
 
     def import_sbml(self, sbml_ea):
@@ -247,7 +261,7 @@ class EventAssignment(SBase):
     def to_df(self):
         attr = ['variable=' + self.variable,
                 'math=' + self.math]
-        if hasattr(self, 'sboterm'):
+        if self.sboterm is not None:
             attr.append('sboterm=' + self.sboterm)
         return ', '.join(attr)
 

@@ -76,6 +76,10 @@ class UnitDefinition(SBase):
 class Unit(SBase):
 
     def __init__(self):
+        self.kind = None
+        self.exponent = None
+        self.scale = None
+        self.multiplier = None
         super().__init__()
         pass
 

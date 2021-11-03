@@ -42,6 +42,8 @@ class ListOfConstraints(SBase):
 class Constraint(SBase):
 
     def __init__(self):
+        self.math = None
+        self.message = None
         super().__init__()
 
     def import_sbml(self, sbml_c):
@@ -58,20 +60,20 @@ class Constraint(SBase):
         else:
             print(libsbml.getLastParseL3Error())
             sys.exit()
-        if hasattr(self, 'message'):
+        if self.message is not None:
             sbml_c.setMessage(self.message)
         super().export_sbml(sbml_c)
 
     def to_df(self):
         c_dict = super().to_df()
         c_dict['math'] = self.math
-        if hasattr(self, 'message'):
+        if self.message is not None:
             xmsg = libsbml.XMLNode.convertStringToXMLNode(self.message)
             if isinstance(xmsg, libsbml.XMLNode) and xmsg.getNumChildren():
                 c_dict['message'] = ''
                 xp = xmsg.getChild(0)
                 for child in range(xp.getNumChildren()):
-                  c_dict['message'] += xp.getChild(child).toXMLString().strip()
+                    c_dict['message'] += xp.getChild(child).toXMLString().strip()
         return c_dict
 
     def from_df(self, co_dict):

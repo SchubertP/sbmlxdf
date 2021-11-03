@@ -42,6 +42,10 @@ class ListOfRules(SBase):
 class Rule(SBase):
 
     def __init__(self):
+        self.math = None
+        self.typecode = None
+        self.ruletype = None
+        self.variable = None
         super().__init__()
 
     def import_sbml(self, sbml_r):
@@ -50,7 +54,7 @@ class Rule(SBase):
         self.ruletype = libsbml.SBMLTypeCode_toString(sbml_r.getTypeCode(),
                                                       sbml_r.getPackageName())
         if (self.typecode == libsbml.SBML_ASSIGNMENT_RULE or
-            self.typecode == libsbml.SBML_RATE_RULE):
+                self.typecode == libsbml.SBML_RATE_RULE):
             self.variable = sbml_r.getVariable()
         super().import_sbml(sbml_r)
 
@@ -76,7 +80,7 @@ class Rule(SBase):
     def to_df(self):
         r_dict = super().to_df()
         r_dict['rule'] = libsbml.SBMLTypeCode_toString(self.typecode, 'core')
-        if hasattr(self, 'variable'):
+        if self.variable is not None:
             r_dict['variable'] = self.variable
         r_dict['math'] = self.math
         return r_dict

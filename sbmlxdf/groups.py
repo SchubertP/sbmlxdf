@@ -44,6 +44,8 @@ class GroupsListOfGroups(SBase):
 class GroupsGroup(SBase):
 
     def __init__(self):
+        self.kind = None
+        self.lo_members = None
         super().__init__()
 
     def import_sbml(self, sbml_g):
@@ -56,7 +58,7 @@ class GroupsGroup(SBase):
     def export_sbml(self, groups_plugin):
         sbml_g = libsbml.Group()
         sbml_g.setKind(self.kind)
-        if hasattr(self, 'lo_members'):
+        if self.lo_members is not None:
             self.lo_members.export_sbml(sbml_g)
         super().export_sbml(sbml_g)
         groups_plugin.addGroup(sbml_g)
@@ -64,7 +66,7 @@ class GroupsGroup(SBase):
     def to_df(self):
         g_dict = super().to_df()
         g_dict['kind'] = self.kind
-        if hasattr(self, 'lo_members'):
+        if self.lo_members is not None:
             for key, val in self.lo_members.to_df().items():
                 g_dict[key] = val
         return g_dict
@@ -79,6 +81,10 @@ class GroupsGroup(SBase):
 
 
 class GroupListOfMembers(SBase):
+
+    @ classmethod
+    def is_in_df(cls, gr_dict):
+        return len({'listMembers', 'members'}.intersection(gr_dict.keys()))
 
     def __init__(self):
         self.members = []
@@ -100,18 +106,15 @@ class GroupListOfMembers(SBase):
 
     def to_df(self):
         attr = []
-        if hasattr(self, 'id'):
+        if self.id is not None:
             attr.append('id=' + self.id)
-        if hasattr(self, 'name'):
+        if self.name is not None:
             attr.append('name=' + self.name)
-        if hasattr(self, 'sboterm'):
+        if self.sboterm is not None:
             attr.append('sboterm=' + self.sboterm)
-        lm_dict={'listMembers': ', '.join(attr)}
-        lm_dict['members'] = '; '.join([m.to_df() for m in self.members])
+        lm_dict = {'listMembers': ', '.join(attr),
+                   'members': '; '.join([m.to_df() for m in self.members])}
         return lm_dict
-
-    def is_in_df(gr_dict):
-        return len({'listMembers', 'members'}.intersection(gr_dict.keys()))
 
     def from_df(self, gr_dict):
         if 'listMembers' in gr_dict:
@@ -131,6 +134,8 @@ class GroupListOfMembers(SBase):
 class GroupMember(SBase):
 
     def __init__(self):
+        self.idref = None
+        self.metaidref = None
         super().__init__()
 
     def import_sbml(self, sbml_m):
@@ -142,24 +147,24 @@ class GroupMember(SBase):
 
     def export_sbml(self, sbml_g):
         sbml_m = libsbml.Member()
-        if hasattr(self, 'idref'):
+        if self.idref is not None:
             sbml_m.setIdRef(self.idref)
-        if hasattr(self, 'metaidref'):
+        if self.metaidref is not None:
             sbml_m.setMetaIdRef(self.metaidref)
         super().export_sbml(sbml_m)
         sbml_g.addMember(sbml_m)
 
     def to_df(self):
         attr = []
-        if hasattr(self, 'idref'):
+        if self.idref is not None:
             attr.append('idRef=' + self.idref)
-        if hasattr(self, 'metaidref'):
+        if self.metaidref is not None:
             attr.append('metaIdRef=' + self.metaidref)
-        if hasattr(self, 'id'):
+        if self.id is not None:
             attr.append('id=' + self.id)
-        if hasattr(self, 'name'):
+        if self.name is not None:
             attr.append('name=' + self.name)
-        if hasattr(self, 'sboterm'):
+        if self.sboterm is not None:
             attr.append('sboterm=' + self.sboterm)
         return ', '.join(attr)
 

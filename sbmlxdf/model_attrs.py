@@ -4,14 +4,22 @@ Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
 
-import libsbml
-
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import get_bool_val
+
 
 class ModelAttrs(SBase):
 
     def __init__(self):
+        self.substance_units = None
+        self.time_units = None
+        self.volume_units = None
+        self.area_units = None
+        self.area_units = None
+        self.length_units = None
+        self.extent_units = None
+        self.conversion_factor = None
+        self.fbc_strict = None
         super().__init__()
 
     def import_sbml(self, sbml_model):
@@ -34,48 +42,48 @@ class ModelAttrs(SBase):
         super().import_sbml(sbml_model)
 
     def export_sbml(self, sbml_model):
-        if hasattr(self, 'substance_units'):
+        if self.substance_units is not None:
             sbml_model.setSubstanceUnits(self.substance_units)
-        if hasattr(self, 'time_units'):
+        if self.time_units is not None:
             sbml_model.setTimeUnits(self.time_units)
-        if hasattr(self, 'volume_units'):
+        if self.volume_units is not None:
             sbml_model.setVolumeUnits(self.volume_units)
-        if hasattr(self, 'area_units'):
+        if self.area_units is not None:
             sbml_model.setAreaUnits(self.area_units)
-        if hasattr(self, 'length_units'):
+        if self.length_units is not None:
             sbml_model.setLengthUnits(self.length_units)
-        if hasattr(self, 'extent_units'):
+        if self.extent_units is not None:
             sbml_model.setExtentUnits(self.extent_units)
-        if hasattr(self, 'conversion_factor'):
+        if self.conversion_factor is not None:
             sbml_model.setConversionFactor(self.conversion_factor)
-        if hasattr(self, 'fbc_strict'):
+        if self.fbc_strict is not None:
             sbml_model.getPlugin('fbc').setStrict(self.fbc_strict)
         super().export_sbml(sbml_model)
 
     def to_df(self):
         ma_dict = super().to_df()
-        if hasattr(self, 'substance_units'):
+        if self.substance_units is not None:
             ma_dict['substanceUnits'] = self.substance_units
-        if hasattr(self, 'time_units'):
+        if self.time_units is not None:
             ma_dict['timeUnits'] = self.time_units
-        if hasattr(self, 'volume_units'):
+        if self.volume_units is not None:
             ma_dict['volumeUnits'] = self.volume_units
-        if hasattr(self, 'area_units'):
+        if self.area_units is not None:
             ma_dict['areaUnits'] = self.area_units
-        if hasattr(self, 'length_units'):
+        if self.length_units is not None:
             ma_dict['lengthUnits'] = self.length_units
-        if hasattr(self, 'extent_units'):
+        if self.extent_units is not None:
             ma_dict['extentUnits'] = self.extent_units
-        if hasattr(self, 'conversion_factor'):
+        if self.conversion_factor is not None:
             ma_dict['conversionFactor'] = self.conversion_factor
-        if hasattr(self, 'fbc_strict'):
+        if self.fbc_strict is not None:
             ma_dict['fbcStrict'] = self.fbc_strict
         return pd.Series(ma_dict)
 
     def from_df(self, ma_s):
         ma_dict = ma_s.dropna().to_dict()
         if 'substanceUnits' in ma_dict:
-            self.substance_units= ma_dict['substanceUnits']
+            self.substance_units = ma_dict['substanceUnits']
         if 'timeUnits' in ma_dict:
             self.time_units = ma_dict['timeUnits']
         if 'volumeUnits' in ma_dict:

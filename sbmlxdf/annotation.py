@@ -12,6 +12,7 @@ from sbmlxdf.misc import extract_params
 # RDF namespace for MIRIAM type annotations
 rdf_namespace = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 
+
 class Annotation:
     """Handle different kinds of annotations.
 
@@ -62,7 +63,7 @@ class Annotation:
                 self.xml_annots.append(xa)
 
     def export_sbml(self, sbml_obj):
-        if self.history != None:
+        if self.history is not None:
             self.history.export_sbml(sbml_obj)
         for cv in self.cvterms:
             cv.export_sbml(sbml_obj)
@@ -71,7 +72,7 @@ class Annotation:
 
     def to_df(self):
         annots_dict = {}
-        if self.history != None:
+        if self.history is not None:
             annots_dict.update(self.history.to_df())
         if len(self.cvterms) > 0:
             annots_dict['miriam-annotation'] = '; '.join(cv.to_df()
@@ -95,6 +96,7 @@ class Annotation:
                 xa = XMLAnnotation()
                 xa.from_df(xa_str)
                 self.xml_annots.append(xa)
+
 
 class CVTerm:
 
@@ -129,7 +131,6 @@ class CVTerm:
             sbml_obj.addCVTerm(sbml_cv)
 
     def to_df(self):
-        cv_str = ''
         cv_str = self.qual_type + ':' + self.sub_type
         cv_str += ', ' + ', '.join([s.replace('http://identifiers.org/', '')
                                     for s in self.resource_uri])
@@ -165,10 +166,6 @@ class XMLAnnotation:
             name of token of the xml element, without prefix
         attrs: dict of str
             key - value pairs
-
-    Note: Class could potentially be extended later
-    for export to SBML it is checked, that at minimum ns_uri, prefix and token
-    are set.
     """
     def __init__(self):
         self.ns_uri = ''
@@ -189,9 +186,7 @@ class XMLAnnotation:
                 self.attrs[xml_node.getAttrName(i)] = xml_node.getAttrValue(i)
 
     def export_sbml(self, sbml_obj):
-        if ((self.ns_uri != '') and
-            (self.prefix != '') and
-            (self.token != '')):
+        if (self.ns_uri != '') and (self.prefix != '') and (self.token != ''):
             xml_triple = libsbml.XMLTriple(self.token, self.ns_uri, self.prefix)
             xml_nss = libsbml.XMLNamespaces()
             xml_nss.add(self.ns_uri, self.prefix)
@@ -221,6 +216,7 @@ class XMLAnnotation:
                     self.token = v
                 else:
                     self.attrs[k] = v
+
 
 class History:
     """Hold information of RDF type history:
@@ -273,9 +269,9 @@ class History:
         mh_dict = {}
         if self.created != '':
             mh_dict['created-history'] = self.created
-        if self.modified != []:
+        if len(self.modified) > 0:
             mh_dict['modified-history'] = '; '.join(self.modified)
-        if self.creators != []:
+        if len(self.creators) > 0:
             mh_dict['creators-history'] = '; '.join([mc.to_df()
                                                      for mc in self.creators])
         return mh_dict
@@ -304,6 +300,10 @@ class History:
 class ModelCreator:
 
     def __init__(self):
+        self.fn = None
+        self.gn = None
+        self.org = None
+        self.email = None
         pass
 
     def import_sbml(self, sbml_mc):
@@ -318,25 +318,25 @@ class ModelCreator:
 
     def export_sbml(self, sbml_hist):
         sbml_mc = libsbml.ModelCreator()
-        if hasattr(self, 'fn'):
+        if self.fn is not None:
             sbml_mc.setFamilyName(self.fn)
-        if hasattr(self, 'gn'):
+        if self.gn is not None:
             sbml_mc.setGivenName(self.gn)
-        if hasattr(self, 'org'):
+        if self.org is not None:
             sbml_mc.setOrganisation(self.org)
-        if hasattr(self, 'email'):
+        if self.email is not None:
             sbml_mc.setEmail(self.email)
         sbml_hist.addCreator(sbml_mc)
 
     def to_df(self):
         attr = []
-        if hasattr(self, 'fn'):
+        if self.fn is not None:
             attr.append('fn=' + self.fn)
-        if hasattr(self, 'gn'):
+        if self.gn is not None:
             attr.append('gn=' + self.gn)
-        if hasattr(self, 'org'):
+        if self.org is not None:
             attr.append('org=' + self.org)
-        if hasattr(self, 'email'):
+        if self.email is not None:
             attr.append('email=' + self.email)
         return ', '.join(attr)
 

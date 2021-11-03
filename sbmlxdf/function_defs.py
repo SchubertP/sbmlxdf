@@ -44,6 +44,7 @@ class ListOfFunctionDefs(SBase):
 class FunctionDef(SBase):
 
     def __init__(self):
+        self.math = None
         super().__init__()
 
     def import_sbml(self, sbml_fd):

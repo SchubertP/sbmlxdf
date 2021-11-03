@@ -90,6 +90,7 @@ class Model(SBase):
         :rtype: bool
         """
         self.isModel = False
+        self.sbml_container = None
         self.list_of = {}
         super().__init__()
         if type(import_file) == str:
@@ -131,7 +132,7 @@ class Model(SBase):
                 sbml_model = sbml_doc.getModel()
                 self._import_components(sbml_model)
                 return True
-        except:
+        except SbmlFileError:
             print('Exception occured:', sys.exc_info()[1])
             return False
 
@@ -175,7 +176,7 @@ class Model(SBase):
         basename = os.path.basename(sbml_file).split('.')[0]
         xml_file = os.path.join('results', basename + '.xml')
         result_file = os.path.join('results', basename + '.txt')
-        if hasattr(self, 'sbml_container'):
+        if self.sbml_container is not None:
             self.export_sbml(xml_file)
             sbml_doc = libsbml.readSBML(xml_file)
             sbml_doc.getErrorLog().clearLog()
@@ -218,7 +219,7 @@ class Model(SBase):
         :param sbml_file: file name of new SBML model (.xml).
         :type sbml_file: str
         """
-        if hasattr(self, 'sbml_container'):
+        if self.sbml_container is not None:
             sbml_doc = self.sbml_container.create_sbml_doc()
             if self.isModel:
                 sbml_model = sbml_doc.createModel()
@@ -301,6 +302,7 @@ class Model(SBase):
         self.sbml_container = SbmlContainer()
         self.sbml_container.from_df(model_dict['sbml'])
         self.isModel = True
+        component = 'no component yet'
         for k, v in _lists_of.items():
             assigned_class = v[1]
             if k in model_dict:
@@ -381,7 +383,7 @@ class Model(SBase):
             for csv_file in glob.glob(os.path.join(dir_name, '*.csv')):
                 try:
                     os.remove(csv_file)
-                except:
+                except FileNotFoundError:
                     print("Error while deleting *.csv file : ", csv_file)
         else:
             os.mkdir(dir_name)

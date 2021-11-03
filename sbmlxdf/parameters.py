@@ -4,8 +4,6 @@ Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
 
-import libsbml
-
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import get_bool_val
 
@@ -43,6 +41,9 @@ class ListOfParameters(SBase):
 class Parameter(SBase):
 
     def __init__(self):
+        self.value = None
+        self.units = None
+        self.constant = None
         super().__init__()
 
     def import_sbml(self, sbml_p):
@@ -55,18 +56,18 @@ class Parameter(SBase):
 
     def export_sbml(self, sbml_model):
         sbml_p = sbml_model.createParameter()
-        if hasattr(self, 'value'):
+        if self.value is not None:
             sbml_p.setValue(self.value)
-        if hasattr(self, 'units'):
+        if self.units is not None:
             sbml_p.setUnits(self.units)
         sbml_p.setConstant(self.constant)
         super().export_sbml(sbml_p)
 
     def to_df(self):
         p_dict = super().to_df()
-        if hasattr(self, 'value'):
+        if self.value is not None:
             p_dict['value'] = self.value
-        if hasattr(self, 'units'):
+        if self.units is not None:
             p_dict['units'] = self.units
         p_dict['constant'] = self.constant
         return p_dict

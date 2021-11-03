@@ -49,6 +49,14 @@ class Reaction(SBase):
         self.reactants = []
         self.products = []
         self.modifiers = []
+        self.reversible = None
+        self.fast = None
+        self.compartment = None
+        self.kinetic_law = None
+        self.fbc_enabled = None
+        self.fbc_lb = None
+        self.fbc_ub = None
+        self.fbc_gpa = None
         super().__init__()
 
     def import_sbml(self, sbml_r):
@@ -94,9 +102,9 @@ class Reaction(SBase):
         sbml_r = sbml_model.createReaction()
         sbml_r.setReversible(self.reversible)
         if ((sbml_model.getLevel() < 3.0) or
-           (sbml_model.getLevel() == 3.0 and sbml_model.getVersion() == 1.0)):
-           sbml_r.setFast(getattr(self,'fast', False))
-        if hasattr(self, 'compartment'):
+                (sbml_model.getLevel() == 3.0 and sbml_model.getVersion() == 1.0)):
+            sbml_r.setFast(getattr(self, 'fast', False))
+        if self.compartment is not None:
             sbml_r.setCompartment(self.compartment)
         for r in self.reactants:
             r.export_sbml(sbml_r)
@@ -104,22 +112,22 @@ class Reaction(SBase):
             p.export_sbml(sbml_r)
         for m in self.modifiers:
             m.export_sbml(sbml_r)
-        if hasattr(self, 'kinetic_law'):
+        if self.kinetic_law is not None:
             self.kinetic_law.export_sbml(sbml_r)
-        if hasattr(self, 'fbc_enabled'):
+        if self.fbc_enabled is not None:
             fbc_rplugin = sbml_r.getPlugin('fbc')
-            if hasattr(self, 'fbc_lb'):
+            if self.fbc_lb is not None:
                 fbc_rplugin.setLowerFluxBound(self.fbc_lb)
-            if hasattr(self, 'fbc_ub'):
+            if self.fbc_ub is not None:
                 fbc_rplugin.setUpperFluxBound(self.fbc_ub)
-            if hasattr(self, 'fbc_gpa'):
+            if self.fbc_gpa is not None:
                 self.fbc_gpa.export_sbml(sbml_r)
         super().export_sbml(sbml_r)
 
     def to_df(self):
         r_dict = super().to_df()
         r_dict['reversible'] = self.reversible
-        if hasattr(self, 'compartment'):
+        if self.compartment is not None:
             r_dict['compartment'] = self.compartment
         if len(self.reactants):
             r_dict['reactants'] = '; '.join(r.to_df() for r in self.reactants)
@@ -127,17 +135,17 @@ class Reaction(SBase):
             r_dict['products'] = '; '.join(p.to_df() for p in self.products)
         if len(self.modifiers):
             r_dict['modifiers'] = '; '.join(m.to_df() for m in self.modifiers)
-        if hasattr(self, 'kinetic_law'):
+        if self.kinetic_law is not None:
             kl_dict = self.kinetic_law.to_df()
             r_dict['kineticLaw'] = kl_dict['math']
             if 'localParams' in kl_dict:
                 r_dict['localParams'] = kl_dict['localParams']
-        if hasattr(self, 'fbc_enabled'):
-            if hasattr(self, 'fbc_lb'):
+        if self.fbc_enabled is not None:
+            if self.fbc_lb is not None:
                 r_dict['fbcLowerFluxBound'] = self.fbc_lb
-            if hasattr(self, 'fbc_ub'):
+            if self.fbc_ub is not None:
                 r_dict['fbcUpperFluxBound'] = self.fbc_ub
-            if hasattr(self, 'fbc_gpa'):
+            if self.fbc_gpa is not None:
                 r_dict['fbcGeneProdAssoc'] = self.fbc_gpa.to_df()
         return r_dict
 
@@ -177,9 +185,9 @@ class Reaction(SBase):
 
 
 class SimpleSpeciesRef(SBase):
-# uncertainties presently not supported
 
     def __init__(self):
+        self.species = None
         super().__init__()
 
     def import_sbml(self, sbml_sr):
@@ -192,12 +200,12 @@ class SimpleSpeciesRef(SBase):
 
     def to_df(self):
         attr = []
-        if hasattr(self, 'id'):
+        if self.id is not None:
             attr.append('id=' + self.id)
-        if hasattr(self, 'name'):
+        if self.name is not None:
             attr.append('name=' + self.name)
         attr.append('species=' + self.species)
-        if hasattr(self, 'sboterm'):
+        if self.sboterm is not None:
             attr.append('sboterm=' + self.sboterm)
         return attr
 
@@ -213,6 +221,8 @@ class SimpleSpeciesRef(SBase):
 class ReacSpeciesRef(SimpleSpeciesRef):
 
     def __init__(self):
+        self.stoichiometry = None
+        self.constant = None
         super().__init__()
 
     def import_sbml(self, sbml_sr):
@@ -224,17 +234,17 @@ class ReacSpeciesRef(SimpleSpeciesRef):
 
     def export_sbml(self, sbml_r):
         sbml_sr = sbml_r.createReactant()
-        if hasattr(self, 'stoichiometry'):
+        if self.stoichiometry is not None:
             sbml_sr.setStoichiometry(self.stoichiometry)
-        if hasattr(self, 'constant'):
+        if self.constant is not None:
             sbml_sr.setConstant(self.constant)
         super().export_sbml(sbml_sr)
 
     def to_df(self):
         attr = super().to_df()
-        if hasattr(self, 'stoichiometry'):
+        if self.stoichiometry is not None:
             attr.append('stoic=' + str(self.stoichiometry))
-        if hasattr(self, 'constant'):
+        if self.constant is not None:
             attr.append('const=' + str(self.constant))
         return ', '.join(attr)
 
@@ -250,6 +260,8 @@ class ReacSpeciesRef(SimpleSpeciesRef):
 class ProdSpeciesRef(SimpleSpeciesRef):
 
     def __init__(self):
+        self.stoichiometry = None
+        self.constant = None
         super().__init__()
 
     def import_sbml(self, sbml_sr):
@@ -261,17 +273,17 @@ class ProdSpeciesRef(SimpleSpeciesRef):
 
     def export_sbml(self, sbml_r):
         sbml_sr = sbml_r.createProduct()
-        if hasattr(self, 'stoichiometry'):
+        if self.stoichiometry is not None:
             sbml_sr.setStoichiometry(self.stoichiometry)
-        if hasattr(self, 'constant'):
+        if self.constant is not None:
             sbml_sr.setConstant(self.constant)
         super().export_sbml(sbml_sr)
 
     def to_df(self):
         attr = super().to_df()
-        if hasattr(self, 'stoichiometry'):
+        if self.stoichiometry is not None:
             attr.append('stoic=' + str(self.stoichiometry))
-        if hasattr(self, 'constant'):
+        if self.constant is not None:
             attr.append('const=' + str(self.constant))
         return ', '.join(attr)
 
@@ -307,6 +319,8 @@ class KineticLaw(SBase):
 
     def __init__(self):
         self.local_params = []
+        self.math = None
+        self.sboTerm = None
         super().__init__()
 
     def import_sbml(self, sbml_r):
@@ -335,11 +349,10 @@ class KineticLaw(SBase):
         super().export_sbml(sbml_kl)
 
     def to_df(self):
-        kl_dict = {}
-        kl_dict['math'] = self.math
-        if hasattr(self, 'local_params'):
+        kl_dict = {'math': self.math}
+        if len(self.local_params) > 0:
             kl_dict['localParams'] = '; '.join([lp.to_df() for lp in self.local_params])
-        if hasattr(self, 'sboTerm'):
+        if self.sboterm is not None:
             kl_dict['sboTerm'] = self.sboterm
         return kl_dict
 
@@ -357,6 +370,8 @@ class KineticLaw(SBase):
 class LocalParameter(SBase):
 
     def __init__(self):
+        self.value = None
+        self.units = None
         super().__init__()
 
     def import_sbml(self, sbml_lp):
@@ -371,21 +386,21 @@ class LocalParameter(SBase):
             sbml_lp = sbml_kl.createLocalParameter()
         else:
             sbml_lp = sbml_kl.createParameter()
-        if hasattr(self, 'value'):
+        if self.value is not None:
             sbml_lp.setValue(self.value)
-        if hasattr(self, 'units'):
+        if self.units is not None:
             sbml_lp.setUnits(self.units)
         super().export_sbml(sbml_lp)
 
     def to_df(self):
         attr = ['id=' + self.id]
-        if hasattr(self, 'name'):
+        if self.name is not None:
             attr.append('name=' + self.name)
-        if hasattr(self, 'value'):
+        if self.value is not None:
             attr.append('value=' + str(float(self.value)))
-        if hasattr(self, 'units'):
+        if self.units is not None:
             attr.append('units=' + self.units)
-        if hasattr(self, 'sboterm'):
+        if self.sboterm is not None:
             attr.append('sboterm=' + self.sboterm)
         return ', '.join(attr)
 
@@ -406,6 +421,7 @@ class LocalParameter(SBase):
 class FbcGeneProdAssociation(SBase):
 
     def __init__(self):
+        self.infix = None
         super().__init__()
 
     def import_sbml(self, sbml_r):
@@ -430,11 +446,11 @@ class FbcGeneProdAssociation(SBase):
 
     def to_df(self):
         attr = []
-        if hasattr(self, 'id'):
+        if self.id is not None:
             attr.append('id=' + self.id)
-        if hasattr(self, 'name'):
+        if self.name is not None:
             attr.append('name=' + self.name)
-        if hasattr(self, 'sboterm'):
+        if self.sboterm is not None:
             attr.append('sboterm=' + self.sboterm)
         attr.append('assoc=' + self.infix)
         return ', '.join(attr)

@@ -4,8 +4,6 @@ Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
 
-import libsbml
-
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import get_bool_val
 
@@ -43,6 +41,10 @@ class ListOfCompartments(SBase):
 class Compartment(SBase):
 
     def __init__(self):
+        self.spatial_dim = None
+        self.size = None
+        self.units = None
+        self.constant = None
         super().__init__()
 
     def import_sbml(self, sbml_c):
@@ -57,22 +59,22 @@ class Compartment(SBase):
 
     def export_sbml(self, sbml_model):
         sbml_c = sbml_model.createCompartment()
-        if hasattr(self, 'spatial_dim'):
+        if self.spatial_dim is not None:
             sbml_c.setSpatialDimensions(self.spatial_dim)
-        if hasattr(self, 'size'):
+        if self.size is not None:
             sbml_c.setSize(self.size)
-        if hasattr(self, 'units'):
+        if self.units is not None:
             sbml_c.setUnits(self.units)
         sbml_c.setConstant(self.constant)
         super().export_sbml(sbml_c)
 
     def to_df(self):
         c_dict = super().to_df()
-        if hasattr(self, 'spatial_dim'):
+        if self.spatial_dim is not None:
             c_dict['spatialDimension'] = self.spatial_dim
-        if hasattr(self, 'size'):
+        if self.size is not None:
             c_dict['size'] = self.size
-        if hasattr(self, 'units'):
+        if self.units is not None:
             c_dict['units'] = self.units
         c_dict['constant'] = self.constant
         return c_dict

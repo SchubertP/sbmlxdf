@@ -110,13 +110,13 @@ class FbcFluxObjective(SBase):
 
     def to_df(self):
         attr = []
-        if hasattr(self, 'id'):
+        if self.id is not None:
             attr.append('id=' + self.id)
-        if hasattr(self, 'name'):
+        if self.name is not None:
             attr.append('name=' + self.name)
         attr.append('reac=' + self.reaction)
         attr.append('coef=' + str(self.coefficient))
-        if hasattr(self, 'sboterm'):
+        if self.sboterm is not None:
             attr.append('sboterm=' + self.sboterm)
         return ', '.join(attr)
 

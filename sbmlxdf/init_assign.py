@@ -43,6 +43,8 @@ class ListOfInitAssign(SBase):
 class InitAssign(SBase):
 
     def __init__(self):
+        self.symbol = None
+        self.math = None
         super().__init__()
 
     def import_sbml(self, sbml_ia):
