@@ -1,9 +1,10 @@
 ## sbmlxdf - convert between SBML and tabular structures
 
-<img src="./docs/images/ccb_logo-2.0.1.png" width="200">
+<img src="https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf/-/blob/master/docs/images/ccb_logo-2.0.1.png" 
+width="200" />
 
 
-![sbmlxdf](./docs/images/sbmlxdf_diagramm.png)
+![sbmlxdf](https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf/-/blob/master/docs/images/sbmlxdf_diagramm.png)
 
 
 **sbmlxdf** is lightweight and transparent converter from
