@@ -166,7 +166,7 @@ class FbcGeneProduct(SBase):
 
     def __init__(self):
         self.label = ''
-        self.associated = ''
+        self.associated = None
         super().__init__()
 
     def import_sbml(self, sbml_gp):
@@ -178,14 +178,14 @@ class FbcGeneProduct(SBase):
     def export_sbml(self, fbc_mplugin):
         sbml_gp = fbc_mplugin.createGeneProduct()
         sbml_gp.setLabel(self.label)
-        if hasattr(self, 'associated'):
+        if self.associated is not None:
             sbml_gp.setAssociatedSpecies(self.associated)
         super().export_sbml(sbml_gp)
 
     def to_df(self):
         gp_dict = super().to_df()
         gp_dict['label'] = self.label
-        if hasattr(self, 'associated'):
+        if self.associated is not None:
             gp_dict['associatedSpec'] = self.associated
         return gp_dict
 

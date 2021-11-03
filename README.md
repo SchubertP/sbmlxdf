@@ -18,11 +18,17 @@ core** package [1] and extension packages **Flux Balance Constraints
 
 using **libSBML API** for accessing SBML [5].
 
-Note: **python-libsbml-experimental** package is used to support
-features in distrib package. It is imported with `import libsbml`. If
-python-libsbml package is installed subsequently, e.g. as requirement
-for another tool, some functionality might get lost. In such case
-python-libsbml-experimental should be re-installed using pip install.
+Note: **python-libsbml-experimental** Python package is required only,
+when using features of SBML extension package `distrib`. 
+**python-libsbml** Python package can be used in all other cases.
+**python-libsbml** and **python-libsbml-experimental** both share the 
+same top level identifier **libsbml** (`import libsbml`). Conflicts can be resolved by
+pip uninstalling both packages and subsequntly installing the 
+favoured package: e.g.
+
+    $ pip3 uninstall python-libsbml-experimental
+    $ pip3 uninstall python-libsbml
+    $ pip3 install python-libsbml-experimental
 
 ## Benefits
 
