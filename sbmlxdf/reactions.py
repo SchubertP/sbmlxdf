@@ -103,7 +103,10 @@ class Reaction(SBase):
         sbml_r.setReversible(self.reversible)
         if ((sbml_model.getLevel() < 3.0) or
                 (sbml_model.getLevel() == 3.0 and sbml_model.getVersion() == 1.0)):
-            sbml_r.setFast(getattr(self, 'fast', False))
+            if self.fast is None:
+                sbml_r.setFast(False)
+            else:
+                sbml_r.setFast(self.fast)
         if self.compartment is not None:
             sbml_r.setCompartment(self.compartment)
         for r in self.reactants:
