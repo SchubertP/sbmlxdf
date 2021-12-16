@@ -13,7 +13,7 @@ from abc import ABC, abstractmethod
 import libsbml
 
 from sbmlxdf.annotation import Annotation
-from sbmlxdf.misc import extract_params, extract_records, extract_lo_records
+from sbmlxdf.misc import extract_params, extract_nested_params, extract_records, extract_lo_records
 
 # RDF namespace for MIRIAM type annotations
 rdf_namespace = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
@@ -300,7 +300,7 @@ class UncertParameter(SBase):
         return attr
 
     def from_df(self, up_str):
-        up_dict = extract_params(up_str)
+        up_dict = extract_nested_params(up_str)
         if 'param' in up_dict:
             self.element = 'param'
             self.type = up_dict['param']
@@ -368,7 +368,7 @@ class UncertScan(UncertParameter):
         return attr
 
     def from_df(self, up_str):
-        us_dict = extract_params(up_str)
+        us_dict = extract_nested_params(up_str)
         if 'vall' in us_dict:
             self.value_lower = float(us_dict['vall'])
         if 'valu' in us_dict:

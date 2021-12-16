@@ -95,7 +95,27 @@ def record_generator(records_str, sep=';'):
                 yield record.strip()
 
 
-def extract_params(s):
+def extract_params(record):
+    """Extract parameters from a record.
+
+    A single record consists of comma separated key-value pairs.
+    Example: 'key1=val1, key2=val2, ...' is converted to
+    {key1: val1, key2: val2, ...}
+
+    :param record: key '=' value pairs separated by ","
+    :type record: str
+    :returns: key-values pairs extracted from record
+    :rtype: dict
+    """
+    params = {}
+    for kv_pair in record_generator(record, sep=','):
+        if '=' in kv_pair:
+            k, v = kv_pair.split('=')
+            params[k.strip()] = v.strip()
+    return params
+
+
+def extract_nested_params(s):
     """Extract parameters from a record.
 
     A record consists of comma separated key-value pairs.
