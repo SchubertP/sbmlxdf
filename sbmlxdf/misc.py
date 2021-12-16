@@ -77,6 +77,24 @@ def get_bool_val(parameter):
         return parameter.upper() == str('TRUE') or parameter == '1'
 
 
+def record_generator(records_str, sep=';'):
+    """Generator to extract individual records from a string of records.
+
+       This generator does not yet handle nested records.
+
+    :param records_str: containing records separated by sep
+    :type records_str: str
+    :param sep: seperator used to separate records
+    :type sep: str (default: ';')
+    :returns: key-values pairs extracted from record
+    :rtype: dict
+    """
+    if type(records_str) == str:
+        for record in records_str.split(sep):
+            if len(record.strip()) > 0:
+                yield record.strip()
+
+
 def extract_params(s):
     """Extract parameters from a record.
 
@@ -98,6 +116,7 @@ def extract_params(s):
     find_key = re.compile(r'\s*(?P<key>\w*)\s*=\s*')
     params = {}
     pos = 0
+    i = 0
     while pos < len(s):
         m = find_key.search(s[pos:])
         if m:
@@ -152,6 +171,7 @@ def extract_records(s):
     records = []
     brackets = 0
     pos = 0
+    i = 0
     while pos < len(s):
         for i in range(pos, len(s)):
             if s[i] == '[':
@@ -189,6 +209,7 @@ def extract_lo_records(s):
     # considers nested values in square brackets (key=[nested values])
     lo_records = []
     pos = 0
+    i = 0
     while pos < len(s):
         m = re.search(r'\[', s[pos:])
         if m:
@@ -227,7 +248,7 @@ def extract_xml_attrs(xml_annots, ns=None, token=None):
     :rtype: dict
     """
     xml_attrs = {}
-    for xml_str in xml_annots.split(';'):
+    for xml_str in record_generator(xml_annots):
         params = extract_params(xml_str)
         if (((ns is not None) and (params['ns_uri'] != ns)) or
                 ((token is not None) and (params['token'] != token))):

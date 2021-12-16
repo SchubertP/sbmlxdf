@@ -5,7 +5,7 @@ Peter Schubert, HHU Dusseldorf, October 2020
 import pandas as pd
 
 from sbmlxdf.sbase import SBase
-from sbmlxdf.misc import extract_params, get_bool_val
+from sbmlxdf.misc import extract_params, get_bool_val, record_generator
 
 
 class FbcListOfObjectives(SBase):
@@ -83,7 +83,7 @@ class FbcObjective(SBase):
 
     def from_df(self, o_dict):
         self.type = o_dict['type']
-        for fo_str in o_dict['fluxObjectives'].split(';'):
+        for fo_str in record_generator(o_dict['fluxObjectives']):
             fo = FbcFluxObjective()
             fo.from_df(fo_str.strip())
             self.flux_objectives.append(fo)

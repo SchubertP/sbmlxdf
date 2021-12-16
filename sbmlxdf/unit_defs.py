@@ -7,7 +7,7 @@ import pandas as pd
 import libsbml
 
 from sbmlxdf.sbase import SBase
-from sbmlxdf.misc import extract_params
+from sbmlxdf.misc import extract_params, record_generator
 
 
 class ListOfUnitDefs(SBase):
@@ -66,7 +66,7 @@ class UnitDefinition(SBase):
 
     def from_df(self, ud_dict):
         if 'units' in ud_dict:
-            for unit_str in ud_dict['units'].split(';'):
+            for unit_str in record_generator(ud_dict['units']):
                 unit = Unit()
                 unit.from_df(unit_str.strip())
                 self.units.append(unit)

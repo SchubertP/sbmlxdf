@@ -10,7 +10,7 @@ import sys
 import libsbml
 
 from sbmlxdf.sbase import SBase
-from sbmlxdf.misc import extract_params, get_bool_val
+from sbmlxdf.misc import extract_params, get_bool_val, record_generator
 
 
 class ListOfReactions(SBase):
@@ -157,17 +157,17 @@ class Reaction(SBase):
         if 'compartment' in r_dict:
             self.compartment = r_dict['compartment']
         if 'reactants' in r_dict:
-            for r_str in r_dict['reactants'].split(';'):
+            for r_str in record_generator(r_dict['reactants']):
                 sr = ReacSpeciesRef()
                 sr.from_df(r_str.strip())
                 self.reactants.append(sr)
         if 'products' in r_dict:
-            for p_str in r_dict['products'].split(';'):
+            for p_str in record_generator(r_dict['products']):
                 sr = ProdSpeciesRef()
                 sr.from_df(p_str.strip())
                 self.products.append(sr)
         if 'modifiers' in r_dict:
-            for m_str in r_dict['modifiers'].split(';'):
+            for m_str in record_generator(r_dict['modifiers']):
                 msr = ModSpeciesRef()
                 msr.from_df(m_str.strip())
                 self.modifiers.append(msr)
@@ -362,7 +362,7 @@ class KineticLaw(SBase):
     def from_df(self, r_dict):
         self.math = r_dict['kineticLaw']
         if 'localParams' in r_dict:
-            for lp_str in r_dict['localParams'].split(';'):
+            for lp_str in record_generator(r_dict['localParams']):
                 lp = LocalParameter()
                 lp.from_df(lp_str.strip())
                 self.local_params.append(lp)

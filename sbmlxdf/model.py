@@ -26,7 +26,7 @@ from sbmlxdf.sbase import SBase
 from sbmlxdf.sbml_container import SbmlContainer
 from sbmlxdf.species import ListOfSpecies
 from sbmlxdf.unit_defs import ListOfUnitDefs
-from sbmlxdf.misc import extract_params
+from sbmlxdf.misc import extract_params, record_generator
 from sbmlxdf._version import __version__, program_name
 
 # directory where to write result files of validate_sbml()
@@ -247,11 +247,11 @@ class Model(SBase):
                                    columns=df_reactions.index.values)
             for idx, r in df_reactions.iterrows():
                 if type(r['reactants']) == str:
-                    for reac in r['reactants'].split(';'):
+                    for reac in record_generator(r[['reactants']]):
                         s_d = extract_params(reac)
                         df_smat.at[s_d['species'], idx] -= float(s_d.get('stoic', 1.0))
                 if type(r['products']) == str:
-                    for prod in r['products'].split(';'):
+                    for prod in record_generator(r[['products']]):
                         s_d = extract_params(prod)
                         df_smat.at[s_d['species'], idx] += float(s_d.get('stoic', 1.0))
         else:

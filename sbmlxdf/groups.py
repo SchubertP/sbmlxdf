@@ -7,7 +7,7 @@ import pandas as pd
 import libsbml
 
 from sbmlxdf.sbase import SBase
-from sbmlxdf.misc import extract_params
+from sbmlxdf.misc import extract_params, record_generator
 
 
 class GroupsListOfGroups(SBase):
@@ -125,7 +125,7 @@ class GroupListOfMembers(SBase):
                 self.name = attr_dict['name']
             if 'sboterm' in attr_dict:
                 self.sboterm = attr_dict['sboterm']
-        for m_str in gr_dict['members'].split(';'):
+        for m_str in record_generator(gr_dict['members']):
             m = GroupMember()
             m.from_df(m_str)
             self.members.append(m)

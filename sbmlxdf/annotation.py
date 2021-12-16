@@ -7,7 +7,7 @@ import time
 
 import libsbml
 
-from sbmlxdf.misc import extract_params
+from sbmlxdf.misc import extract_params, record_generator
 
 # RDF namespace for MIRIAM type annotations
 rdf_namespace = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
@@ -87,12 +87,12 @@ class Annotation:
             self.history = History()
             self.history.from_df(obj_dict)
         if 'miriam-annotation' in obj_dict:
-            for cv_str in obj_dict['miriam-annotation'].split(';'):
+            for cv_str in record_generator(obj_dict['miriam-annotation']):
                 cv = CVTerm()
                 cv.from_df(cv_str)
                 self.cvterms.append(cv)
         if 'xml-annotation' in obj_dict:
-            for xa_str in obj_dict['xml-annotation'].split(';'):
+            for xa_str in record_generator(obj_dict['xml-annotation']):
                 xa = XMLAnnotation()
                 xa.from_df(xa_str)
                 self.xml_annots.append(xa)
@@ -203,7 +203,7 @@ class XMLAnnotation:
                 ', '.join([k + '=' + v for k, v in self.attrs.items()]))
 
     def from_df(self, xa_str):
-        for kvp in xa_str.split(','):
+        for kvp in record_generator(xa_str, sep=','):
             if '=' in kvp:
                 k, v = kvp.split('=')
                 k = k.strip()
@@ -284,14 +284,14 @@ class History:
             else:
                 self.created = obj_dict['created-history']
         if 'modified-history' in obj_dict:
-            for mod_date in obj_dict['modified-history'].split(';'):
+            for mod_date in record_generator(obj_dict['modified-history']):
                 if mod_date.strip() == 'localtime':
                     self.modified.append(time.strftime('%Y-%m-%dT%H:%M:%S%z',
                                                        time.localtime()))
                 else:
                     self.modified.append(mod_date.strip())
         if 'creators-history' in obj_dict:
-            for creator in obj_dict['creators-history'].split(';'):
+            for creator in record_generator(obj_dict['creators-history']):
                 mc = ModelCreator()
                 mc.from_df(creator)
                 self.creators.append(mc)
