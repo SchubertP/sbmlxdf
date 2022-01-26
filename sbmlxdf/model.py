@@ -26,6 +26,7 @@ from sbmlxdf.sbase import SBase
 from sbmlxdf.sbml_container import SbmlContainer
 from sbmlxdf.species import ListOfSpecies
 from sbmlxdf.unit_defs import ListOfUnitDefs
+import sbmlxdf.misc
 from sbmlxdf.misc import extract_params, record_generator
 from sbmlxdf._version import __version__, program_name
 
@@ -274,6 +275,10 @@ class Model(SBase):
         model_dict = {'sbml': self.sbml_container.to_df()}
         for key, lo in self.list_of.items():
             model_dict[key] = lo.to_df()
+
+        if 'reactions' in model_dict:
+            model_dict['reactions'] = sbmlxdf.misc.add_reaction_translations(model_dict)
+
         if ('reactions' in model_dict) and ('parameters' in model_dict):
             if 'fbcLowerFluxBound' in model_dict['reactions'].columns:
                 params = model_dict['parameters']['value'].to_dict()
@@ -302,6 +307,11 @@ class Model(SBase):
         self.sbml_container = SbmlContainer()
         self.sbml_container.from_df(model_dict['sbml'])
         self.isModel = True
+        if 'reactions' in model_dict:
+            if ('reactants' not in model_dict['reactions'] and
+                    'products' not in model_dict['reactions'] and
+                    'reaction_string' in model_dict['reactions']):
+                model_dict['reactions'] = sbmlxdf.misc.translate_reaction_string(model_dict)
         component = 'no component yet'
         for k, v in _lists_of.items():
             assigned_class = v[1]

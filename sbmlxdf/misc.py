@@ -163,7 +163,7 @@ def extract_nested_params(s):
                             r_brackets -= 1
                         if s[i] == ',' and r_brackets == 0:
                             break
-                        if i == len(s)-1:
+                        if i == len(s) - 1:
                             i += 1
                 params[m['key']] = s[pos:i].strip()
                 pos = i
@@ -203,7 +203,7 @@ def extract_records(s):
         if s[i] != ';':
             i += 1
         records.append(s[pos:i].strip())
-        pos = i+1
+        pos = i + 1
     return records
 
 
@@ -246,7 +246,7 @@ def extract_lo_records(s):
                     break
             if s[i] == ']':
                 lo_records.append(s[pos:i].strip())
-            pos = i+1
+            pos = i + 1
         else:
             break
     return lo_records
@@ -277,3 +277,109 @@ def extract_xml_attrs(xml_annots, ns=None, token=None):
             if k not in {'ns_uri', 'prefix', 'token'}:
                 xml_attrs[k] = v
     return xml_attrs
+
+
+def convert_srefs(srefs_str):
+    """Convert species references from rectants/products.
+
+    E.g. 'species=M_mal__L_e, stoic=1.0, const=True; species=M_h_e, stoic=2.0, const=True'
+    gets converted to '2.0 M_h_e + M_mal__L_e'
+    srefs get sorted according to metabolite id
+
+    :param srefs_str: ';'-separated string with species references as key/value pairs
+    :type srefs_str: str
+    :returns: stoichiometric string
+    :rtype: string
+    """
+    d_srefs = {}
+    for sref in record_generator(srefs_str):
+        params = extract_params(sref)
+        d_srefs[params['species']] = params['stoic']
+
+    l_srefs = []
+    for sid in sorted(d_srefs.keys()):
+        if d_srefs[sid] == '1.0':
+            l_srefs.append(sid)
+        else:
+            l_srefs.append(d_srefs[sid] + ' ' + sid)
+    return ' + '.join(l_srefs)
+
+
+def generate_srefs(stoichometric_str):
+    """Generate species references from one side of reaction string.
+
+    E.g. '2.0 M_h_e + M_mal__L_e' gets converted to
+    'species=M_h_e, stoic=2.0, const=True; species=M_mal__L_e, stoic=1.0, const=True'
+
+    :param stoichometric_str: stoichiometric string
+    :type stoichometric_str: str
+    :returns: ';'-separated string with species references as key/value pairs
+    :rtype: string
+    """
+    d_srefs = {}
+    for sref in stoichometric_str.split('+'):
+        l_sref = re.split(r'\s+', sref.strip())
+        stoic = l_sref[0] if len(l_sref) == 2 else '1.0'
+        sid = l_sref[-1]
+        if sid != '':
+            d_srefs[sid] = stoic
+    l_srefs = []
+    for sid, stoic in d_srefs.items():
+        l_srefs.append('species=' + sid + ', stoic=' + stoic + ', const=True')
+    return '; '.join(l_srefs)
+
+
+def add_reaction_translations(model_dict):
+    """Applies translations to some reaction columns.
+
+    To support analysis of reactions table.
+    Translations implemented are:
+    - given the numberical value of flux bounds.
+    - adding a reaction string
+
+    :param model_dict: pandas DataFrames of model components
+    :type model_dict: dict
+    :returns: updated reactions table
+    :rtype: pandas DataFrame
+    """
+    df_reactions = model_dict['reactions'].copy()
+
+    if 'reactants' in df_reactions.columns and 'products' in df_reactions.columns:
+        for rid, row in df_reactions.iterrows():
+            direction = ' <=> ' if row['reversible'] is True else ' => '
+            df_reactions.at[rid, 'reaction_string'] = (convert_srefs(row['reactants'])
+                                                       + direction
+                                                       + convert_srefs(row['products']))
+    if ('parameters' in model_dict and
+            'fbcLowerFluxBound' in df_reactions.columns and
+            'fbcUpperFluxBound' in df_reactions.columns):
+        params = model_dict['parameters']['value'].to_dict()
+        df_reactions['fbcLb'] = df_reactions['fbcLowerFluxBound'].replace(params)
+        df_reactions['fbcUb'] = df_reactions['fbcUpperFluxBound'].replace(params)
+
+    return df_reactions
+
+
+def translate_reaction_string(model_dict):
+    """Produces reactants and products from reaction string.
+
+    To support defining reactants and products with in a more readable format.
+    Used, e.g. when reactants/products not defined in the dataframe
+
+    :param model_dict: pandas DataFrames of model components
+    :type model_dict: dict
+    :returns: updated reactions table
+    :rtype: pandas DataFrame
+    """
+    df_reactions = model_dict['reactions'].copy()
+
+    for rid, reaction_string in df_reactions['reaction_string'].items():
+        if '=>' in reaction_string:
+            components = re.split('<*=>', reaction_string)
+        else:  # actually an error
+            components = ['', '']
+        df_reactions.at[rid, 'reversible'] = ('<=>' in reaction_string)
+        df_reactions.at[rid, 'reactants'] = generate_srefs(components[0])
+        df_reactions.at[rid, 'products'] = generate_srefs(components[1])
+
+    return df_reactions
