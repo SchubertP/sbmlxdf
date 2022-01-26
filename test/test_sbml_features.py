@@ -26,11 +26,12 @@ import os
 
 import sbmlxdf
 
-## pytest test/test_sbml_features.py -v
+# pytest test/test_sbml_features.py -v
 
 test_dir = os.path.dirname(__file__)
 model_dir = os.path.join(test_dir, 'data')
 pickel_dir = os.path.join(model_dir, 'pickel')
+
 
 def check_vs_reference(model_dfs, ref_dfs):
     for df in ref_dfs:
@@ -38,6 +39,7 @@ def check_vs_reference(model_dfs, ref_dfs):
             pd.testing.assert_frame_equal(model_dfs[df], ref_dfs[df])
         if type(ref_dfs[df]) == pd.Series:
             pd.testing.assert_series_equal(model_dfs[df], ref_dfs[df])
+
 
 @pytest.mark.parametrize('model_name', [
     'test_SBML_L3V2_empty_doc',
@@ -69,7 +71,6 @@ def check_vs_reference(model_dfs, ref_dfs):
     'test_SBML_L3V2_xml_annotation',
     'test_SBML_L3V2_annotation_SHK',
     ])
-
 def test_sbml_features(model_name, tmp_path):
     tmp_xlsx = os.path.join(tmp_path, 'tmp.xlsx')
     tmp_xml = os.path.join(tmp_path, 'tmp.xml')
@@ -81,7 +82,7 @@ def test_sbml_features(model_name, tmp_path):
     # import original SBML model
     orig_model = sbmlxdf.Model()
     model_path = os.path.join(model_dir, model_name + '.xml')
-    assert orig_model.import_sbml(model_path) == True
+    assert orig_model.import_sbml(model_path) is True
     check_vs_reference(orig_model.to_df(), ref_dfs)
 
     # export to Excel
