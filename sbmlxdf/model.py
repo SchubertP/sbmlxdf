@@ -311,7 +311,7 @@ class Model(SBase):
             if ('reactants' not in model_dict['reactions'] and
                     'products' not in model_dict['reactions'] and
                     'reaction_string' in model_dict['reactions']):
-                model_dict['reactions'] = sbmlxdf.misc.translate_reaction_string(model_dict)
+                model_dict['reactions'] = sbmlxdf.misc.translate_reaction_string(model_dict['reactions'])
         component = 'no component yet'
         for k, v in _lists_of.items():
             assigned_class = v[1]

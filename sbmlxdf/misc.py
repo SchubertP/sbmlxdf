@@ -346,7 +346,7 @@ def add_reaction_translations(model_dict):
 
     if 'reactants' in df_reactions.columns and 'products' in df_reactions.columns:
         for rid, row in df_reactions.iterrows():
-            direction = ' <=> ' if row['reversible'] is True else ' => '
+            direction = ' -> ' if row['reversible'] is True else ' => '
             df_reactions.at[rid, 'reaction_string'] = (convert_srefs(row['reactants'])
                                                        + direction
                                                        + convert_srefs(row['products']))
@@ -360,26 +360,27 @@ def add_reaction_translations(model_dict):
     return df_reactions
 
 
-def translate_reaction_string(model_dict):
+def translate_reaction_string(df_reactions):
     """Produces reactants and products from reaction string.
 
     To support defining reactants and products with in a more readable format.
     Used, e.g. when reactants/products not defined in the dataframe
+    e.g. 'M_fum_c + M_h2o_c -> M_mal__L_c' for a reversible reaction
+    e.g. 'M_ac_e => ' for an irreversible reaction with no product
 
-    :param model_dict: pandas DataFrames of model components
-    :type model_dict: dict
+    :param df_reactions: pandas DataFrames of reaction objects
+    :type df_reactions: dataframe
     :returns: updated reactions table
     :rtype: pandas DataFrame
     """
-    df_reactions = model_dict['reactions'].copy()
+    df_reactions = df_reactions.copy()
 
     for rid, reaction_string in df_reactions['reaction_string'].items():
-        if '=>' in reaction_string:
-            components = re.split('<*=>', reaction_string)
+        if '->' in reaction_string or '=>' in reaction_string:
+            components = re.split(r'[=-]>', reaction_string)
         else:  # actually an error
             components = ['', '']
-        df_reactions.at[rid, 'reversible'] = ('<=>' in reaction_string)
+        df_reactions.at[rid, 'reversible'] = ('->' in reaction_string)
         df_reactions.at[rid, 'reactants'] = generate_srefs(components[0])
         df_reactions.at[rid, 'products'] = generate_srefs(components[1])
-
     return df_reactions
