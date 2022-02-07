@@ -1,6 +1,6 @@
 """Implementation of miscellaneous functions.
 
-Peter Schubert, HHU Dusseldorf, October 2020
+Peter Schubert, HHU Duesseldorf, October 2020
 """
 import re
 
@@ -63,7 +63,7 @@ def get_bool_val(parameter):
     Values imported from spreadsheets are all converted to string
     objects, while parameters coming from Model.to_df() may contain
     boolean values.
-    'True' objects from spreadsheets my be represented as
+    'True' objects from spreadsheets can be represented as
     'True' or as numerical 1, getting converted to string.
 
     :param parameter: parameter to retrieve boolean value from
@@ -119,7 +119,7 @@ def extract_nested_params(s):
     """Extract parameters from a record.
 
     A record consists of comma separated key-value pairs.
-    Values may containing nested records (key=[record_x, record_y, ...]),
+    Values may contain nested records (key=[record_x, record_y, ...]),
     values can also be functions with several parameters, e.g.
     math=gamma(shape_Z, scale_Z)
 
@@ -223,10 +223,6 @@ def extract_lo_records(s):
     :returns: elements contain the string of records for each group
     :rtype: list of str
     """
-    # extract list of records from a list of list of records
-    # list of records are enclosed by square brackets and separated by ';'
-    # "v
-    # considers nested values in square brackets (key=[nested values])
     lo_records = []
     pos = 0
     i = 0

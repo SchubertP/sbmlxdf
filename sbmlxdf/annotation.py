@@ -19,8 +19,8 @@ class Annotation:
     there can be RDF type annotations, model history and miriam,
     which are handled by libsbml already
 
-    there can be other annotations, which are must be handled handled via
-    libsbml.XMLNode object. These other annotations allow the the modeller
+    there can be other annotations, which must be handled via
+    libsbml.XMLNode object. These other annotations allow the modeller
     to extend the annotations that can be processed by his software. E.g.
     one could add molecular weights to species object. This requires
     a separate namespace, prefix and XML elements.
@@ -32,11 +32,12 @@ class Annotation:
         xml_annots: list of XMLAnnotation objects
 
     """
-    accepted_cols = {'miriam-annotation', 'xml-annotation'}
+    accepted_cols = {'miriam_annotation', 'miriam-annotation',
+                     'xml_annotation' 'xml-annotation'}
 
     @staticmethod
     def is_annotation(obj_dict):
-        return (not Annotation.accepted_cols.isdisjoint(obj_dict.keys()) or
+        return (not Annotation.accepted_cols.isdisjoint(obj_dict) or
                 History.is_history(obj_dict))
 
     def __init__(self):
@@ -75,10 +76,10 @@ class Annotation:
         if self.history is not None:
             annots_dict.update(self.history.to_df())
         if len(self.cvterms) > 0:
-            annots_dict['miriam-annotation'] = '; '.join(cv.to_df()
+            annots_dict['miriam_annotation'] = '; '.join(cv.to_df()
                                                          for cv in self.cvterms)
         if len(self.xml_annots) > 0:
-            annots_dict['xml-annotation'] = '; '.join(xa.to_df()
+            annots_dict['xml_annotation'] = '; '.join(xa.to_df()
                                                       for xa in self.xml_annots)
         return annots_dict
 
@@ -86,16 +87,16 @@ class Annotation:
         if History.is_history(obj_dict):
             self.history = History()
             self.history.from_df(obj_dict)
-        if 'miriam-annotation' in obj_dict:
-            for cv_str in record_generator(obj_dict['miriam-annotation']):
-                cv = CVTerm()
-                cv.from_df(cv_str)
-                self.cvterms.append(cv)
-        if 'xml-annotation' in obj_dict:
-            for xa_str in record_generator(obj_dict['xml-annotation']):
-                xa = XMLAnnotation()
-                xa.from_df(xa_str)
-                self.xml_annots.append(xa)
+        annotation = obj_dict.get('miriam-annotation', obj_dict.get('miriam_annotation'))
+        for cv_str in record_generator(annotation):
+            cv = CVTerm()
+            cv.from_df(cv_str)
+            self.cvterms.append(cv)
+        annotation = obj_dict.get('xml_annotation', obj_dict.get('xml-annotation'))
+        for xa_str in record_generator(annotation):
+            xa = XMLAnnotation()
+            xa.from_df(xa_str)
+            self.xml_annots.append(xa)
 
 
 class CVTerm:
@@ -231,11 +232,13 @@ class History:
             information of the model creators
 
     """
-    accepted_cols = {'created-history', 'modified-history', 'creators-history'}
+    accepted_cols = {'created_history', 'created-history',
+                     'modified_history', 'modified-history',
+                     'creators_history', 'creators-history'}
 
     @staticmethod
     def is_history(obj_dict):
-        return not History.accepted_cols.isdisjoint(obj_dict.keys())
+        return not History.accepted_cols.isdisjoint(obj_dict)
 
     def __init__(self):
         self.created = ''
@@ -268,33 +271,34 @@ class History:
     def to_df(self):
         mh_dict = {}
         if self.created != '':
-            mh_dict['created-history'] = self.created
+            mh_dict['created_history'] = self.created
         if len(self.modified) > 0:
-            mh_dict['modified-history'] = '; '.join(self.modified)
+            mh_dict['modified_history'] = '; '.join(self.modified)
         if len(self.creators) > 0:
-            mh_dict['creators-history'] = '; '.join([mc.to_df()
+            mh_dict['creators_history'] = '; '.join([mc.to_df()
                                                      for mc in self.creators])
         return mh_dict
 
     def from_df(self, obj_dict):
-        if 'created-history' in obj_dict:
-            if obj_dict['created-history'] == 'localtime':
+        created_date = obj_dict.get('created_history', obj_dict.get('created-history'))
+        if created_date is not None:
+            if created_date == 'localtime':
                 self.created = time.strftime('%Y-%m-%dT%H:%M:%S%z',
                                              time.localtime())
             else:
-                self.created = obj_dict['created-history']
-        if 'modified-history' in obj_dict:
-            for mod_date in record_generator(obj_dict['modified-history']):
-                if mod_date.strip() == 'localtime':
-                    self.modified.append(time.strftime('%Y-%m-%dT%H:%M:%S%z',
-                                                       time.localtime()))
-                else:
-                    self.modified.append(mod_date.strip())
-        if 'creators-history' in obj_dict:
-            for creator in record_generator(obj_dict['creators-history']):
-                mc = ModelCreator()
-                mc.from_df(creator)
-                self.creators.append(mc)
+                self.created = created_date
+        mod_dates = obj_dict.get('modified_history', obj_dict.get('modified-history'))
+        for mod_date in record_generator(mod_dates):
+            if mod_date.strip() == 'localtime':
+                self.modified.append(time.strftime('%Y-%m-%dT%H:%M:%S%z',
+                                                   time.localtime()))
+            else:
+                self.modified.append(mod_date.strip())
+        creators = obj_dict.get('creators_history', obj_dict.get('creators-history'))
+        for creator in record_generator(creators):
+            mc = ModelCreator()
+            mc.from_df(creator)
+            self.creators.append(mc)
 
 
 class ModelCreator:
