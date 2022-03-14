@@ -32,8 +32,8 @@ class Annotation:
         xml_annots: list of XMLAnnotation objects
 
     """
-    accepted_cols = {'miriam_annotation', 'miriam-annotation',
-                     'xml_annotation', 'xml-annotation'}
+    accepted_cols = {'miriamAnnotation', 'miriam-annotation',
+                     'xmlAnnotation', 'xml-annotation'}
 
     @staticmethod
     def is_annotation(obj_dict):
@@ -76,23 +76,23 @@ class Annotation:
         if self.history is not None:
             annots_dict.update(self.history.to_df())
         if len(self.cvterms) > 0:
-            annots_dict['miriam_annotation'] = '; '.join(cv.to_df()
-                                                         for cv in self.cvterms)
+            annots_dict['miriamAnnotation'] = '; '.join(cv.to_df()
+                                                        for cv in self.cvterms)
         if len(self.xml_annots) > 0:
-            annots_dict['xml_annotation'] = '; '.join(xa.to_df()
-                                                      for xa in self.xml_annots)
+            annots_dict['xmlAnnotation'] = '; '.join(xa.to_df()
+                                                     for xa in self.xml_annots)
         return annots_dict
 
     def from_df(self, obj_dict):
         if History.is_history(obj_dict):
             self.history = History()
             self.history.from_df(obj_dict)
-        annotation = obj_dict.get('miriam-annotation', obj_dict.get('miriam_annotation'))
+        annotation = obj_dict.get('miriamAnnotation', obj_dict.get('miriam-annotation'))
         for cv_str in record_generator(annotation):
             cv = CVTerm()
             cv.from_df(cv_str)
             self.cvterms.append(cv)
-        annotation = obj_dict.get('xml_annotation', obj_dict.get('xml-annotation'))
+        annotation = obj_dict.get('xmlAnnotation', obj_dict.get('xml-annotation'))
         for xa_str in record_generator(annotation):
             xa = XMLAnnotation()
             xa.from_df(xa_str)
@@ -232,9 +232,9 @@ class History:
             information of the model creators
 
     """
-    accepted_cols = {'created_history', 'created-history',
-                     'modified_history', 'modified-history',
-                     'creators_history', 'creators-history'}
+    accepted_cols = {'createdHistory', 'created-history',
+                     'modifiedHistory', 'modified-history',
+                     'creatorsHistory', 'creators-history'}
 
     @staticmethod
     def is_history(obj_dict):
@@ -271,30 +271,30 @@ class History:
     def to_df(self):
         mh_dict = {}
         if self.created != '':
-            mh_dict['created_history'] = self.created
+            mh_dict['createdHistory'] = self.created
         if len(self.modified) > 0:
-            mh_dict['modified_history'] = '; '.join(self.modified)
+            mh_dict['modifiedHistory'] = '; '.join(self.modified)
         if len(self.creators) > 0:
-            mh_dict['creators_history'] = '; '.join([mc.to_df()
-                                                     for mc in self.creators])
+            mh_dict['creatorsHistory'] = '; '.join([mc.to_df()
+                                                    for mc in self.creators])
         return mh_dict
 
     def from_df(self, obj_dict):
-        created_date = obj_dict.get('created_history', obj_dict.get('created-history'))
+        created_date = obj_dict.get('createdHistory', obj_dict.get('created-history'))
         if created_date is not None:
             if created_date == 'localtime':
                 self.created = time.strftime('%Y-%m-%dT%H:%M:%S%z',
                                              time.localtime())
             else:
                 self.created = created_date
-        mod_dates = obj_dict.get('modified_history', obj_dict.get('modified-history'))
+        mod_dates = obj_dict.get('modifiedHistory', obj_dict.get('modified-history'))
         for mod_date in record_generator(mod_dates):
             if mod_date.strip() == 'localtime':
                 self.modified.append(time.strftime('%Y-%m-%dT%H:%M:%S%z',
                                                    time.localtime()))
             else:
                 self.modified.append(mod_date.strip())
-        creators = obj_dict.get('creators_history', obj_dict.get('creators-history'))
+        creators = obj_dict.get('creatorsHistory', obj_dict.get('creators-history'))
         for creator in record_generator(creators):
             mc = ModelCreator()
             mc.from_df(creator)

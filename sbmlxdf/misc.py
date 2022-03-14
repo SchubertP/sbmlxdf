@@ -343,7 +343,7 @@ def add_reaction_translations(model_dict):
     if 'reactants' in df_reactions.columns and 'products' in df_reactions.columns:
         for rid, row in df_reactions.iterrows():
             direction = ' -> ' if row['reversible'] is True else ' => '
-            df_reactions.at[rid, 'reaction_string'] = (convert_srefs(row['reactants'])
+            df_reactions.at[rid, 'reactionString'] = (convert_srefs(row['reactants'])
                                                        + direction
                                                        + convert_srefs(row['products']))
     if ('parameters' in model_dict and
@@ -371,7 +371,7 @@ def translate_reaction_string(df_reactions):
     """
     df_reactions = df_reactions.copy()
 
-    for rid, reaction_string in df_reactions['reaction_string'].items():
+    for rid, reaction_string in df_reactions['reactionString'].items():
         if type(reaction_string) is str:
             if ('->' in reaction_string) or ('=>' in reaction_string):
                 components = re.split(r'[=-]>', reaction_string)
