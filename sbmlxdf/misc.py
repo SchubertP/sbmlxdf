@@ -344,8 +344,8 @@ def add_reaction_translations(model_dict):
         for rid, row in df_reactions.iterrows():
             direction = ' -> ' if row['reversible'] is True else ' => '
             df_reactions.at[rid, 'reactionString'] = (convert_srefs(row['reactants'])
-                                                       + direction
-                                                       + convert_srefs(row['products']))
+                                                      + direction
+                                                      + convert_srefs(row['products']))
     if ('parameters' in model_dict and
             'fbcLowerFluxBound' in df_reactions.columns and
             'fbcUpperFluxBound' in df_reactions.columns):
