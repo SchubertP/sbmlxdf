@@ -372,11 +372,12 @@ def translate_reaction_string(df_reactions):
     df_reactions = df_reactions.copy()
 
     for rid, reaction_string in df_reactions['reaction_string'].items():
-        if '->' in reaction_string or '=>' in reaction_string:
-            components = re.split(r'[=-]>', reaction_string)
-        else:  # actually an error
-            components = ['', '']
-        df_reactions.at[rid, 'reversible'] = ('->' in reaction_string)
-        df_reactions.at[rid, 'reactants'] = generate_srefs(components[0])
-        df_reactions.at[rid, 'products'] = generate_srefs(components[1])
+        if type(reaction_string) is str:
+            if ('->' in reaction_string) or ('=>' in reaction_string):
+                components = re.split(r'[=-]>', reaction_string)
+            else:  # actually an error
+                components = ['', '']
+            df_reactions.at[rid, 'reversible'] = ('->' in reaction_string)
+            df_reactions.at[rid, 'reactants'] = generate_srefs(components[0])
+            df_reactions.at[rid, 'products'] = generate_srefs(components[1])
     return df_reactions

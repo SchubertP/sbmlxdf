@@ -33,7 +33,7 @@ class Annotation:
 
     """
     accepted_cols = {'miriam_annotation', 'miriam-annotation',
-                     'xml_annotation' 'xml-annotation'}
+                     'xml_annotation', 'xml-annotation'}
 
     @staticmethod
     def is_annotation(obj_dict):
