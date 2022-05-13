@@ -290,7 +290,7 @@ def convert_srefs(srefs_str):
     d_srefs = {}
     for sref in record_generator(srefs_str):
         params = extract_params(sref)
-        d_srefs[params['species']] = params['stoic']
+        d_srefs[params['species']] = params.get('stoic', '1.0')
 
     l_srefs = []
     for sid in sorted(d_srefs.keys()):

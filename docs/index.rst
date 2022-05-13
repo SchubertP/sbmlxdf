@@ -60,7 +60,7 @@ Features
 --------
 - support of SBML L3V2 core [SBML_L3V2]_, including:
 
-  - model history, miriam-annotations, xml-annotations
+  - model history, miriamAnnotations, xmlAnnotations
   - units of measurement
   - local/global parameters
   - function definitions

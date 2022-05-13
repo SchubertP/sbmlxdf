@@ -52,8 +52,8 @@ The **reaction** sheet contains all information related to reactions this model:
 
 - **id**: identifier of the reaction
 - **name**: a more human readable name
-- **metaid**: required for miriam-annotations and model history
-- **miriam-annotation**: records (";" - separated) with qualifier elements and
+- **metaid**: required for miriamAnnotations and model history
+- **miriamAnnotation**: records (";" - separated) with qualifier elements and
   resources ('http://identifiers.org/' removed)
 - **reversible**: boolean value for reaction reversibility
 - **reactants**: reactants of the reaction (";" - separated)
@@ -62,6 +62,8 @@ The **reaction** sheet contains all information related to reactions this model:
 - **kineticLaw**
 - **local parameters**: parameters used in a kinetic law can be either local
   or global
+- **reactionString**: reaction converted into a tellurium compatible
+  string representation
 
 .. note::
 
@@ -212,7 +214,7 @@ Updates to model reactions. We had to implement several configurations
 
 In the sheet ``modelAttrs`` we could add the **current time** to the
 modification history. We do this by adding ``; localtime`` to the end of the
-``modified-history`` value.
+``modifiedHistory`` value.
 
 .. image:: ./images/upd_modelAttrs_L2V4.png
 
@@ -317,7 +319,7 @@ key-value pairs from a record, e.g. to get all attributes of a reactant.
     10 reactions found, first reaction:
     name                                                 MAPKKK activation
     metaid                                                              J0
-    miriam-annotation    bqbiol:isHomologTo, reactome/REACT_525; bqbiol...
+    miriamAnnotation    bqbiol:isHomologTo, reactome/REACT_525; bqbiol...
     reversible                                                       False
     reactants                          species=MKKK, stoic=1.0, const=True
     products                         species=MKKK_P, stoic=1.0, const=True
@@ -444,19 +446,19 @@ on the level of ``species``. Let us extend our spreadsheet ``BIO10_upd.xlsx``.
 
 To benefit from spreadsheet features, we
 add a sheet ``helpers`` and copy relevant information from the
-``species`` sheet. The ``miriam-annotation`` values provide references
+``species`` sheet. The ``miriamAnnotation`` values provide references
 to ``UniProt`` database. We manually lookup
 `UniProt <https://www.uniprot.org>`_ and search for the **unitprot ids** used
 in our model. In the **Sequence** section we find protein length and
 molecular weight, which we add to our table.
 Just as an example, we also add weights of inorganic phosphates.
-Using Excel ``concat()`` function we create ``xml-annotations``
+Using Excel ``concat()`` function we create ``xmlAnnotations``
 using fixed namespace, token and prefix and
 variable values from our table. Note: Here I define an arbitrary namespace.
 
 .. image:: ./images/upd_helper_xml.png
 
-Subsequently we **copy** the ``xml-annotation`` column and
+Subsequently we **copy** the ``xmlAnnotation`` column and
 **Paste Special - Values** it into our ``species`` sheet.
 I also updated the ``metaid`` values.
 
@@ -481,7 +483,7 @@ which is demonstrated in below code block:
   model_df = model.to_df()
   df_s = model_df['species']
   for species, row in df_s.iterrows():
-      attrs = sbmlxdf.misc.extract_xml_attrs(row['xml-annotation'], token='molecule')
+      attrs = sbmlxdf.misc.extract_xml_attrs(row['xmlAnnotation'], token='molecule')
       print(species, attrs)
 
   MKKK {'weight_Da': '71960', 'prot_len': '638'}

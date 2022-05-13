@@ -85,7 +85,7 @@ metaid
 
 Type: **string**
 
-Identifier to link ``xxx-history`` and ``miriam-annotation`` to a component.
+Identifier to link ``xxxHistory`` and ``miriamAnnotation`` to a component.
 Values are in a separate namespace. I.e. they can overlap with ``id`` values.
 
 Example::
@@ -108,8 +108,8 @@ Example::
 
   SBO:0000290
 
-created-history
-~~~~~~~~~~~~~~~
+createdHistory
+~~~~~~~~~~~~~~
 
 Type: **string**
 
@@ -122,8 +122,8 @@ Example::
   2005-02-06T23:39:40Z
 
 
-modified-history
-~~~~~~~~~~~~~~~~
+modifiedHistory
+~~~~~~~~~~~~~~~
 
 Type: **special_records**
 
@@ -136,8 +136,8 @@ Example::
   2020-09-25T10:00:00+01:00; localtime
 
 
-creators-history
-~~~~~~~~~~~~~~~~
+creatorsHistory
+~~~~~~~~~~~~~~~
 
 Type: **records**
 
@@ -154,8 +154,8 @@ Example::
 
   fn=Schubert, gn=Peter, org=Heinrich-Heine-University Duesseldorf, email=Peter.Schubert@hhu.de
 
-miriam-annotation
-~~~~~~~~~~~~~~~~~
+miriamAnnotation
+~~~~~~~~~~~~~~~~
 
 Type: **special_records**
 
@@ -170,7 +170,7 @@ Example::
 
   bqbiol:is, bigg.metabolite/14glucan, biocyc/META:1-4-alpha-D-Glucan, metanetx.chemical/MNXM2905, seed.compound/cpd21754
 
-xml-annotation
+xmlAnnotation
 ~~~~~~~~~~~~~~
 
 Type: **records**
