@@ -139,12 +139,15 @@ class SBase(ABC):
             xbody = xnotes.getChild('body')
             xcontent = libsbml.XMLNode.convertStringToXMLNode(
                            ' ' + obj_dict['notes'] + ' ')
-            if not xcontent.isEOF():
-                xbody.addChild(xcontent)
+            if xcontent is None:
+                print('invalid <notes> parameter in', self.id)
             else:
-                for i in range(xcontent.getNumChildren()):
-                    xbody.addChild(xcontent.getChild(i))
-            self.notes = xnotes.toXMLString()
+                if not xcontent.isEOF():
+                    xbody.addChild(xcontent)
+                else:
+                    for i in range(xcontent.getNumChildren()):
+                        xbody.addChild(xcontent.getChild(i))
+                self.notes = xnotes.toXMLString()
         if 'uncertainties' in obj_dict:
             self.lo_uncertainties = ListOfUncertainties()
             self.lo_uncertainties.from_df(obj_dict['uncertainties'])

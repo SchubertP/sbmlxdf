@@ -87,10 +87,13 @@ class Constraint(SBase):
             xp = xmsg.getChild('p')
             xcontent = libsbml.XMLNode.convertStringToXMLNode(
                            ' ' + co_dict['message'] + ' ')
-            if not xcontent.isEOF():
-                xp.addChild(xcontent)
+            if xcontent is None:
+                print('invalid <message> parameter')
             else:
-                for i in range(xcontent.getNumChildren()):
-                    xp.addChild(xcontent.getChild(i))
-            self.message = xmsg.toXMLString()
+                if not xcontent.isEOF():
+                    xp.addChild(xcontent)
+                else:
+                    for i in range(xcontent.getNumChildren()):
+                        xp.addChild(xcontent.getChild(i))
+                self.message = xmsg.toXMLString()
         super().from_df(co_dict)
