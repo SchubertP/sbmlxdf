@@ -8,6 +8,7 @@ import os.path
 import glob
 import numpy as np
 import pandas as pd
+from scipy.sparse import coo_matrix
 
 import libsbml
 
@@ -219,6 +220,8 @@ class Model(SBase):
 
         :param sbml_file: file name of new SBML model (.xml).
         :type sbml_file: str
+        :return: success/failure of export
+        :rtype: bool
         """
         if self.sbml_container is not None:
             sbml_doc = self.sbml_container.create_sbml_doc()
@@ -230,9 +233,16 @@ class Model(SBase):
             writer.setProgramName(program_name)
             writer.setProgramVersion(__version__)
             writer.writeSBML(sbml_doc, sbml_file)
+            return True
+        return False
 
     def get_s_matrix(self, sparse=False):
         """Retrieve stoichiometric matrix.
+
+        Composing stoichiometric matrix using coo_matrix vs. dataframe is faster.
+        (factor 4 for iJO1366)
+
+        Returning a sparce dataframe is faster (factor 2)
 
         :param sparse: S-matrix in normal/sparse format (default: normal)
         :type sparse: bool, optional
@@ -243,25 +253,35 @@ class Model(SBase):
             df_species = self.list_of['species'].to_df()
             df_reactions = self.list_of['reactions'].to_df()
 
-            df_smat = pd.DataFrame(np.zeros((len(df_species), len(df_reactions))),
-                                   index=df_species.index.values,
-                                   columns=df_reactions.index.values)
-            for idx, r in df_reactions.iterrows():
-                if type(r['reactants']) == str:
-                    for reac in record_generator(r['reactants']):
-                        s_d = extract_params(reac)
-                        df_smat.at[s_d['species'], idx] -= float(s_d.get('stoic', 1.0))
-                if type(r['products']) == str:
-                    for prod in record_generator(r['products']):
-                        s_d = extract_params(prod)
-                        df_smat.at[s_d['species'], idx] += float(s_d.get('stoic', 1.0))
+            sids = list(df_species.index)
+            sid2idx = {sid: idx for idx, sid in enumerate(sids)}
+            rids = list(df_reactions.index)
+            rid2idx = {rid: idx for idx, rid in enumerate(rids)}
+
+            stoic_data = []
+            for rid, r in df_reactions.iterrows():
+                col_idx = rid2idx[rid]
+                for reac in record_generator(r['reactants']):
+                    sref = extract_params(reac)
+                    row_idx = sid2idx[sref['species']]
+                    data = -float(sref.get('stoic', 1.0))
+                    stoic_data.append([row_idx, col_idx, data])
+
+                for prod in record_generator(r['products']):
+                    sref = extract_params(prod)
+                    row_idx = sid2idx[sref['species']]
+                    data = float(sref.get('stoic', 1.0))
+                    stoic_data.append([row_idx, col_idx, data])
+            coo_data = np.array(stoic_data)
+            s_mat_coo = coo_matrix((coo_data[:, 2], (coo_data[:, 0], coo_data[:, 1])),
+                                   shape=(len(sids), len(rids)))
+            if sparse is True:
+                df_smat = pd.DataFrame.sparse.from_spmatrix(s_mat_coo, index=sids, columns=rids)
+            else:
+                df_smat = pd.DataFrame(s_mat_coo.todense(), index=sids, columns=rids)
         else:
             df_smat = pd.DataFrame(np.zeros((0, 0)))
-
-        if sparse:
-            return df_smat.astype(pd.SparseDtype('float', 0.0))
-        else:
-            return df_smat
+        return df_smat
 
     def to_df(self):
         """Export model to a dict of pandas DataFrames.

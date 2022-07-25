@@ -38,6 +38,7 @@ setup(
     packages=find_packages(exclude='docs'),
     install_requires=['pandas>=1.0.0',
                       'numpy >= 0.18.0',
+                      'scipy>=1.7.0',
                       'xlrd>=1.1.0',
                       'openpyxl>=2.6.0',
                       'python-libsbml-experimental>=5.18.0'],
