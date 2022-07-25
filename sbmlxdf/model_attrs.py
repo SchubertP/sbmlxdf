@@ -6,6 +6,7 @@ import pandas as pd
 
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import get_bool_val
+from sbmlxdf.import_cursor import ImportCursor
 
 
 class ModelAttrs(SBase):

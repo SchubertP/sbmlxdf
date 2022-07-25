@@ -8,6 +8,7 @@ import libsbml
 
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import extract_params, record_generator
+from sbmlxdf.import_cursor import ImportCursor
 
 
 class GroupsListOfGroups(SBase):
@@ -36,6 +37,7 @@ class GroupsListOfGroups(SBase):
 
     def from_df(self, lg_df):
         for idx, g_s in lg_df.iterrows():
+            ImportCursor.set_component_id(idx)
             g = GroupsGroup()
             g.from_df(g_s.dropna().to_dict())
             self.groups.append(g)
@@ -72,8 +74,11 @@ class GroupsGroup(SBase):
         return g_dict
 
     def from_df(self, gr_dict):
-        if 'kind' in gr_dict:
-            self.kind = gr_dict['kind']
+        self.kind = gr_dict.get('kind', '')
+        if self.kind not in ['classification', 'partonomy', 'collection']:
+            ImportCursor.set_parameter('kind')
+            print(ImportCursor.get_component_info())
+            raise AttributeError
         if GroupListOfMembers.is_in_df(gr_dict):
             self.lo_members = GroupListOfMembers()
             self.lo_members.from_df(gr_dict)

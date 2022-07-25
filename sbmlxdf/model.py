@@ -29,6 +29,7 @@ from sbmlxdf.species import ListOfSpecies
 from sbmlxdf.unit_defs import ListOfUnitDefs
 import sbmlxdf.misc
 from sbmlxdf.misc import extract_params, record_generator
+from sbmlxdf.import_cursor import ImportCursor
 from sbmlxdf._version import __version__, program_name
 
 # directory where to write result files of validate_sbml()
@@ -333,12 +334,17 @@ class Model(SBase):
                     'reactionString' in model_dict['reactions']):
                 model_dict['reactions'] = sbmlxdf.misc.translate_reaction_string(model_dict['reactions'])
         component = 'no component yet'
+
+        # 1. create listOfComponentsX for each component type in model_dict
         for k, v in _lists_of.items():
             assigned_class = v[1]
             if k in model_dict:
                 self.list_of[k] = assigned_class()
+
+        # 2. import components to listOfComponentsX
         try:
             for component, lo in self.list_of.items():
+                ImportCursor.set_component_type(component)
                 lo.from_df(model_dict[component])
         except KeyError as err:
             print('KeyError: {0} in {1} while processing {2}'
