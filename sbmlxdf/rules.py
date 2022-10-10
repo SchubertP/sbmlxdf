@@ -8,6 +8,7 @@ import sys
 import libsbml
 
 from sbmlxdf.sbase import SBase
+from sbmlxdf.cursor import Cursor
 
 
 class ListOfRules(SBase):
@@ -26,6 +27,7 @@ class ListOfRules(SBase):
 
     def export_sbml(self, sbml_model):
         for r in self.rules:
+            Cursor.set_component_id(r.id)
             r.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfRules())
 
@@ -61,14 +63,17 @@ class Rule(SBase):
     def export_sbml(self, sbml_model):
         if self.typecode == libsbml.SBML_ASSIGNMENT_RULE:
             sbml_r = sbml_model.createAssignmentRule()
+            Cursor.set_parameter('variable')
             sbml_r.setVariable(self.variable)
         elif self.typecode == libsbml.SBML_RATE_RULE:
             sbml_r = sbml_model.createRateRule()
+            Cursor.set_parameter('variable')
             sbml_r.setVariable(self.variable)
         elif self.typecode == libsbml.SBML_ALGEBRAIC_RULE:
             sbml_r = sbml_model.createAlgebraicRule()
         else:
             return
+        Cursor.set_parameter('math')
         math = libsbml.parseL3Formula(self.math)
         if math:
             sbml_r.setMath(math)

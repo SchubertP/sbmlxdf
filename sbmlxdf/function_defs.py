@@ -8,6 +8,7 @@ import sys
 import libsbml
 
 from sbmlxdf.sbase import SBase
+from sbmlxdf.cursor import Cursor
 
 
 class ListOfFunctionDefs(SBase):
@@ -26,6 +27,7 @@ class ListOfFunctionDefs(SBase):
 
     def export_sbml(self, sbml_model):
         for fd in self.function_defs:
+            Cursor.set_component_id(fd.id)
             fd.export_sbml(sbml_model)
         sbml_lfd = sbml_model.getListOfFunctionDefinitions()
         super().export_sbml(sbml_lfd)
@@ -53,6 +55,7 @@ class FunctionDef(SBase):
 
     def export_sbml(self, sbml_model):
         sbml_fd = sbml_model.createFunctionDefinition()
+        Cursor.set_parameter('math')
         math = libsbml.parseL3Formula(self.math)
         if math:
             sbml_fd.setMath(math)

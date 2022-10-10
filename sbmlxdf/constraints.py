@@ -8,6 +8,7 @@ import sys
 import libsbml
 
 from sbmlxdf.sbase import SBase
+from sbmlxdf.cursor import Cursor
 
 
 class ListOfConstraints(SBase):
@@ -26,6 +27,7 @@ class ListOfConstraints(SBase):
 
     def export_sbml(self, sbml_model):
         for c in self.constraints:
+            Cursor.set_component_id(c.id)
             c.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfConstraints())
 
@@ -54,6 +56,7 @@ class Constraint(SBase):
 
     def export_sbml(self, sbml_model):
         sbml_c = sbml_model.createConstraint()
+        Cursor.set_parameter('math')
         math = libsbml.parseL3Formula(self.math)
         if math:
             sbml_c.setMath(math)
@@ -61,6 +64,7 @@ class Constraint(SBase):
             print(libsbml.getLastParseL3Error())
             sys.exit()
         if self.message is not None:
+            Cursor.set_parameter('messages')
             sbml_c.setMessage(self.message)
         super().export_sbml(sbml_c)
 

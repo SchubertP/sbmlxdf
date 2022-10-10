@@ -8,6 +8,7 @@ import libsbml
 
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import extract_records, extract_params, get_bool_val
+from sbmlxdf.cursor import Cursor
 
 
 class SbmlContainer(SBase):
@@ -38,8 +39,10 @@ class SbmlContainer(SBase):
                                     'required': sbml_doc.getPkgRequired(pname)}
 
     def create_sbml_doc(self):
+        Cursor.set_component_id('sbml container')
         sbml_container = libsbml.SBMLNamespaces(self.level, self.version)
         for pname in self.packages:
+            Cursor.set_parameter(f'packages {pname}')
             success = sbml_container.addPackageNamespace(
                       pname, self.packages[pname]['version'])
             if success != libsbml.LIBSBML_OPERATION_SUCCESS:
@@ -52,6 +55,7 @@ class SbmlContainer(SBase):
     def export_sbml(self, sbml_doc):
         super().export_sbml(sbml_doc)
         for pname in self.packages:
+            Cursor.set_parameter(f'packages {pname}')
             sbml_doc.setPackageRequired(pname, self.packages[pname]['required'])
 
     def to_df(self):

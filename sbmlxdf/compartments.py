@@ -6,6 +6,7 @@ import pandas as pd
 
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import get_bool_val
+from sbmlxdf.cursor import Cursor
 
 
 class ListOfCompartments(SBase):
@@ -24,6 +25,7 @@ class ListOfCompartments(SBase):
 
     def export_sbml(self, sbml_model):
         for c in self.compartments:
+            Cursor.set_component_id(c.id)
             c.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfCompartments())
 
@@ -60,11 +62,15 @@ class Compartment(SBase):
     def export_sbml(self, sbml_model):
         sbml_c = sbml_model.createCompartment()
         if self.spatial_dim is not None:
+            Cursor.set_parameter('spatial dimensions')
             sbml_c.setSpatialDimensions(self.spatial_dim)
         if self.size is not None:
+            Cursor.set_parameter('size')
             sbml_c.setSize(self.size)
         if self.units is not None:
+            Cursor.set_parameter('units')
             sbml_c.setUnits(self.units)
+        Cursor.set_parameter('constant')
         sbml_c.setConstant(self.constant)
         super().export_sbml(sbml_c)
 

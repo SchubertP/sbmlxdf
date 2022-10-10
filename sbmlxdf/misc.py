@@ -4,6 +4,7 @@ Peter Schubert, HHU Duesseldorf, October 2020
 """
 import re
 
+
 _map_mathml2numpy = (
     # arithmetic operators
     ('abs', 'NP_NS.absolute'), ('exp', 'NP_NS.exp'), ('sqrt', 'NP_NS.sqrt'),

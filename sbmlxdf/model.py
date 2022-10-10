@@ -29,7 +29,7 @@ from sbmlxdf.species import ListOfSpecies
 from sbmlxdf.unit_defs import ListOfUnitDefs
 import sbmlxdf.misc
 from sbmlxdf.misc import extract_params, record_generator
-from sbmlxdf.import_cursor import ImportCursor
+from sbmlxdf.cursor import Cursor
 from sbmlxdf._version import __version__, program_name
 
 # directory where to write result files of validate_sbml()
@@ -228,8 +228,14 @@ class Model(SBase):
             sbml_doc = self.sbml_container.create_sbml_doc()
             if self.isModel:
                 sbml_model = sbml_doc.createModel()
-                for lo in self.list_of.values():
-                    lo.export_sbml(sbml_model)
+                for component, lo in self.list_of.items():
+                    try:
+                        Cursor.set_component_type(component)
+                        lo.export_sbml(sbml_model)
+                    except (TypeError, ValueError):
+                        cursor = Cursor.get_component_info()
+                        print(f'Error while processing {cursor["type"]}:{cursor["id"]}:{cursor["value"]}')
+
             writer = libsbml.SBMLWriter()
             writer.setProgramName(program_name)
             writer.setProgramVersion(__version__)
@@ -344,7 +350,7 @@ class Model(SBase):
         # 2. import components to listOfComponentsX
         try:
             for component, lo in self.list_of.items():
-                ImportCursor.set_component_type(component)
+                Cursor.set_component_type(component)
                 lo.from_df(model_dict[component])
         except KeyError as err:
             print('KeyError: {0} in {1} while processing {2}'
@@ -400,10 +406,11 @@ class Model(SBase):
                     if _sheets[sheet] == IS_SERIES:
                         params['header'] = None
                         params['index_col'] = 0
-                        params['squeeze'] = True
-                    if _sheets[sheet] == IS_DF_INDEXED:
-                        params['index_col'] = 0
-                    df_raw = pd.read_excel(xlsx, **params)
+                        df_raw = pd.read_excel(xlsx, **params).squeeze("columns")
+                    else:
+                        if _sheets[sheet] == IS_DF_INDEXED:
+                            params['index_col'] = 0
+                        df_raw = pd.read_excel(xlsx, **params)
                     df_raw.replace(to_replace=r'^\s+$', value=np.nan,
                                    regex=True, inplace=True)
                     m_dict[sheet] = df_raw.loc[df_raw.index.dropna()]
@@ -455,8 +462,9 @@ class Model(SBase):
                 if _sheets[sheet] == IS_SERIES:
                     params['header'] = None
                     params['index_col'] = 0
-                    params['squeeze'] = True
-                if _sheets[sheet] == IS_DF_INDEXED:
-                    params['index_col'] = 0
-                m_dict[sheet] = pd.read_csv(csv_file, **params)
+                    m_dict[sheet] = pd.read_csv(csv_file, **params).squeeze("columns")
+                else:
+                    if _sheets[sheet] == IS_DF_INDEXED:
+                        params['index_col'] = 0
+                    m_dict[sheet] = pd.read_csv(csv_file, **params)
         return self.from_df(m_dict)

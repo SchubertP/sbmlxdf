@@ -7,6 +7,7 @@ import pandas as pd
 
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import get_bool_val
+from sbmlxdf.cursor import Cursor
 
 
 class ListOfSpecies(SBase):
@@ -25,6 +26,7 @@ class ListOfSpecies(SBase):
 
     def export_sbml(self, sbml_model):
         for s in self.species:
+            Cursor.set_component_id(s.id)
             s.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfSpecies())
 
@@ -77,21 +79,31 @@ class Species(SBase):
 
     def export_sbml(self, sbml_model):
         sbml_s = sbml_model.createSpecies()
+        Cursor.set_parameter('compartment')
         sbml_s.setCompartment(self.compartment)
         if self.initial_amount is not None:
+            Cursor.set_parameter('initial amount')
             sbml_s.setInitialAmount(self.initial_amount)
         if self.initial_concentration is not None:
+            Cursor.set_parameter('initial concentration')
             sbml_s.setInitialConcentration(self.initial_concentration)
         if self.substance_units is not None:
+            Cursor.set_parameter('substance units')
             sbml_s.setSubstanceUnits(self.substance_units)
+        Cursor.set_parameter('has only substance units')
         sbml_s.setHasOnlySubstanceUnits(self.has_only_substance_units)
+        Cursor.set_parameter('boundary condition')
         sbml_s.setBoundaryCondition(self.boundary_condition)
+        Cursor.set_parameter('constant')
         sbml_s.setConstant(self.constant)
         if self.conversion_factor is not None:
+            Cursor.set_parameter('conversion factor')
             sbml_s.setConversionFactor(self.conversion_factor)
         if self.fbc_charge is not None:
+            Cursor.set_parameter('fbc charge')
             sbml_s.getPlugin('fbc').setCharge(self.fbc_charge)
         if self.fbc_chem_formula is not None:
+            Cursor.set_parameter('fbc chemical formula')
             sbml_s.getPlugin('fbc').setChemicalFormula(self.fbc_chem_formula)
         super().export_sbml(sbml_s)
 

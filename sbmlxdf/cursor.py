@@ -8,7 +8,7 @@ Peter Schubert, 2022-07-25
 """
 
 
-class ImportCursor:
+class Cursor:
     _instance = None
     component_type = None
     component_id = None
@@ -16,7 +16,7 @@ class ImportCursor:
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(ImportCursor, cls).__new__(cls)
+            cls._instance = super(Cursor, cls).__new__(cls)
         return cls._instance
 
     @classmethod

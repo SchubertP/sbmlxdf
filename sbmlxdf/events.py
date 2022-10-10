@@ -9,6 +9,7 @@ import libsbml
 
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import extract_params, get_bool_val
+from sbmlxdf.cursor import Cursor
 
 
 class ListOfEvents(SBase):
@@ -27,6 +28,7 @@ class ListOfEvents(SBase):
 
     def export_sbml(self, sbml_model):
         for e in self.events:
+            Cursor.set_component_id(e.id)
             e.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfEvents())
 
@@ -68,13 +70,18 @@ class Event(SBase):
 
     def export_sbml(self, sbml_model):
         sbml_e = sbml_model.createEvent()
+        Cursor.set_parameter('use values from trigger time')
         sbml_e.setUseValuesFromTriggerTime(self.from_trigger_time)
+        Cursor.set_parameter('trigger')
         self.trigger.export_sbml(sbml_e)
         if self.priority is not None:
+            Cursor.set_parameter('priority')
             self.priority.export_sbml(sbml_e)
         if self.delay is not None:
+            Cursor.set_parameter('delay')
             self.delay.export_sbml(sbml_e)
         for ea in self.event_assignments.values():
+            Cursor.set_parameter('event assignments')
             ea.export_sbml(sbml_e)
         super().export_sbml(sbml_e)
 

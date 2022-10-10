@@ -8,6 +8,7 @@ import libsbml
 
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import extract_params, record_generator
+from sbmlxdf.cursor import Cursor
 
 
 class ListOfUnitDefs(SBase):
@@ -26,6 +27,7 @@ class ListOfUnitDefs(SBase):
 
     def export_sbml(self, sbml_model):
         for ud in self.unit_defs:
+            Cursor.set_component_id(ud.id)
             ud.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfUnitDefinitions())
 
@@ -56,6 +58,7 @@ class UnitDefinition(SBase):
     def export_sbml(self, sbml_model):
         sbml_ud = sbml_model.createUnitDefinition()
         for u in self.units:
+            Cursor.set_parameter('u.kind')
             u.export_sbml(sbml_ud)
         super().export_sbml(sbml_ud)
 

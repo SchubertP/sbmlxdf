@@ -10,7 +10,9 @@ import sys
 import libsbml
 
 from sbmlxdf.sbase import SBase
+from sbmlxdf.cursor import Cursor
 from sbmlxdf.misc import extract_params, get_bool_val, record_generator
+from sbmlxdf.cursor import Cursor
 
 
 class ListOfReactions(SBase):
@@ -29,6 +31,7 @@ class ListOfReactions(SBase):
 
     def export_sbml(self, sbml_model):
         for r in self.reactions:
+            Cursor.set_component_id(r.id)
             r.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfReactions())
 
@@ -100,6 +103,7 @@ class Reaction(SBase):
 
     def export_sbml(self, sbml_model):
         sbml_r = sbml_model.createReaction()
+        Cursor.set_parameter('reversible')
         sbml_r.setReversible(self.reversible)
         if ((sbml_model.getLevel() < 3.0) or
                 (sbml_model.getLevel() == 3.0 and sbml_model.getVersion() == 1.0)):
@@ -108,22 +112,31 @@ class Reaction(SBase):
             else:
                 sbml_r.setFast(self.fast)
         if self.compartment is not None:
+            Cursor.set_parameter('compartment')
             sbml_r.setCompartment(self.compartment)
         for r in self.reactants:
+            Cursor.set_parameter('reactants')
             r.export_sbml(sbml_r)
         for p in self.products:
+            Cursor.set_parameter('products')
             p.export_sbml(sbml_r)
         for m in self.modifiers:
+            Cursor.set_parameter('modifiers')
             m.export_sbml(sbml_r)
         if self.kinetic_law is not None:
+            Cursor.set_parameter('kinetic law')
             self.kinetic_law.export_sbml(sbml_r)
         if self.fbc_enabled is not None:
+            Cursor.set_parameter('fbc plugin')
             fbc_rplugin = sbml_r.getPlugin('fbc')
             if self.fbc_lb is not None:
+                Cursor.set_parameter('fbc lb')
                 fbc_rplugin.setLowerFluxBound(self.fbc_lb)
             if self.fbc_ub is not None:
+                Cursor.set_parameter('fbc ub')
                 fbc_rplugin.setUpperFluxBound(self.fbc_ub)
             if self.fbc_gpa is not None:
+                Cursor.set_parameter('fbc gpa')
                 self.fbc_gpa.export_sbml(sbml_r)
         super().export_sbml(sbml_r)
 

@@ -6,7 +6,7 @@ import pandas as pd
 
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import get_bool_val
-from sbmlxdf.import_cursor import ImportCursor
+from sbmlxdf.cursor import Cursor
 
 
 class ModelAttrs(SBase):
@@ -25,24 +25,33 @@ class ModelAttrs(SBase):
 
     def import_sbml(self, sbml_model):
         if sbml_model.isSetSubstanceUnits():
+            Cursor.set_parameter('substance units')
             self.substance_units = sbml_model.getSubstanceUnits()
         if sbml_model.isSetTimeUnits():
+            Cursor.set_parameter('time units')
             self.time_units = sbml_model.getTimeUnits()
         if sbml_model.isSetVolumeUnits():
+            Cursor.set_parameter('volume units')
             self.volume_units = sbml_model.getVolumeUnits()
         if sbml_model.isSetAreaUnits():
+            Cursor.set_parameter('area units')
             self.area_units = sbml_model.getAreaUnits()
         if sbml_model.isSetLengthUnits():
+            Cursor.set_parameter('length units')
             self.length_units = sbml_model.getLengthUnits()
         if sbml_model.isSetExtentUnits():
+            Cursor.set_parameter('extent units')
             self.extent_units = sbml_model.getExtentUnits()
         if sbml_model.isSetConversionFactor():
+            Cursor.set_parameter('converstion factor')
             self.conversion_factor = sbml_model.getConversionFactor()
         if sbml_model.isPackageEnabled('fbc'):
+            Cursor.set_parameter('fbc strict')
             self.fbc_strict = sbml_model.getPlugin('fbc').getStrict()
         super().import_sbml(sbml_model)
 
     def export_sbml(self, sbml_model):
+        Cursor.set_component_id('model attrs')
         if self.substance_units is not None:
             sbml_model.setSubstanceUnits(self.substance_units)
         if self.time_units is not None:

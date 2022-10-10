@@ -1,6 +1,6 @@
 """Implementation of fbc ext. package components.
 
-Peter Schubert, HHU Dusseldorf, October 2020
+Peter Schubert, HHU Duesseldorf, October 2020
 """
 import pandas as pd
 

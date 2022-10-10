@@ -8,6 +8,7 @@ import sys
 import libsbml
 
 from sbmlxdf.sbase import SBase
+from sbmlxdf.cursor import Cursor
 
 
 class ListOfInitAssign(SBase):
@@ -26,6 +27,7 @@ class ListOfInitAssign(SBase):
 
     def export_sbml(self, sbml_model):
         for ia in self.init_assigns:
+            Cursor.set_component_id(ia.id)
             ia.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfInitialAssignments())
 
@@ -54,7 +56,9 @@ class InitAssign(SBase):
 
     def export_sbml(self, sbml_model):
         sbml_ia = sbml_model.createInitialAssignment()
+        Cursor.set_parameter('symbol')
         sbml_ia.setSymbol(self.symbol)
+        Cursor.set_parameter('math')
         math = libsbml.parseL3Formula(self.math)
         if math:
             sbml_ia.setMath(math)

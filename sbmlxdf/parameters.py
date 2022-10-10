@@ -6,6 +6,7 @@ import pandas as pd
 
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import get_bool_val
+from sbmlxdf.cursor import Cursor
 
 
 class ListOfParameters(SBase):
@@ -24,6 +25,7 @@ class ListOfParameters(SBase):
 
     def export_sbml(self, sbml_model):
         for p in self.parameters:
+            Cursor.set_component_id(p.id)
             p.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfParameters())
 
@@ -57,9 +59,12 @@ class Parameter(SBase):
     def export_sbml(self, sbml_model):
         sbml_p = sbml_model.createParameter()
         if self.value is not None:
+            Cursor.set_parameter('value')
             sbml_p.setValue(self.value)
         if self.units is not None:
+            Cursor.set_parameter('units')
             sbml_p.setUnits(self.units)
+        Cursor.set_parameter('constant')
         sbml_p.setConstant(self.constant)
         super().export_sbml(sbml_p)
 
