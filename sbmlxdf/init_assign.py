@@ -27,7 +27,7 @@ class ListOfInitAssign(SBase):
 
     def export_sbml(self, sbml_model):
         for ia in self.init_assigns:
-            Cursor.set_component_id(ia.id)
+            Cursor.set_component_id(ia.symbol)
             ia.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfInitialAssignments())
 
@@ -37,7 +37,7 @@ class ListOfInitAssign(SBase):
 
     def from_df(self, lia_df):
         for idx, ia_s in lia_df.reset_index().iterrows():
-            Cursor.set_component_id(idx)
+            Cursor.set_component_id(ia_s['symbol'])
             ia = InitAssign()
             ia.from_df(ia_s.dropna().to_dict())
             self.init_assigns.append(ia)

@@ -27,8 +27,8 @@ class ListOfEvents(SBase):
         super().import_sbml(sbml_le)
 
     def export_sbml(self, sbml_model):
-        for e in self.events:
-            Cursor.set_component_id(e.id)
+        for idx, e in enumerate(self.events):
+            Cursor.set_component_id(idx)
             e.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfEvents())
 
@@ -105,6 +105,8 @@ class Event(SBase):
         return e_dict
 
     def from_df(self, e_dict):
+        Cursor.set_parameter('valFromTriggerTime')
+        self.from_trigger_time = get_bool_val(e_dict['valFromTriggerTime'])
         Cursor.set_parameter('trigger')
         self.trigger = Trigger()
         self.trigger.from_df(e_dict)

@@ -28,14 +28,18 @@ class Cursor:
     @classmethod
     def set_component_id(cls, component_id):
         if cls.component_type is None:
+            print('Cursor component type not defined')
             raise RuntimeError
         cls.component_id = component_id
         cls.parameter = None
 
     @classmethod
     def set_parameter(cls, parameter):
-
-        if cls.component_type is None or cls.component_id is None:
+        if cls.component_type is None:
+            print('Cursor component type not defined')
+            raise RuntimeError
+        if cls.component_id is None:
+            print('Cursor component id not defined')
             raise RuntimeError
         cls.parameter = parameter
 

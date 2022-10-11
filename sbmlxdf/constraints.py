@@ -26,8 +26,8 @@ class ListOfConstraints(SBase):
         super().import_sbml(sbml_lc)
 
     def export_sbml(self, sbml_model):
-        for c in self.constraints:
-            Cursor.set_component_id(c.id)
+        for idx, c in enumerate(self.constraints):
+            Cursor.set_component_id(idx)
             c.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfConstraints())
 

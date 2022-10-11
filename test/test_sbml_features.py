@@ -12,7 +12,7 @@ SBML.xml -> (orig) -> tmp Excel.xlsx -> (xlsx) -> tmp SBML.xml -> (xml)
 - (xlsx) is also validated wrt SBML compliance, except for models with known
   warning messages.
 
-- sample models can be used as reference to create excel spreadsheet templates
+- sample models can be used as reference to create Excel spreadsheet templates
 
 Execute in package directory:
 $ pytest -v
@@ -34,11 +34,11 @@ pickel_dir = os.path.join(model_dir, 'pickel')
 
 
 def check_vs_reference(model_dfs, ref_dfs):
-    for df in ref_dfs:
-        if type(ref_dfs[df]) == pd.DataFrame:
-            pd.testing.assert_frame_equal(model_dfs[df], ref_dfs[df])
-        if type(ref_dfs[df]) == pd.Series:
-            pd.testing.assert_series_equal(model_dfs[df], ref_dfs[df])
+    for component in ref_dfs:
+        if type(ref_dfs[component]) == pd.DataFrame:
+            pd.testing.assert_frame_equal(model_dfs[component], ref_dfs[component])
+        if type(ref_dfs[component]) == pd.Series:
+            pd.testing.assert_series_equal(model_dfs[component], ref_dfs[component])
 
 
 @pytest.mark.parametrize('model_name', [

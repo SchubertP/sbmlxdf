@@ -26,8 +26,8 @@ class ListOfRules(SBase):
         super().import_sbml(sbml_lr)
 
     def export_sbml(self, sbml_model):
-        for r in self.rules:
-            Cursor.set_component_id(r.id)
+        for idx, r in enumerate(self.rules):
+            Cursor.set_component_id(idx)
             r.export_sbml(sbml_model)
         super().export_sbml(sbml_model.getListOfRules())
 
