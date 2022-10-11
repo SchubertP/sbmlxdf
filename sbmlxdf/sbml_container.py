@@ -39,7 +39,7 @@ class SbmlContainer(SBase):
                                     'required': sbml_doc.getPkgRequired(pname)}
 
     def create_sbml_doc(self):
-        Cursor.set_component_id('sbml container')
+        Cursor.set_component_id('-')
         sbml_container = libsbml.SBMLNamespaces(self.level, self.version)
         for pname in self.packages:
             Cursor.set_parameter(f'packages {pname}')
@@ -53,6 +53,7 @@ class SbmlContainer(SBase):
         return sbml_doc
 
     def export_sbml(self, sbml_doc):
+        Cursor.set_component_id('-')
         super().export_sbml(sbml_doc)
         for pname in self.packages:
             Cursor.set_parameter(f'packages {pname}')
@@ -71,16 +72,16 @@ class SbmlContainer(SBase):
         return pd.Series(sc_dict)
 
     def from_df(self, sc_s):
+        Cursor.set_component_id('-')
         sc_dict = sc_s.dropna().to_dict()
-        try:
-            self.level = int(sc_dict['level'])
-            self.version = int(sc_dict['version'])
-            if 'packages' in sc_dict:
-                for record in extract_records(sc_dict['packages']):
-                    pkg_dict = extract_params(record)
-                    self.packages[pkg_dict['name']] = {
-                        'version': int(pkg_dict['version']),
-                        'required': get_bool_val(pkg_dict['required'])
-                        }
-        except KeyError as err:
-            print("KeyError: {0} in {1}".format(err, __name__))
+
+        self.level = int(sc_dict['level'])
+        self.version = int(sc_dict['version'])
+        if 'packages' in sc_dict:
+            Cursor.set_parameter('packages')
+            for record in extract_records(sc_dict['packages']):
+                pkg_dict = extract_params(record)
+                self.packages[pkg_dict['name']] = {
+                    'version': int(pkg_dict['version']),
+                    'required': get_bool_val(pkg_dict['required'])
+                    }

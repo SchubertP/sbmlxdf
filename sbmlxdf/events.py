@@ -37,6 +37,7 @@ class ListOfEvents(SBase):
 
     def from_df(self, le_df):
         for idx, e_s in le_df.iterrows():
+            Cursor.set_component_id(idx)
             e = Event()
             e.from_df(e_s.dropna().to_dict())
             self.events.append(e)
@@ -70,7 +71,7 @@ class Event(SBase):
 
     def export_sbml(self, sbml_model):
         sbml_e = sbml_model.createEvent()
-        Cursor.set_parameter('use values from trigger time')
+        Cursor.set_parameter('valFromTriggerTime')
         sbml_e.setUseValuesFromTriggerTime(self.from_trigger_time)
         Cursor.set_parameter('trigger')
         self.trigger.export_sbml(sbml_e)
@@ -81,7 +82,7 @@ class Event(SBase):
             Cursor.set_parameter('delay')
             self.delay.export_sbml(sbml_e)
         for ea in self.event_assignments.values():
-            Cursor.set_parameter('event assignments')
+            Cursor.set_parameter('eventAssign')
             ea.export_sbml(sbml_e)
         super().export_sbml(sbml_e)
 
@@ -104,16 +105,19 @@ class Event(SBase):
         return e_dict
 
     def from_df(self, e_dict):
-        self.from_trigger_time = get_bool_val(e_dict['valFromTriggerTime'])
+        Cursor.set_parameter('trigger')
         self.trigger = Trigger()
         self.trigger.from_df(e_dict)
         if Priority.is_in_df(e_dict):
+            Cursor.set_parameter('priority')
             self.priority = Priority()
             self.priority.from_df(e_dict)
         if Delay.is_in_df(e_dict):
+            Cursor.set_parameter('delay')
             self.delay = Delay()
             self.delay.from_df(e_dict)
         if 'eventAssign' in e_dict:
+            Cursor.set_parameter('eventAssign')
             for ea_str in e_dict['eventAssign'].split(';'):
                 ea = EventAssignment()
                 ea.from_df(ea_str)

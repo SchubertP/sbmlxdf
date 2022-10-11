@@ -10,7 +10,6 @@ import sys
 import libsbml
 
 from sbmlxdf.sbase import SBase
-from sbmlxdf.cursor import Cursor
 from sbmlxdf.misc import extract_params, get_bool_val, record_generator
 from sbmlxdf.cursor import Cursor
 
@@ -41,6 +40,7 @@ class ListOfReactions(SBase):
 
     def from_df(self, lr_df):
         for idx, r_s in lr_df.reset_index().iterrows():
+            Cursor.set_component_id(idx)
             r = Reaction()
             r.from_df(r_s.dropna().to_dict())
             self.reactions.append(r)
@@ -124,19 +124,19 @@ class Reaction(SBase):
             Cursor.set_parameter('modifiers')
             m.export_sbml(sbml_r)
         if self.kinetic_law is not None:
-            Cursor.set_parameter('kinetic law')
+            Cursor.set_parameter('kineticLaw')
             self.kinetic_law.export_sbml(sbml_r)
         if self.fbc_enabled is not None:
             Cursor.set_parameter('fbc plugin')
             fbc_rplugin = sbml_r.getPlugin('fbc')
             if self.fbc_lb is not None:
-                Cursor.set_parameter('fbc lb')
+                Cursor.set_parameter('fbcLowerFluxBound')
                 fbc_rplugin.setLowerFluxBound(self.fbc_lb)
             if self.fbc_ub is not None:
-                Cursor.set_parameter('fbc ub')
+                Cursor.set_parameter('fbcUpperFluxBound')
                 fbc_rplugin.setUpperFluxBound(self.fbc_ub)
             if self.fbc_gpa is not None:
-                Cursor.set_parameter('fbc gpa')
+                Cursor.set_parameter('fbcGeneProdAssoc')
                 self.fbc_gpa.export_sbml(sbml_r)
         super().export_sbml(sbml_r)
 
@@ -166,34 +166,43 @@ class Reaction(SBase):
         return r_dict
 
     def from_df(self, r_dict):
+        Cursor.set_parameter('reversible')
         self.reversible = get_bool_val(r_dict['reversible'])
         if 'compartment' in r_dict:
+            Cursor.set_parameter('compartment')
             self.compartment = r_dict['compartment']
         if 'reactants' in r_dict:
+            Cursor.set_parameter('reactants')
             for r_str in record_generator(r_dict['reactants']):
                 sr = ReacSpeciesRef()
                 sr.from_df(r_str.strip())
                 self.reactants.append(sr)
         if 'products' in r_dict:
+            Cursor.set_parameter('products')
             for p_str in record_generator(r_dict['products']):
                 sr = ProdSpeciesRef()
                 sr.from_df(p_str.strip())
                 self.products.append(sr)
         if 'modifiers' in r_dict:
+            Cursor.set_parameter('modifiers')
             for m_str in record_generator(r_dict['modifiers']):
                 msr = ModSpeciesRef()
                 msr.from_df(m_str.strip())
                 self.modifiers.append(msr)
         if 'kineticLaw' in r_dict:
+            Cursor.set_parameter('kineticLaw')
             self.kinetic_law = KineticLaw()
             self.kinetic_law.from_df(r_dict)
         if 'fbcLowerFluxBound' in r_dict:
+            Cursor.set_parameter('fbcLowerFluxBound')
             self.fbc_enabled = True
             self.fbc_lb = r_dict['fbcLowerFluxBound']
         if 'fbcUpperFluxBound' in r_dict:
+            Cursor.set_parameter('fbcUpperFluxBound')
             self.fbc_enabled = True
             self.fbc_ub = r_dict['fbcUpperFluxBound']
         if 'fbcGeneProdAssoc' in r_dict:
+            Cursor.set_parameter('fbcGeneProdAssoc')
             self.fbc_enabled = True
             self.fbc_gpa = FbcGeneProdAssociation()
             self.fbc_gpa.from_df(r_dict['fbcGeneProdAssoc'].strip())
@@ -360,6 +369,7 @@ class KineticLaw(SBase):
         else:
             print(libsbml.getLastParseL3Error())
             sys.exit()
+        Cursor.set_parameter('localParams')
         for lp in self.local_params:
             lp.export_sbml(sbml_kl)
         super().export_sbml(sbml_kl)

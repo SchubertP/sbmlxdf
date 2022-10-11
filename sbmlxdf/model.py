@@ -225,6 +225,7 @@ class Model(SBase):
         :rtype: bool
         """
         if self.sbml_container is not None:
+            Cursor.set_component_type('sbml')
             sbml_doc = self.sbml_container.create_sbml_doc()
             if self.isModel:
                 sbml_model = sbml_doc.createModel()
@@ -234,7 +235,8 @@ class Model(SBase):
                         lo.export_sbml(sbml_model)
                     except (TypeError, ValueError):
                         cursor = Cursor.get_component_info()
-                        print(f'Error while processing {cursor["type"]}:{cursor["id"]}:{cursor["value"]}')
+                        print(f'Error in export_sbml() while processing {cursor["type"]}:'
+                              f'{cursor["id"]}:{cursor["value"]}')
 
             writer = libsbml.SBMLWriter()
             writer.setProgramName(program_name)
@@ -331,6 +333,7 @@ class Model(SBase):
         if ('sbml' not in model_dict) or ('modelAttrs' not in model_dict):
             print('no valid model dict; sbml and modelAttrs required!')
             return False
+        Cursor.set_component_type('sbml')
         self.sbml_container = SbmlContainer()
         self.sbml_container.from_df(model_dict['sbml'])
         self.isModel = True
@@ -339,7 +342,6 @@ class Model(SBase):
                     'products' not in model_dict['reactions'] and
                     'reactionString' in model_dict['reactions']):
                 model_dict['reactions'] = sbmlxdf.misc.translate_reaction_string(model_dict['reactions'])
-        component = 'no component yet'
 
         # 1. create listOfComponentsX for each component type in model_dict
         for k, v in _lists_of.items():
@@ -348,14 +350,15 @@ class Model(SBase):
                 self.list_of[k] = assigned_class()
 
         # 2. import components to listOfComponentsX
-        try:
-            for component, lo in self.list_of.items():
+        for component, lo in self.list_of.items():
+            try:
                 Cursor.set_component_type(component)
                 lo.from_df(model_dict[component])
-        except KeyError as err:
-            print('KeyError: {0} in {1} while processing {2}'
-                  .format(err, __name__, component))
-            return False
+            except (TypeError, ValueError):
+                cursor = Cursor.get_component_info()
+                print(f'Error in from_df() while processing {cursor["type"]}:'
+                      f'{cursor["id"]}:{cursor["value"]}')
+                return False
         return True
 
     def to_excel(self, file_name, model_dict=None):

@@ -25,48 +25,48 @@ class ModelAttrs(SBase):
 
     def import_sbml(self, sbml_model):
         if sbml_model.isSetSubstanceUnits():
-            Cursor.set_parameter('substance units')
             self.substance_units = sbml_model.getSubstanceUnits()
         if sbml_model.isSetTimeUnits():
-            Cursor.set_parameter('time units')
             self.time_units = sbml_model.getTimeUnits()
         if sbml_model.isSetVolumeUnits():
-            Cursor.set_parameter('volume units')
             self.volume_units = sbml_model.getVolumeUnits()
         if sbml_model.isSetAreaUnits():
-            Cursor.set_parameter('area units')
             self.area_units = sbml_model.getAreaUnits()
         if sbml_model.isSetLengthUnits():
-            Cursor.set_parameter('length units')
             self.length_units = sbml_model.getLengthUnits()
         if sbml_model.isSetExtentUnits():
-            Cursor.set_parameter('extent units')
             self.extent_units = sbml_model.getExtentUnits()
         if sbml_model.isSetConversionFactor():
-            Cursor.set_parameter('converstion factor')
             self.conversion_factor = sbml_model.getConversionFactor()
         if sbml_model.isPackageEnabled('fbc'):
-            Cursor.set_parameter('fbc strict')
             self.fbc_strict = sbml_model.getPlugin('fbc').getStrict()
         super().import_sbml(sbml_model)
 
     def export_sbml(self, sbml_model):
-        Cursor.set_component_id('model attrs')
+        Cursor.set_component_id('-')
         if self.substance_units is not None:
+            Cursor.set_parameter('substanceUnits')
             sbml_model.setSubstanceUnits(self.substance_units)
         if self.time_units is not None:
+            Cursor.set_parameter('timeUnits')
             sbml_model.setTimeUnits(self.time_units)
         if self.volume_units is not None:
+            Cursor.set_parameter('volumeUnits')
             sbml_model.setVolumeUnits(self.volume_units)
         if self.area_units is not None:
+            Cursor.set_parameter('areaUnits')
             sbml_model.setAreaUnits(self.area_units)
         if self.length_units is not None:
+            Cursor.set_parameter('lengthUnits')
             sbml_model.setLengthUnits(self.length_units)
         if self.extent_units is not None:
+            Cursor.set_parameter('extentUnits')
             sbml_model.setExtentUnits(self.extent_units)
         if self.conversion_factor is not None:
+            Cursor.set_parameter('conversionFactor')
             sbml_model.setConversionFactor(self.conversion_factor)
         if self.fbc_strict is not None:
+            Cursor.set_parameter('fbcStrict')
             sbml_model.getPlugin('fbc').setStrict(self.fbc_strict)
         super().export_sbml(sbml_model)
 
@@ -91,21 +91,30 @@ class ModelAttrs(SBase):
         return pd.Series(ma_dict)
 
     def from_df(self, ma_s):
+        Cursor.set_component_id('-')
         ma_dict = ma_s.dropna().to_dict()
         if 'substanceUnits' in ma_dict:
+            Cursor.set_parameter('substanceUnits')
             self.substance_units = ma_dict['substanceUnits']
         if 'timeUnits' in ma_dict:
+            Cursor.set_parameter('timeUnits')
             self.time_units = ma_dict['timeUnits']
         if 'volumeUnits' in ma_dict:
+            Cursor.set_parameter('volumeUnits')
             self.volume_units = ma_dict['volumeUnits']
         if 'areaUnits' in ma_dict:
+            Cursor.set_parameter('areaUnits')
             self.area_units = ma_dict['areaUnits']
         if 'lengthUnits' in ma_dict:
+            Cursor.set_parameter('lengthUnits')
             self.length_units = ma_dict['lengthUnits']
         if 'extentUnits' in ma_dict:
+            Cursor.set_parameter('extentUnits')
             self.extent_units = ma_dict['extentUnits']
         if 'conversionFactor' in ma_dict:
+            Cursor.set_parameter('conversionFactor')
             self.conversion_factor = ma_dict['conversionFactor']
         if 'fbcStrict' in ma_dict:
+            Cursor.set_parameter('fbcStrict')
             self.fbc_strict = get_bool_val(ma_dict['fbcStrict'])
         super().from_df(ma_dict)

@@ -35,6 +35,7 @@ class ListOfCompartments(SBase):
 
     def from_df(self, lc_df):
         for idx, c_s in lc_df.reset_index().iterrows():
+            Cursor.set_component_id(idx)
             c = Compartment()
             c.from_df(c_s.dropna().to_dict())
             self.compartments.append(c)
@@ -62,7 +63,7 @@ class Compartment(SBase):
     def export_sbml(self, sbml_model):
         sbml_c = sbml_model.createCompartment()
         if self.spatial_dim is not None:
-            Cursor.set_parameter('spatial dimensions')
+            Cursor.set_parameter('spatialDimension')
             sbml_c.setSpatialDimensions(self.spatial_dim)
         if self.size is not None:
             Cursor.set_parameter('size')
@@ -87,11 +88,15 @@ class Compartment(SBase):
 
     def from_df(self, c_dict):
         if 'spatialDimension' in c_dict:
+            Cursor.set_parameter('spatialDimension')
             self.spatial_dim = float(c_dict['spatialDimension'])
         if 'size' in c_dict:
+            Cursor.set_parameter('size')
             self.size = float(c_dict['size'])
         if 'units' in c_dict:
+            Cursor.set_parameter('units')
             self.units = c_dict['units']
+        Cursor.set_parameter('constant')
         self.constant = get_bool_val(c_dict['constant'])
 
         super().from_df(c_dict)

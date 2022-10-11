@@ -29,6 +29,7 @@ class GroupsListOfGroups(SBase):
     def export_sbml(self, sbml_model):
         groups_plugin = sbml_model.getPlugin('groups')
         for group in self.groups:
+            Cursor.set_component_id(group.id)
             group.export_sbml(groups_plugin)
         super().export_sbml(groups_plugin.getListOfGroups())
 
@@ -59,8 +60,10 @@ class GroupsGroup(SBase):
 
     def export_sbml(self, groups_plugin):
         sbml_g = libsbml.Group()
+        Cursor.set_parameter('kind')
         sbml_g.setKind(self.kind)
         if self.lo_members is not None:
+            Cursor.set_parameter('members')
             self.lo_members.export_sbml(sbml_g)
         super().export_sbml(sbml_g)
         groups_plugin.addGroup(sbml_g)
@@ -80,6 +83,7 @@ class GroupsGroup(SBase):
             print(Cursor.get_component_info())
             raise AttributeError
         if GroupListOfMembers.is_in_df(gr_dict):
+            Cursor.set_parameter('members')
             self.lo_members = GroupListOfMembers()
             self.lo_members.from_df(gr_dict)
         super().from_df(gr_dict)

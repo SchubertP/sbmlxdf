@@ -37,6 +37,7 @@ class ListOfInitAssign(SBase):
 
     def from_df(self, lia_df):
         for idx, ia_s in lia_df.reset_index().iterrows():
+            Cursor.set_component_id(idx)
             ia = InitAssign()
             ia.from_df(ia_s.dropna().to_dict())
             self.init_assigns.append(ia)
@@ -74,6 +75,8 @@ class InitAssign(SBase):
         return ia_dict
 
     def from_df(self, ia_dict):
+        Cursor.set_parameter('symbol')
         self.symbol = ia_dict['symbol']
+        Cursor.set_parameter('math')
         self.math = ia_dict['math']
         super().from_df(ia_dict)

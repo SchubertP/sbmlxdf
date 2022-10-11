@@ -38,6 +38,7 @@ class ListOfFunctionDefs(SBase):
 
     def from_df(self, lfd_df):
         for idx, fd_s in lfd_df.reset_index().iterrows():
+            Cursor.set_component_id(idx)
             fd = FunctionDef()
             fd.from_df(fd_s.dropna().to_dict())
             self.function_defs.append(fd)
@@ -70,5 +71,6 @@ class FunctionDef(SBase):
         return fd_dict
 
     def from_df(self, fd_dict):
+        Cursor.set_parameter('math')
         self.math = fd_dict['math']
         super().from_df(fd_dict)

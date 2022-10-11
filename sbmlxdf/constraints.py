@@ -36,6 +36,7 @@ class ListOfConstraints(SBase):
 
     def from_df(self, lco_df):
         for idx, co_s in lco_df.iterrows():
+            Cursor.set_component_id(idx)
             co = Constraint()
             co.from_df(co_s.dropna().to_dict())
             self.constraints.append(co)
@@ -81,7 +82,9 @@ class Constraint(SBase):
         return c_dict
 
     def from_df(self, co_dict):
+        Cursor.set_parameter('math')
         self.math = co_dict.get('math', '')
+        Cursor.set_parameter('messages')
         if 'message' in co_dict:
             msg = ('<message>'
                    '  <p xmlns="http://www.w3.org/1999/xhtml">'

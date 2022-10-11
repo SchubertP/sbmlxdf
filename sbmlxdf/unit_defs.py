@@ -37,6 +37,7 @@ class ListOfUnitDefs(SBase):
 
     def from_df(self, lud_df):
         for idx, ud_s in lud_df.reset_index().iterrows():
+            Cursor.set_component_id(idx)
             ud = UnitDefinition()
             ud.from_df(ud_s.dropna().to_dict())
             self.unit_defs.append(ud)
@@ -56,9 +57,9 @@ class UnitDefinition(SBase):
         super().import_sbml(sbml_ud)
 
     def export_sbml(self, sbml_model):
+        Cursor.set_parameter('units')
         sbml_ud = sbml_model.createUnitDefinition()
         for u in self.units:
-            Cursor.set_parameter('u.kind')
             u.export_sbml(sbml_ud)
         super().export_sbml(sbml_ud)
 
@@ -69,6 +70,7 @@ class UnitDefinition(SBase):
 
     def from_df(self, ud_dict):
         if 'units' in ud_dict:
+            Cursor.set_parameter('units')
             for unit_str in record_generator(ud_dict['units']):
                 unit = Unit()
                 unit.from_df(unit_str.strip())

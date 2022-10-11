@@ -35,6 +35,7 @@ class ListOfParameters(SBase):
 
     def from_df(self, lp_df):
         for idx, p_s in lp_df.reset_index().iterrows():
+            Cursor.set_component_id(idx)
             p = Parameter()
             p.from_df(p_s.dropna().to_dict())
             self.parameters.append(p)
@@ -79,8 +80,11 @@ class Parameter(SBase):
 
     def from_df(self, p_dict):
         if 'value' in p_dict:
+            Cursor.set_parameter('value')
             self.value = float(p_dict['value'])
         if 'units' in p_dict:
+            Cursor.set_parameter('units')
             self.units = p_dict['units']
+        Cursor.set_parameter('constant')
         self.constant = get_bool_val(p_dict['constant'])
         super().from_df(p_dict)

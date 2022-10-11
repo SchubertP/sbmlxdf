@@ -6,6 +6,7 @@ import pandas as pd
 
 from sbmlxdf.sbase import SBase
 from sbmlxdf.misc import extract_params, get_bool_val, record_generator
+from sbmlxdf.cursor import Cursor
 
 
 class FbcListOfObjectives(SBase):
@@ -26,8 +27,10 @@ class FbcListOfObjectives(SBase):
         super().import_sbml(sbml_lo)
 
     def export_sbml(self, sbml_model):
+        Cursor.set_component_id('fbcPlugin')
         fbc_mplugin = sbml_model.getPlugin('fbc')
         for o in self.objectives:
+            Cursor.set_component_id(o.id)
             o.export_sbml(fbc_mplugin)
         sbml_lo = fbc_mplugin.getListOfObjectives()
         sbml_lo.setActiveObjective(self.active)
@@ -40,11 +43,12 @@ class FbcListOfObjectives(SBase):
         return df_obj
 
     def from_df(self, lo_df):
-        for obj, active in lo_df['active'].iteritems():
+        for obj, active in lo_df['active'].items():
             if get_bool_val(active):
                 self.active = obj
                 break
         for idx, o_s in lo_df.reset_index().iterrows():
+            Cursor.set_component_id(idx)
             o = FbcObjective()
             o.from_df(o_s.dropna().to_dict())
             self.objectives.append(o)
@@ -69,7 +73,9 @@ class FbcObjective(SBase):
 
     def export_sbml(self, fbc_mplugin):
         sbml_o = fbc_mplugin.createObjective()
+        Cursor.set_parameter('type')
         sbml_o.setType(self.type)
+        Cursor.set_parameter('fluxObjectives')
         for fo in self.flux_objectives:
             fo.export_sbml(sbml_o)
         super().export_sbml(sbml_o)
@@ -82,7 +88,9 @@ class FbcObjective(SBase):
         return o_dict
 
     def from_df(self, o_dict):
+        Cursor.set_parameter('type')
         self.type = o_dict['type']
+        Cursor.set_parameter('fluxObjectives')
         for fo_str in record_generator(o_dict['fluxObjectives']):
             fo = FbcFluxObjective()
             fo.from_df(fo_str.strip())

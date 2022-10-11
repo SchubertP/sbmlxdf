@@ -36,6 +36,7 @@ class ListOfRules(SBase):
 
     def from_df(self, lr_df):
         for idx, r_s in lr_df.iterrows():
+            Cursor.set_component_id(idx)
             r = Rule()
             r.from_df(r_s.dropna().to_dict())
             self.rules.append(r)
@@ -62,14 +63,15 @@ class Rule(SBase):
 
     def export_sbml(self, sbml_model):
         if self.typecode == libsbml.SBML_ASSIGNMENT_RULE:
+            Cursor.set_parameter('assignmentRule')
             sbml_r = sbml_model.createAssignmentRule()
-            Cursor.set_parameter('variable')
             sbml_r.setVariable(self.variable)
         elif self.typecode == libsbml.SBML_RATE_RULE:
+            Cursor.set_parameter('rateRule')
             sbml_r = sbml_model.createRateRule()
-            Cursor.set_parameter('variable')
             sbml_r.setVariable(self.variable)
         elif self.typecode == libsbml.SBML_ALGEBRAIC_RULE:
+            Cursor.set_parameter('algebraicRule')
             sbml_r = sbml_model.createAlgebraicRule()
         else:
             return
@@ -91,6 +93,7 @@ class Rule(SBase):
         return r_dict
 
     def from_df(self, r_dict):
+        Cursor.set_parameter('rule')
         self.ruletype = r_dict['rule']
         if self.ruletype == libsbml.SBMLTypeCode_toString(
                                 libsbml.SBML_ASSIGNMENT_RULE, 'core'):
@@ -103,5 +106,6 @@ class Rule(SBase):
         if self.ruletype == libsbml.SBMLTypeCode_toString(
                                 libsbml.SBML_ALGEBRAIC_RULE, 'core'):
             self.typecode = libsbml.SBML_ALGEBRAIC_RULE
+        Cursor.set_parameter('math')
         self.math = r_dict['math']
         super().from_df(r_dict)

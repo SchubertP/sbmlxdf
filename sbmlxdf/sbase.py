@@ -23,6 +23,14 @@ rdf_namespace = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 class SBase(ABC):
     """Abstract Class SBase, the base Class for any model object.
 
+    SBase implemented as an ABC
+     - SBase cannot be directly instantiated
+     - and subclasses need to provide implementations for the
+       abstract methods
+
+    The abstract methods of Sbase also have an implementation,
+    which can be invoked from subclass methods using super().
+
     Attributes
     ----------
     id: str
@@ -80,18 +88,25 @@ class SBase(ABC):
     @abstractmethod
     def export_sbml(self, sbml_obj):
         if self.id is not None:
+            Cursor.set_component_id('id')
             sbml_obj.setId(self.id)
         if self.name is not None:
+            Cursor.set_component_id('name')
             sbml_obj.setName(self.name)
         if self.sboterm is not None:
+            Cursor.set_component_id('sboterm')
             sbml_obj.setSBOTerm(self.sboterm)
         if self.metaid is not None:
+            Cursor.set_component_id('metaid')
             sbml_obj.setMetaId(self.metaid)
         if self.annotation is not None:
+            Cursor.set_component_id('annotation')
             self.annotation.export_sbml(sbml_obj)
         if self.notes is not None:
+            Cursor.set_component_id('notes')
             sbml_obj.setNotes(self.notes)
         if self.lo_uncertainties is not None:
+            Cursor.set_component_id('uncertainties')
             self.lo_uncertainties.export_sbml(sbml_obj)
 
     @abstractmethod
@@ -121,17 +136,23 @@ class SBase(ABC):
     @abstractmethod
     def from_df(self, obj_dict):
         if 'id' in obj_dict:
+            Cursor.set_component_id('id')
             self.id = obj_dict['id']
         if 'name' in obj_dict:
+            Cursor.set_component_id('name')
             self.name = obj_dict['name']
         if 'sboterm' in obj_dict:
+            Cursor.set_component_id('sboterm')
             self.sboterm = obj_dict['sboterm']
         if 'metaid' in obj_dict:
+            Cursor.set_component_id('metaid')
             self.metaid = obj_dict['metaid']
         if Annotation.is_annotation(obj_dict):
+            Cursor.set_component_id('annotation')
             self.annotation = Annotation()
             self.annotation.from_df(obj_dict)
         if 'notes' in obj_dict:
+            Cursor.set_component_id('notes')
             notes = ('<notes>'
                      '  <body xmlns="http://www.w3.org/1999/xhtml">'
                      '  </body>'
@@ -150,6 +171,7 @@ class SBase(ABC):
                         xbody.addChild(xcontent.getChild(i))
                 self.notes = xnotes.toXMLString()
         if 'uncertainties' in obj_dict:
+            Cursor.set_component_id('uncertainties')
             self.lo_uncertainties = ListOfUncertainties()
             self.lo_uncertainties.from_df(obj_dict['uncertainties'])
 

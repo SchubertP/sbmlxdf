@@ -36,6 +36,7 @@ class ListOfSpecies(SBase):
 
     def from_df(self, ls_df):
         for idx, s_s in ls_df.reset_index().iterrows():
+            Cursor.set_component_id(idx)
             s = Species()
             s.from_df(s_s.dropna().to_dict())
             self.species.append(s)
@@ -82,28 +83,28 @@ class Species(SBase):
         Cursor.set_parameter('compartment')
         sbml_s.setCompartment(self.compartment)
         if self.initial_amount is not None:
-            Cursor.set_parameter('initial amount')
+            Cursor.set_parameter('initialAmount')
             sbml_s.setInitialAmount(self.initial_amount)
         if self.initial_concentration is not None:
-            Cursor.set_parameter('initial concentration')
+            Cursor.set_parameter('initialConcentration')
             sbml_s.setInitialConcentration(self.initial_concentration)
         if self.substance_units is not None:
-            Cursor.set_parameter('substance units')
+            Cursor.set_parameter('substanceUnits')
             sbml_s.setSubstanceUnits(self.substance_units)
-        Cursor.set_parameter('has only substance units')
+        Cursor.set_parameter('hasOnlySubstanceUnits')
         sbml_s.setHasOnlySubstanceUnits(self.has_only_substance_units)
-        Cursor.set_parameter('boundary condition')
+        Cursor.set_parameter('boundaryCondition')
         sbml_s.setBoundaryCondition(self.boundary_condition)
         Cursor.set_parameter('constant')
         sbml_s.setConstant(self.constant)
         if self.conversion_factor is not None:
-            Cursor.set_parameter('conversion factor')
+            Cursor.set_parameter('conversionFactor')
             sbml_s.setConversionFactor(self.conversion_factor)
         if self.fbc_charge is not None:
-            Cursor.set_parameter('fbc charge')
+            Cursor.set_parameter('fbcCharge')
             sbml_s.getPlugin('fbc').setCharge(self.fbc_charge)
         if self.fbc_chem_formula is not None:
-            Cursor.set_parameter('fbc chemical formula')
+            Cursor.set_parameter('fbcChemicalFormula')
             sbml_s.getPlugin('fbc').setChemicalFormula(self.fbc_chem_formula)
         super().export_sbml(sbml_s)
 
@@ -128,20 +129,30 @@ class Species(SBase):
         return s_dict
 
     def from_df(self, s_dict):
+        Cursor.set_parameter('compartment')
         self.compartment = s_dict['compartment']
         if 'initialAmount' in s_dict:
+            Cursor.set_parameter('initialAmount')
             self.initial_amount = float(s_dict['initialAmount'])
         if 'initialConcentration' in s_dict:
+            Cursor.set_parameter('initialConcentration')
             self.initial_concentration = float(s_dict['initialConcentration'])
         if 'substanceUnits' in s_dict:
+            Cursor.set_parameter('substanceUnits')
             self.substance_units = s_dict['substanceUnits']
+        Cursor.set_parameter('hasOnlySubstanceUnits')
         self.has_only_substance_units = get_bool_val(s_dict['hasOnlySubstanceUnits'])
+        Cursor.set_parameter('boundaryCondition')
         self.boundary_condition = get_bool_val(s_dict['boundaryCondition'])
+        Cursor.set_parameter('constant')
         self.constant = get_bool_val(s_dict['constant'])
         if 'conversionFactor' in s_dict:
+            Cursor.set_parameter('conversionFactor')
             self.conversion_factor = s_dict['conversionFactor']
         if 'fbcCharge' in s_dict:
+            Cursor.set_parameter('fbcCharge')
             self.fbc_charge = int(float(s_dict['fbcCharge']))
         if 'fbcChemicalFormula' in s_dict:
+            Cursor.set_parameter('fbcChemicalFormula')
             self.fbc_chem_formula = s_dict['fbcChemicalFormula']
         super().from_df(s_dict)
