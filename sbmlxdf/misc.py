@@ -34,7 +34,7 @@ _map_mathml2numpy = (
 
 
 def mathml2numpy(mformula, np_ns='np'):
-    """Convert mathml infix notation to a numpy notation
+    """Convert mathml infix notation to a numpy notation.
 
     mathml functions and operators are converted to numpy equivalents,
     where possible. Functions are prefixed with numpy namespace
@@ -82,6 +82,15 @@ def record_generator(records_str, sep=';'):
     """Generator to extract individual records from a string of records.
 
        This generator does not yet handle nested records.
+
+    Example: parsing through species reference records, e.g. df_reaction['rectants']
+
+    .. code-block:: python
+
+        srefs = {}
+        for sref_str in sbmlxdf.record_generator(srefs_str):
+            params = sbmlxdf.extract_params(sref_str)
+            srefs[params['species']] = float(params['stoic'])
 
     :param records_str: containing records separated by sep
     :type records_str: str
@@ -280,10 +289,10 @@ def convert_srefs(srefs_str):
     """Convert species references from rectants/products.
 
     E.g. 'species=M_mal__L_e, stoic=1.0, const=True; species=M_h_e, stoic=2.0, const=True'
-    gets converted to '2.0 M_h_e + M_mal__L_e'
+    is converted to '2.0 M_h_e + M_mal__L_e'
     srefs get sorted according to metabolite id
 
-    :param srefs_str: ';'-separated string with species references as key/value pairs
+    :param srefs_str: ';' - separated string with species references as key/value pairs
     :type srefs_str: str
     :returns: stoichiometric string
     :rtype: string
@@ -305,7 +314,7 @@ def convert_srefs(srefs_str):
 def generate_srefs(stoichometric_str):
     """Generate species references from one side of reaction string.
 
-    E.g. '2.0 M_h_e + M_mal__L_e' gets converted to
+    E.g. '2.0 M_h_e + M_mal__L_e' is converted to
     'species=M_h_e, stoic=2.0, const=True; species=M_mal__L_e, stoic=1.0, const=True'
 
     :param stoichometric_str: stoichiometric string
@@ -327,12 +336,13 @@ def generate_srefs(stoichometric_str):
 
 
 def add_reaction_translations(model_dict):
-    """Applies translations to some reaction columns.
+    """Creates reaction string and numeric flux bounds.
 
-    To support analysis of reactions table.
+    Additional transformations are provided as information columsn
+    when exporting model to dataframe / excel.
     Translations implemented are:
-    - given the numberical value of flux bounds.
     - adding a reaction string
+    - given the numberical value of flux bounds.
 
     :param model_dict: pandas DataFrames of model components
     :type model_dict: dict
@@ -358,9 +368,11 @@ def add_reaction_translations(model_dict):
 
 
 def translate_reaction_string(df_reactions):
-    """Produces reactants and products from reaction string.
+    """Extracts reactants/products/reversibility from reaction string.
 
     To support defining reactants and products with in a more readable format.
+    A simplified version of tellurium/antimony, see:
+     https://tellurium.readthedocs.io/en/latest/antimony.html
     Used, e.g. when reactants/products not defined in the dataframe
     e.g. 'M_fum_c + M_h2o_c -> M_mal__L_c' for a reversible reaction
     e.g. 'M_ac_e => ' for an irreversible reaction with no product

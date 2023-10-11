@@ -80,14 +80,17 @@ class Model(SBase):
     def __init__(self, import_file=None):
         """Constructor.
 
-        During instantiation model can be imported.
-        Alternatively import model in a subsequent step.
+        import_file can be any of:
+        - SBML coded model (.xml)
+        - model from spreadsheet (.xlsx or .ods)
+        - model from cvs directory (directory name)
+
+        If import_file not specified, it must be imported later.
 
         see also: :func:`import_sbml`, :func:`from_excel`, :func:`from_csv`,
         :func:`from_df`
 
-        :param import_file: filename of SBML (.xml) model, 
-            spreadsheet document (.xlsc or .ods) directory of .csv files with model data
+        :param import_file: filename of model definition
         :type import_file: str, optional
         :returns: success/failure
         :rtype: bool
@@ -106,7 +109,7 @@ class Model(SBase):
                 self.from_csv(import_file)
 
     def import_sbml(self, sbml_file):
-        """Import SBML model.
+        """Import SBML coded model.
 
         :param sbml_file: file name of SBML model (.xml)
         :type sbml_file: str
@@ -213,9 +216,9 @@ class Model(SBase):
             return err_tot
 
     def export_sbml(self, sbml_file):
-        """Create SBML model.
+        """Export model as SBML coded model.
 
-        It is recommended to first validate model against SBML specification.
+        Recommended to first validate model against SBML specifications.
 
         see also: :func:`validate_sbml`
 
@@ -248,10 +251,9 @@ class Model(SBase):
     def get_s_matrix(self, sparse=False):
         """Retrieve stoichiometric matrix.
 
-        Composing stoichiometric matrix using coo_matrix vs. dataframe is faster.
-        (factor 4 for iJO1366)
-
-        Returning a sparce dataframe is faster (factor 2)
+        rows: species ids
+        columns: reaction ids
+        values: stoichiometric coefficients (float)
 
         :param sparse: S-matrix in normal/sparse format (default: normal)
         :type sparse: bool, optional
@@ -293,10 +295,10 @@ class Model(SBase):
         return df_smat
 
     def to_df(self):
-        """Export model to a dict of pandas DataFrames.
+        """Export model to a set of pandas DataFrames.
 
         Keys 'sbml' and 'modelAttrs' reference pandas Series objects.
-        Index of dataframes is generally set on 'id' attribute.
+        Index of dataframes is mainly set on 'id' attribute.
 
         :returns: pandas DataFrames of model components
         :rtype: dict
@@ -318,7 +320,7 @@ class Model(SBase):
         return model_dict
 
     def from_df(self, model_dict):
-        """Loading model from a dict of pandas dataframes.
+        """Import model coded in pandas DataFrames.
 
         Keys of dict, header names and index of dataframes are significant.
         Only known names are imported, other names may exist.
@@ -362,9 +364,10 @@ class Model(SBase):
         return True
 
     def to_excel(self, file_name, model_dict=None):
-        """Create spreadsheet document of model (.xlsx or .ods).
-           alternatively provide the model in mdict format (for additional
-           attributes).
+        """Export model to Excel or OpenOffice spreadsheet.
+
+        Optional a model_dict could be provided, in case additional (unsupported)
+        attributes should be exported.
 
         :param file_name: file name of new spreadsheet document (.xlsx or .ods)
         :type file_name: str
@@ -386,12 +389,17 @@ class Model(SBase):
                 component.to_excel(writer, **params)
 
     def from_excel(self, file_name):
-        """Import model from spreadsheet document (.xlsx or .ods).
+        """Import model coded in Excel or OpenOffice spreadsheet.
 
-        Sheet and header names are significant. Only known names
-        are imported, other names may exist in the document.
-        With few exceptions, the 'id' column must be the first
-        column in sheets.
+        Note: spreadsheet structure and naming can be identified by
+        importing an existing SBML coded model and subsequently
+        exporting it to Excel or OpenOffice.
+
+        Note: Package testing made with Excel spreadsheet.
+
+        Only known sheets and columns are imported. Column order is arbitrary,
+        except of first column ('id' columns) which in most cases is
+        used as index.
 
         :param file_name: file name of spreadsheet document with model info
         :type file_name: str
@@ -420,7 +428,7 @@ class Model(SBase):
         return self.from_df(m_dict)
 
     def to_csv(self, dir_name):
-        """Create comma-separated-value files of model(.csv).
+        """Export model to comma-separated-value files (.csv).
 
         :param dir_name: directory name for .csv files
         :type dir_name: str
@@ -442,7 +450,7 @@ class Model(SBase):
             component.to_csv(**params)
 
     def from_csv(self, dir_name):
-        """Import model from .csv files.
+        """Import model coded in set of .csv files.
 
         File names and header names are significant. Only known names
         are imported, other names may exist.
