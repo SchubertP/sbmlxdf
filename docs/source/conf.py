@@ -22,6 +22,32 @@ import re
 import sys
 
 
+# In order to build documentation that requires libraries to import
+class Mock(object):
+    def __init__(self, *args, **kwargs):
+        return
+
+    def __call__(self, *args, **kwargs):
+        return Mock()
+
+    @classmethod
+    def __getattr__(cls, name):
+        if name in ('__file__', '__path__'):
+            return '/dev/null'
+        else:
+            return Mock()
+
+# These modules should correspond to the importable Python packages.
+MOCK_MODULES = [
+    'numpy',
+    'pandas',
+    'scipy.sparse',
+    'libsbml',
+]
+
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = Mock()
+
 # retrieve version number
 def get_version(project):
     """Return package version from <project>/_version.py"""
