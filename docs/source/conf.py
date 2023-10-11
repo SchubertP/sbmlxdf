@@ -25,7 +25,7 @@ import sys
 # retrieve version number
 def get_version(project):
     """Return package version from <project>/_version.py"""
-    version_path = os.path.join('..', project, '_version.py')
+    version_path = os.path.join('../..', project, '_version.py')
     if not os.path.exists(version_path):
         print('Version file not found: ' + version_path)
         sys.exit(-1)
@@ -46,7 +46,7 @@ author = 'Peter Schubert'
 release = get_version(project)
 
 # insert link to project for autodoc
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 # -- General configuration ---------------------------------------------------
 
