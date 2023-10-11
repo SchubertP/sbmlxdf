@@ -26,6 +26,10 @@ Welcome to sbmlxdf's documentation!
 
 Convert between SBML and tabular structures
 -------------------------------------------
+
+.. image:: ./images/sbmlxdf.png
+   :align: center
+
 **sbmlxdf** is lightweight and transparent converter from
 SBML to pandas Dataframes (sbml2df) and
 from pandas Dataframes to SBML (df2sbml).
