@@ -33,12 +33,12 @@ from sbmlxdf.cursor import Cursor
 from sbmlxdf._version import __version__, program_name
 
 # directory where to write result files of validate_sbml()
-results_dir = 'results'
+RESULTS_DIR = 'results'
 
 IS_SERIES = 1
 IS_DF_INDEXED = 2
 IS_DF_NOTINDEXED = 3
-_sheets = {
+_SHEETS = {
     'sbml': IS_SERIES, 'modelAttrs': IS_SERIES, 'funcDefs': IS_DF_INDEXED,
     'unitDefs': IS_DF_INDEXED, 'compartments': IS_DF_INDEXED,
     'species': IS_DF_INDEXED, 'parameters': IS_DF_INDEXED,
@@ -48,7 +48,7 @@ _sheets = {
     'fbcGeneProducts': IS_DF_INDEXED, 'groups': IS_DF_NOTINDEXED
     }
 
-_lists_of = {
+_LISTS_OF = {
     'modelAttrs': [libsbml.Model.hasRequiredElements, ModelAttrs],
     'funcDefs': [libsbml.Model.getNumFunctionDefinitions, ListOfFunctionDefs],
     'unitDefs': [libsbml.Model.getNumUnitDefinitions, ListOfUnitDefs],
@@ -143,7 +143,7 @@ class Model(SBase):
             return False
 
     def _import_components(self, sbml_model):
-        for k, v in _lists_of.items():
+        for k, v in _LISTS_OF.items():
             sbml_func, assigned_class = v
             if k.startswith('fbc'):
                 if sbml_model.isPackageEnabled('fbc'):
@@ -177,8 +177,8 @@ class Model(SBase):
         :returns: Error types and number of occurrences
         :rtype: dict
         """
-        if not os.path.exists(results_dir):
-            os.makedirs(results_dir)
+        if not os.path.exists(RESULTS_DIR):
+            os.makedirs(RESULTS_DIR)
         basename = os.path.basename(sbml_file).split('.')[0]
         xml_file = os.path.join('results', basename + '.xml')
         result_file = os.path.join('results', basename + '.txt')
@@ -346,7 +346,7 @@ class Model(SBase):
                 model_dict['reactions'] = sbmlxdf.misc.translate_reaction_string(model_dict['reactions'])
 
         # 1. create listOfComponentsX for each component type in model_dict
-        for k, v in _lists_of.items():
+        for k, v in _LISTS_OF.items():
             assigned_class = v[1]
             if k in model_dict:
                 self.list_of[k] = assigned_class()
@@ -379,9 +379,9 @@ class Model(SBase):
                 model_dict = self.to_df()
             for sheet, component in model_dict.items():
                 params = {'sheet_name': sheet}
-                if _sheets[sheet] == IS_SERIES:
+                if _SHEETS[sheet] == IS_SERIES:
                     params['header'] = False
-                if _sheets[sheet] == IS_DF_NOTINDEXED:
+                if _SHEETS[sheet] == IS_DF_NOTINDEXED:
                     params['index'] = False
                 if file_name.endswith('.ods'):
                     component.replace(False, value=0, inplace=True)
@@ -412,14 +412,14 @@ class Model(SBase):
         m_dict = {}
         with pd.ExcelFile(file_name) as xlsx:
             for sheet in xlsx.sheet_names:
-                if sheet in _sheets:
+                if sheet in _SHEETS:
                     params = {'sheet_name': sheet, 'dtype': str}
-                    if _sheets[sheet] == IS_SERIES:
+                    if _SHEETS[sheet] == IS_SERIES:
                         params['header'] = None
                         params['index_col'] = 0
                         df_raw = pd.read_excel(xlsx, **params).squeeze("columns")
                     else:
-                        if _sheets[sheet] == IS_DF_INDEXED:
+                        if _SHEETS[sheet] == IS_DF_INDEXED:
                             params['index_col'] = 0
                         df_raw = pd.read_excel(xlsx, **params)
                     df_raw.replace(to_replace=r'^\s+$', value=np.nan,
@@ -443,9 +443,9 @@ class Model(SBase):
             os.mkdir(dir_name)
         for sheet, component in self.to_df().items():
             params = {'path_or_buf': os.path.join(dir_name, sheet + '.csv')}
-            if _sheets[sheet] == IS_SERIES:
+            if _SHEETS[sheet] == IS_SERIES:
                 params['header'] = False
-            if _sheets[sheet] == IS_DF_NOTINDEXED:
+            if _SHEETS[sheet] == IS_DF_NOTINDEXED:
                 params['index'] = False
             component.to_csv(**params)
 
@@ -468,14 +468,14 @@ class Model(SBase):
         m_dict = {}
         for csv_file in glob.glob(os.path.join(dir_name, '*.csv')):
             sheet = os.path.basename(csv_file).replace('.csv', '')
-            if sheet in _sheets:
+            if sheet in _SHEETS:
                 params = {'dtype': str}
-                if _sheets[sheet] == IS_SERIES:
+                if _SHEETS[sheet] == IS_SERIES:
                     params['header'] = None
                     params['index_col'] = 0
                     m_dict[sheet] = pd.read_csv(csv_file, **params).squeeze("columns")
                 else:
-                    if _sheets[sheet] == IS_DF_INDEXED:
+                    if _SHEETS[sheet] == IS_DF_INDEXED:
                         params['index_col'] = 0
                     m_dict[sheet] = pd.read_csv(csv_file, **params)
         return self.from_df(m_dict)

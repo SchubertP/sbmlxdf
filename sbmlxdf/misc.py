@@ -18,8 +18,6 @@ _map_mathml2numpy = (
     # logical operators
     ('and', 'NP_NS.logical_and'), ('or', 'NP_NS.logical_or'),
     ('xor', 'NP_NS.logical_xor'), ('not', 'NP_NS.logical_not'),
-    ('and', 'NP_NS.logical_and'), ('or', 'NP_NS.logical_or'),
-    ('xor', 'NP_NS.logical_xor'), ('not', 'NP_NS.logical_not'),
     # trigonometric operators
     ('sin', 'NP_NS.sin'), ('cos', 'NP_NS.cos'), ('tan', 'NP_NS.tan'),
     ('sec', '1.0/NP_NS.cos'), ('csc', '1.0/NP_NS.sin'),
@@ -49,12 +47,11 @@ def mathml2numpy(mformula, np_ns='np'):
     np_formula = ' ' + mformula
     np_formula = re.sub(r'\s?dimensionless\s?', ' ', np_formula)
     np_formula = re.sub(r'\^', '**', np_formula)
-    np_formula = re.sub(r'\s?&&\s?', ' & ', np_formula)
-    np_formula = re.sub(r'\s?\|\|\s?', ' | ', np_formula)
+    np_formula = re.sub(r'\s?&&\s?', ' and ', np_formula)
+    np_formula = re.sub(r'\s?\|\|\s?', ' or ', np_formula)
     for mathml_f, np_f in _map_mathml2numpy:
         np_formula = re.sub(r'\s+' + mathml_f + r'\(',
-                            ' ' + np_f.replace('NP_NS', np_ns) + '(',
-                            np_formula)
+                            ' ' + np_f.replace('NP_NS', np_ns) + '(', np_formula)
     return np_formula.strip()
 
 
@@ -258,11 +255,45 @@ def extract_lo_records(s):
     return lo_records
 
 
+def get_miriam_refs(annotations, database, qualifier=None):
+    """Extract references from MIRIAM annotation for specific database/qualifier.
+
+    .. code-block:: python
+
+        chebi_refs = sbmlxdf.misc.get_miriam_refs(miriam_annot, 'chebi', 'bqbiol:is')
+
+    :param annotations: MIRIAM annotation string produced by sbmlxdf
+    :type annotations: str
+    :param database: specific resource to access, e.g. 'uniprot'
+    :type database: str
+    :param qualifier: specific qualifier for which to extract resouces
+                      e.g. 'bqbiol:is', (default: all)
+    :type qualifier: str or None (default)
+    :return: list of resources
+    :rtype: list of str
+    """
+    refs = []
+    if type(annotations) is str:
+        for annotation in record_generator(annotations):
+            fields = [item.strip() for item in annotation.split(',')]
+            if qualifier is not None and fields[0] != qualifier:
+                continue
+            for field in fields[1:]:
+                if database in field:
+                    refs.append(field.rsplit('/')[1])
+    return refs
+
+
 def extract_xml_attrs(xml_annots, ns=None, token=None):
     """Extract XML-attributes from given namespace and/or token.
 
     Example of xml_annots: 'ns_uri=http://www.hhu.de/ccb/bgm/ns, prefix=bgm,
     token=molecule, weight_Da=100'
+
+    .. code-block:: python
+
+        XML_SPECIES_NS = 'http://www.hhu.de/ccb/rba/species/ns'
+        xml_attrs = sbmlxdf.misc.extract_xml_attrs(xml_annots, ns=XML_SPECIES_NS)
 
     :param xml_annots: XML-annotations separated by ";"
     :type xml_annots: str
