@@ -280,7 +280,7 @@ def get_miriam_refs(annotations, database, qualifier=None):
                 continue
             for field in fields[1:]:
                 if database in field:
-                    refs.append(field.rsplit('/')[1])
+                    refs.append(field.rsplit('/')[-1])
     return refs
 
 

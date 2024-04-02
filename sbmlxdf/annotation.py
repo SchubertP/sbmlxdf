@@ -117,7 +117,8 @@ class CVTerm:
             self.sub_type = libsbml.ModelQualifierType_toString(
                                 sbml_cv.getModelQualifierType())
         for r_idx in range(sbml_cv.getNumResources()):
-            self.resource_uri.append(sbml_cv.getResourceURI(r_idx))
+            # stop resources uri as first semicolon
+            self.resource_uri.append((sbml_cv.getResourceURI(r_idx)).split(',')[0])
 
     def export_sbml(self, sbml_obj):
         sbml_cv = libsbml.CVTerm()
