@@ -1,9 +1,10 @@
 """Implementation of Annotations.
 
 Peter Schubert, June 2021
-Computational Cell Design, HHU Duesseldorf
+Computational Cell Biology, HHU Duesseldorf
 """
 import time
+import re
 
 import libsbml
 
@@ -134,8 +135,7 @@ class CVTerm:
 
     def to_df(self):
         cv_str = self.qual_type + ':' + self.sub_type
-        cv_str += ', ' + ', '.join([s.replace('http://identifiers.org/', '')
-                                    for s in self.resource_uri])
+        cv_str += ', ' + ', '.join([re.sub(r'http[s]?://identifiers.org/', '', s) for s in self.resource_uri])
         return cv_str
 
     def from_df(self, cv_str):
@@ -146,9 +146,8 @@ class CVTerm:
             self.sub_type = qual[1].strip()
             for i in range(1, len(parts)):
                 path = parts[i].strip()
-                if not (path.find('urn:') == 0 or
-                        path.find('http') == 0):
-                    path = 'http://identifiers.org/' + path
+                if re.match(r'http[s]?', path) is None and re.match('urn:', path) is None:
+                    path = 'https://identifiers.org/' + path
                 self.resource_uri.append(path)
         except IndexError as err:
             print(err)
