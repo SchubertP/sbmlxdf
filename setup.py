@@ -38,11 +38,11 @@ setup(
     packages=find_packages(exclude='docs'),
     install_requires=['pandas>=1.5.0',
                       'numpy >= 1.23.0',
-                      'scipy>=1.10.0',
+                      'scipy>=1.13.0',
                       'xlrd>=2.0.0',
                       'openpyxl>=3.0.0',
                       'python-libsbml-experimental>=5.18.0'],
-    python_requires=">=3.9",
+    python_requires=">=3.11",
     keywords=['modeling', 'standardization', 'SBML'],
     **setup_kwargs
 )

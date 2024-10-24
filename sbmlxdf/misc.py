@@ -342,6 +342,30 @@ def convert_srefs(srefs_str):
     return ' + '.join(l_srefs)
 
 
+def get_srefs_dict(reaction_str):
+    """Generate species references from one side of reaction string.
+
+    E.g. 'M_adp_c + M_atp_m -> M_adp_m + M_atp_c' is converted to
+    {'M_adp_c': -1.0, 'M_atp_m': -1.0, 'M_adp_m': 1.0, 'M_atp_c': 1.0}
+
+    :param reaction_str: reactions sting
+    :type reaction_str: str
+    :returns: dict with reactants/products and corresponding stochiometry
+    :rtype: dict
+    """
+    react_srefs = {}
+    if type(reaction_str) is str:
+
+        for idx, side in enumerate(re.split(r'[=-]>', reaction_str)):
+            for sref in side.split('+'):
+                l_sref = re.split(r'\s+', sref.strip())
+                stoic = float(l_sref[0]) if len(l_sref) == 2 else 1.0
+                sid = l_sref[-1]
+                if sid != '':
+                    react_srefs[sid] = -stoic if idx == 0 else stoic
+    return react_srefs
+
+
 def generate_srefs(stoichometric_str):
     """Generate species references from one side of reaction string.
 
@@ -369,7 +393,7 @@ def generate_srefs(stoichometric_str):
 def add_reaction_translations(model_dict):
     """Creates reaction string and numeric flux bounds.
 
-    Additional transformations are provided as information columsn
+    Additional transformations are provided as information columns
     when exporting model to dataframe / excel.
     Translations implemented are:
     - adding a reaction string

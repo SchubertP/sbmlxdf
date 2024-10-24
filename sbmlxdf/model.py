@@ -9,7 +9,6 @@ import glob
 import numpy as np
 import pandas as pd
 from scipy.sparse import coo_matrix
-
 import libsbml
 
 from sbmlxdf.compartments import ListOfCompartments
@@ -27,8 +26,7 @@ from sbmlxdf.sbase import SBase
 from sbmlxdf.sbml_container import SbmlContainer
 from sbmlxdf.species import ListOfSpecies
 from sbmlxdf.unit_defs import ListOfUnitDefs
-import sbmlxdf.misc
-from sbmlxdf.misc import extract_params, record_generator
+from sbmlxdf.misc import extract_params, record_generator, add_reaction_translations, translate_reaction_string
 from sbmlxdf.cursor import Cursor
 from sbmlxdf._version import __version__, program_name
 
@@ -295,7 +293,7 @@ class Model(SBase):
         return df_smat
 
     def to_df(self):
-        """Export model to a set of pandas DataFrames.
+        """Export model to a dict of pandas DataFrames.
 
         Keys 'sbml' and 'modelAttrs' reference pandas Series objects.
         Index of dataframes is mainly set on 'id' attribute.
@@ -308,7 +306,7 @@ class Model(SBase):
             model_dict[key] = lo.to_df()
 
         if 'reactions' in model_dict:
-            model_dict['reactions'] = sbmlxdf.misc.add_reaction_translations(model_dict)
+            model_dict['reactions'] = add_reaction_translations(model_dict)
 
         if ('reactions' in model_dict) and ('parameters' in model_dict):
             if 'fbcLowerFluxBound' in model_dict['reactions'].columns:
@@ -343,7 +341,7 @@ class Model(SBase):
             if ('reactants' not in model_dict['reactions'] and
                     'products' not in model_dict['reactions'] and
                     'reactionString' in model_dict['reactions']):
-                model_dict['reactions'] = sbmlxdf.misc.translate_reaction_string(model_dict['reactions'])
+                model_dict['reactions'] = translate_reaction_string(model_dict['reactions'])
 
         # 1. create listOfComponentsX for each component type in model_dict
         for k, v in _LISTS_OF.items():

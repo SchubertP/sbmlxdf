@@ -118,8 +118,11 @@ class CVTerm:
             self.sub_type = libsbml.ModelQualifierType_toString(
                                 sbml_cv.getModelQualifierType())
         for r_idx in range(sbml_cv.getNumResources()):
-            # stop resources uri as first semicolon
-            self.resource_uri.append((sbml_cv.getResourceURI(r_idx)).split(',')[0])
+            # mask ',' and ';' to not interfere with subsequent annotation string parsing
+            resource_uri = sbml_cv.getResourceURI(r_idx)
+            resource_uri = re.sub(',', '^', resource_uri)
+            resource_uri = re.sub(';', '|', resource_uri)
+            self.resource_uri.append(resource_uri)
 
     def export_sbml(self, sbml_obj):
         sbml_cv = libsbml.CVTerm()
@@ -130,6 +133,9 @@ class CVTerm:
             sbml_cv.setQualifierType(libsbml.MODEL_QUALIFIER)
             sbml_cv.setModelQualifierType(self.sub_type)
         for uri in self.resource_uri:
+            # unhide masked , and ;
+            uri = re.sub('^', ',', uri)
+            uri = re.sub('|', ';', uri)
             sbml_cv.addResource(uri)
             sbml_obj.addCVTerm(sbml_cv)
 
