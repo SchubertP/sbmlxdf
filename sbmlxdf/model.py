@@ -30,8 +30,8 @@ from sbmlxdf.misc import extract_params, record_generator, add_reaction_translat
 from sbmlxdf.cursor import Cursor
 from sbmlxdf._version import __version__, program_name
 
-# directory where to write result files of validate_sbml()
-RESULTS_DIR = 'results'
+# directory where to write temporary result files of validate_sbml()
+TMP_DIR = 'tmp'
 
 IS_SERIES = 1
 IS_DF_INDEXED = 2
@@ -162,7 +162,7 @@ class Model(SBase):
         """Validate model against SBML specifications.
 
         Uses checkConsistency() method from libSBML. Model is exported as
-        a SBML model with name sbml_file and written to directory ./results.
+        a SBML model with name sbml_file and written to directory ./tmp.
         Directory is created, if not existing. Line numbers in
         warning/errors messages can be checked against SBML file.
         Warnings and errors are copied to a text file
@@ -175,11 +175,11 @@ class Model(SBase):
         :returns: Error types and number of occurrences
         :rtype: dict
         """
-        if not os.path.exists(RESULTS_DIR):
-            os.makedirs(RESULTS_DIR)
+        if not os.path.exists(TMP_DIR):
+            os.makedirs(TMP_DIR)
         basename = os.path.basename(sbml_file).split('.')[0]
-        xml_file = os.path.join('results', basename + '.xml')
-        result_file = os.path.join('results', basename + '.txt')
+        xml_file = os.path.join(TMP_DIR, basename + '.xml')
+        result_file = os.path.join(TMP_DIR, basename + '.txt')
         if self.sbml_container is not None:
             self.export_sbml(xml_file)
             sbml_doc = libsbml.readSBML(xml_file)
@@ -205,7 +205,7 @@ class Model(SBase):
             with open(result_file, 'w') as f:
                 f.write(str(err_tot))
                 if ('Errors' in err_tot) or ('Fatals' in err_tot):
-                    f.write(' NOK: not SBML compliant, see results file!\n')
+                    f.write(f' NOK: not SBML compliant, see validation results in directory {TMP_DIR}!\n')
                 else:
                     f.write(' OK: SBML compliant\n')
                 if not units_check:
