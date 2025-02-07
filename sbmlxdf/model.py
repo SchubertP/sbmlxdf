@@ -26,7 +26,7 @@ from sbmlxdf.sbase import SBase
 from sbmlxdf.sbml_container import SbmlContainer
 from sbmlxdf.species import ListOfSpecies
 from sbmlxdf.unit_defs import ListOfUnitDefs
-from sbmlxdf.misc import extract_params, record_generator, add_reaction_translations, translate_reaction_string
+from sbmlxdf.misc import extract_params, record_generator, convert_srefs, translate_reaction_string
 from sbmlxdf.cursor import Cursor
 from sbmlxdf._version import __version__, program_name
 
@@ -305,16 +305,21 @@ class Model(SBase):
         for key, lo in self.list_of.items():
             model_dict[key] = lo.to_df()
 
+        # add information columns to reactions table
         if 'reactions' in model_dict:
-            model_dict['reactions'] = add_reaction_translations(model_dict)
-
-        if ('reactions' in model_dict) and ('parameters' in model_dict):
-            if 'fbcLowerFluxBound' in model_dict['reactions'].columns:
+            r_cols = set(model_dict['reactions'].columns)
+            if len(r_cols.intersection({'reactants', 'products'})) == 2:
+                for rid, row in model_dict['reactions'].iterrows():
+                    direction = ' -> ' if row['reversible'] is True else ' => '
+                    model_dict['reactions'].at[rid, 'reactionString'] = (convert_srefs(row['reactants']) + direction
+                                                                         + convert_srefs(row['products']))
+            if len(r_cols.intersection({'fbcLowerFluxBound', 'fbcUpperFluxBound'})) == 2:
+                assert 'parameters' in model_dict
                 params = model_dict['parameters']['value'].to_dict()
-                model_dict['reactions']['fbcLb'] = \
-                    model_dict['reactions']['fbcLowerFluxBound'].replace(params)
-                model_dict['reactions']['fbcUb'] = \
-                    model_dict['reactions']['fbcUpperFluxBound'].replace(params)
+                for rid, row in model_dict['reactions'].iterrows():
+                    model_dict['reactions'].at[rid, 'fbcLb'] = params[row['fbcLowerFluxBound']]
+                    model_dict['reactions'].at[rid, 'fbcUb'] = params[row['fbcUpperFluxBound']]
+
         return model_dict
 
     def from_df(self, model_dict):

@@ -390,38 +390,6 @@ def generate_srefs(stoichometric_str):
     return '; '.join(l_srefs)
 
 
-def add_reaction_translations(model_dict):
-    """Creates reaction string and numeric flux bounds.
-
-    Additional transformations are provided as information columns
-    when exporting model to dataframe / excel.
-    Translations implemented are:
-    - adding a reaction string
-    - given the numberical value of flux bounds.
-
-    :param model_dict: pandas DataFrames of model components
-    :type model_dict: dict
-    :returns: updated reactions table
-    :rtype: pandas DataFrame
-    """
-    df_reactions = model_dict['reactions'].copy()
-
-    if 'reactants' in df_reactions.columns and 'products' in df_reactions.columns:
-        for rid, row in df_reactions.iterrows():
-            direction = ' -> ' if row['reversible'] is True else ' => '
-            df_reactions.at[rid, 'reactionString'] = (convert_srefs(row['reactants'])
-                                                      + direction
-                                                      + convert_srefs(row['products']))
-    if ('parameters' in model_dict and
-            'fbcLowerFluxBound' in df_reactions.columns and
-            'fbcUpperFluxBound' in df_reactions.columns):
-        params = model_dict['parameters']['value'].to_dict()
-        df_reactions['fbcLb'] = df_reactions['fbcLowerFluxBound'].replace(params)
-        df_reactions['fbcUb'] = df_reactions['fbcUpperFluxBound'].replace(params)
-
-    return df_reactions
-
-
 def translate_reaction_string(df_reactions):
     """Extracts reactants/products/reversibility from reaction string.
 
