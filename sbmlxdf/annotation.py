@@ -281,23 +281,20 @@ class History:
         if len(self.modified) > 0:
             mh_dict['modifiedHistory'] = '; '.join(self.modified)
         if len(self.creators) > 0:
-            mh_dict['creatorsHistory'] = '; '.join([mc.to_df()
-                                                    for mc in self.creators])
+            mh_dict['creatorsHistory'] = '; '.join([mc.to_df() for mc in self.creators])
         return mh_dict
 
     def from_df(self, obj_dict):
         created_date = obj_dict.get('createdHistory', obj_dict.get('created-history'))
         if created_date is not None:
             if created_date == 'localtime':
-                self.created = time.strftime('%Y-%m-%dT%H:%M:%S%z',
-                                             time.localtime())
+                self.created = time.strftime('%Y-%m-%dT%H:%M:%S%z', time.localtime())
             else:
                 self.created = created_date
         mod_dates = obj_dict.get('modifiedHistory', obj_dict.get('modified-history'))
         for mod_date in record_generator(mod_dates):
             if mod_date.strip() == 'localtime':
-                self.modified.append(time.strftime('%Y-%m-%dT%H:%M:%S%z',
-                                                   time.localtime()))
+                self.modified.append(time.strftime('%Y-%m-%dT%H:%M:%S%z', time.localtime()))
             else:
                 self.modified.append(mod_date.strip())
         creators = obj_dict.get('creatorsHistory', obj_dict.get('creators-history'))
