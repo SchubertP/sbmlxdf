@@ -21,12 +21,11 @@ setup(
     description='convert between SBML and tabular structures',
     author='Peter Schubert',
     author_email='peter.schubert@hhu.de',
-    url='https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf',
+    url='https://www.cs.hhu.de/lehrstuehle-und-arbeitsgruppen/computational-cell-biology',
     project_urls={
-        "Source Code": 'https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf',
+        "Source Code": 'https://github.com/SchubertP/sbmlxdf',
         "Documentation": 'https://sbmlxdf.readthedocs.io',
-        "Bug Tracker":
-        'https://gitlab.cs.uni-duesseldorf.de/schubert/sbmlxdf/-/issues'},
+        "Bug Tracker": 'https://github.com/SchubertP/sbmlxdf/issues'},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
@@ -42,6 +41,6 @@ setup(
                       'openpyxl>=3.0.0',
                       'python-libsbml-experimental>=5.18.0'],
     python_requires=">=3.11",
-    keywords=['modeling', 'standardization', 'SBML'],
+    keywords=['systems biology', 'metabolic modeling', 'SBML'],
     **setup_kwargs
 )
