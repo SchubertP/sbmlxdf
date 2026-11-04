@@ -21,7 +21,7 @@ class Annotation:
     which are handled by libsbml already
 
     there can be other annotations, which must be handled via
-    libsbml.XMLNode object. These other annotations allow the modeller
+    libsbml.XMLNode object. These other annotations allow the modeler
     to extend the annotations that can be processed by his software. E.g.
     one could add molecular weights to species object. This requires
     a separate namespace, prefix and XML elements.
@@ -141,7 +141,7 @@ class CVTerm:
 
     def to_df(self):
         cv_str = self.qual_type + ':' + self.sub_type
-        cv_str += ', ' + ', '.join([re.sub(r'http[s]?://identifiers.org/', '', s) for s in self.resource_uri])
+        cv_str += ', ' + ', '.join([re.sub(r'https?://identifiers.org/', '', s) for s in self.resource_uri])
         return cv_str
 
     def from_df(self, cv_str):
@@ -152,7 +152,7 @@ class CVTerm:
             self.sub_type = qual[1].strip()
             for i in range(1, len(parts)):
                 path = parts[i].strip()
-                if re.match(r'http[s]?', path) is None and re.match('urn:', path) is None:
+                if re.match(r'https?', path) is None and re.match('urn:', path) is None:
                     path = 'https://identifiers.org/' + path
                 self.resource_uri.append(path)
         except IndexError as err:
@@ -170,7 +170,7 @@ class XMLAnnotation:
         prefix: str
             prefix assigned to namespace above. e.g. 'bgm'
         token: str
-            name of token of the xml element, without prefix
+            name of token of the XML element, without prefix
         attrs: dict of str
             key - value pairs
     """

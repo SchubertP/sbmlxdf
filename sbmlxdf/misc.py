@@ -72,7 +72,7 @@ def get_bool_val(parameter):
     if type(parameter) == bool:
         return parameter
     else:
-        return parameter.upper() == str('TRUE') or parameter == '1'
+        return str(parameter).upper() == str('TRUE') or parameter == '1'
 
 
 def record_generator(records_str, sep=';'):
@@ -326,7 +326,7 @@ def convert_srefs(srefs_str):
     :param srefs_str: ';' - separated string with species references as key/value pairs
     :type srefs_str: str
     :returns: stoichiometric string
-    :rtype: string
+    :rtype: str
     """
     d_srefs = {}
     for sref in record_generator(srefs_str):
@@ -413,7 +413,7 @@ def translate_reaction_string(df_reactions):
                 components = re.split(r'[=-]>', reaction_string)
             else:  # actually an error
                 components = ['', '']
-            df_reactions.at[rid, 'reversible'] = ('->' in reaction_string)
-            df_reactions.at[rid, 'reactants'] = generate_srefs(components[0])
-            df_reactions.at[rid, 'products'] = generate_srefs(components[1])
+            df_reactions.loc[rid, 'reversible'] = ('->' in reaction_string)
+            df_reactions.loc[rid, 'reactants'] = generate_srefs(components[0])
+            df_reactions.loc[rid, 'products'] = generate_srefs(components[1])
     return df_reactions

@@ -1,4 +1,4 @@
-"""Test routines to check overall behaviour of sbmlxdf
+"""Test routines to check overall behavior of sbmlxdf
 
 Check handling of SBML configurations extracted from SBML specifications
 and configured in SBML models 'test_SBML_L3V2_*.xml'

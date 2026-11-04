@@ -14,7 +14,6 @@ Heinrich-Heine-University Duesseldorf, Germany
    :maxdepth: 2
    :hidden:
 
-   install
    tutorial
    scripts
    spreadsheet
@@ -81,3 +80,12 @@ Features
    i.e. **Hierarchical Model Composition**,
    **Multistate and Multicomponent Species** and **Qualitative Models** are
    not supported at the moment, but might be included in future versions.
+
+Installation
+------------
+
+**sbmlxdf** can be installed via standard pip command
+
+.. code-block:: bash
+
+   $ pip install sbmlxdf

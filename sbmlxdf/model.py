@@ -8,7 +8,7 @@ import os.path
 import glob
 import numpy as np
 import pandas as pd
-from scipy.sparse import coo_matrix
+from scipy.sparse import coo_array
 import libsbml
 
 from sbmlxdf.compartments import ListOfCompartments
@@ -212,6 +212,7 @@ class Model(SBase):
                     f.write('Units not checked\n')
                 f.write(sbml_doc.getErrorLog().toString())
             return err_tot
+        return {'Fatals': 1}
 
     def export_sbml(self, sbml_file):
         """Export model as SBML coded model.
@@ -282,7 +283,7 @@ class Model(SBase):
                     data = float(sref.get('stoic', 1.0))
                     stoic_data.append([row_idx, col_idx, data])
             coo_data = np.array(stoic_data)
-            s_mat_coo = coo_matrix((coo_data[:, 2], (coo_data[:, 0], coo_data[:, 1])),
+            s_mat_coo = coo_array((coo_data[:, 2], (coo_data[:, 0], coo_data[:, 1])),
                                    shape=(len(sids), len(rids)))
             if sparse is True:
                 df_smat = pd.DataFrame.sparse.from_spmatrix(s_mat_coo, index=sids, columns=rids)
@@ -311,14 +312,14 @@ class Model(SBase):
             if len(r_cols.intersection({'reactants', 'products'})) == 2:
                 for rid, row in model_dict['reactions'].iterrows():
                     direction = ' -> ' if row['reversible'] is True else ' => '
-                    model_dict['reactions'].at[rid, 'reactionString'] = (convert_srefs(row['reactants']) + direction
+                    model_dict['reactions'].loc[rid, 'reactionString'] = (convert_srefs(row['reactants']) + direction
                                                                          + convert_srefs(row['products']))
             if len(r_cols.intersection({'fbcLowerFluxBound', 'fbcUpperFluxBound'})) == 2:
                 assert 'parameters' in model_dict
                 params = model_dict['parameters']['value'].to_dict()
                 for rid, row in model_dict['reactions'].iterrows():
-                    model_dict['reactions'].at[rid, 'fbcLb'] = params[row['fbcLowerFluxBound']]
-                    model_dict['reactions'].at[rid, 'fbcUb'] = params[row['fbcUpperFluxBound']]
+                    model_dict['reactions'].loc[rid, 'fbcLb'] = params[row['fbcLowerFluxBound']]
+                    model_dict['reactions'].loc[rid, 'fbcUb'] = params[row['fbcUpperFluxBound']]
 
         return model_dict
 
@@ -375,7 +376,7 @@ class Model(SBase):
         :param file_name: file name of new spreadsheet document (.xlsx or .ods)
         :type file_name: str
         :param model_dict: optional, pandas DataFrames of model components
-        :type model_dict: dict
+        :type model_dict: dict or None
         """
         with pd.ExcelWriter(file_name) as writer:
             if model_dict is None:
@@ -387,8 +388,7 @@ class Model(SBase):
                 if _SHEETS[sheet] == IS_DF_NOTINDEXED:
                     params['index'] = False
                 if file_name.endswith('.ods'):
-                    component.replace(False, value=0, inplace=True)
-                    component.replace(True, value=1, inplace=True)
+                    component = component.replace({False: 0, True: 1})
                 component.to_excel(writer, **params)
 
     def from_excel(self, file_name):
@@ -425,8 +425,8 @@ class Model(SBase):
                         if _SHEETS[sheet] == IS_DF_INDEXED:
                             params['index_col'] = 0
                         df_raw = pd.read_excel(xlsx, **params)
-                    df_raw.replace(to_replace=r'^\s+$', value=np.nan,
-                                   regex=True, inplace=True)
+                    # replace empty fields with np.nan
+                    df_raw = df_raw.replace(to_replace=r'^\s+$', value=np.nan, regex=True)
                     m_dict[sheet] = df_raw.loc[df_raw.index.dropna()]
         return self.from_df(m_dict)
 

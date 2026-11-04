@@ -27,7 +27,7 @@ document as follows:
    model = sbmlxdf.Model('BIOMD0000000010_url.xml')
    model.to_excel('BIOMD0000000010_ulr.xlsx')
 
-You may now open the spreadsheet document. It will contain 5 sheets.
+You may now open the spreadsheet document. It contain 6 sheets.
 
 - **sbml**
 - **modelAttrs**
@@ -38,8 +38,7 @@ You may now open the spreadsheet document. It will contain 5 sheets.
 
 .. Note::
 
-   Number of sheets and their names in the spreadsheet document
-   depend on the type of components stored in the model.
+   Number of sheets depend on the type of components stored in the model.
 
 E.g. sheet **sbml** contains level and version of the SBML document, in this
 case Level 2 version 4.
@@ -51,7 +50,7 @@ case Level 2 version 4.
 The **reaction** sheet contains all information related to reactions this model:
 
 - **id**: identifier of the reaction
-- **name**: a more human readable name
+- **name**: a descriptive name
 - **metaid**: required for miriamAnnotations and model history
 - **miriamAnnotation**: records (";" - separated) with qualifier elements and
   resources ('http://identifiers.org/' removed)
@@ -76,7 +75,7 @@ The **reaction** sheet contains all information related to reactions this model:
     Number of columns in a sheet depend on the type of attributes used
     in the model. There are optional and mandatory attributes. Column order
     does not matter, with the exception of the ``id`` column which must
-    be the first in most of the sheets (``id`` it is used as an index).
+    be the first in most of the sheets (``id`` is used as an index).
 
 
 2. Spreadsheet to SBML model
@@ -130,7 +129,7 @@ validate the model and only after successful validation create the SBML file.
 contains methods for checking compliance to SBML standards. These validation
 routines are invoked with the method ``validate_sbml()``. This method
 creates an error report (``tmp.txt``) and a SBML file (``tmp.xml``), both in
-directory ``./results``
+directory ``./tmp``
 
 .. code-block:: python
 
